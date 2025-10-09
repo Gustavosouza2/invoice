@@ -1,49 +1,106 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
-datasource db { 
+datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  email     String   @unique
-  invoices  Invoice[] 
-  name      String
-  password  String
-  phone     String
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  emailVerified Boolean? @default(false)
+  updatedAt     DateTime @updatedAt
+  email         String   @unique
+  password      String?
+  image         String?
+  phone         String?
+  name          String
+
+  // Relations
+  credentials Credential[]
+  accounts    Account[]
+  sessions    Session[]
+  Invoice     Invoice[]
 }
 
-model File {
-  id        String @id @default(uuid())
-  url       String
-  type      String
-  invoiceId String   @unique 
-  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+model Session {
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  token     String   @unique
+  expiresAt DateTime
+  userId    String
+}
+
+model Account {
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String    @id @default(uuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  expiresAt         DateTime?
+  accessToken       String?
+  refreshToken      String?
+  tokenType         String?
+  scope             String?
+  idToken           String?
+  userId            String
+  accountId         String?
+  providerId        String?   @default("credential")
+  providerAccountId String?   @default("")
+  provider          String?   @default("credential")
+  password          String?
+
+  @@unique([providerId, providerAccountId])
+}
+
+model VerificationToken {
+  token      String   @unique
+  expiresAt  DateTime
+  identifier String
+
+  @@unique([identifier, token])
+}
+
+model Credential {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  accountId         String
+  providerId        String
+  provider          String?  @default("credential")
+  providerAccountId String?  @default("")
+  password          String
 }
 
 model Invoice {
-   user                 User @relation(fields: [userId], references: [id])
-   id                   String   @id @default(uuid())
-   service_description  String
-   invoice_number       Int
-   date DateTime        @default(now())
-   service_price        Float
-   license_plate        String @unique
-   customer_name        String
-   vehicle_model        String
-   total_amount         Float
-   labor_cost           Float
-   part_name            String
-   userId               String
-   cost                 Float
-   file                 File?
+  user                User     @relation(fields: [userId], references: [id])
+  id                  String   @id @default(uuid())
+  date                DateTime @default(now())
+  license_plate       String   @unique
+  userId              String
+  service_description String
+  customer_name       String
+  vehicle_model       String
+  part_name           String
+  service_price       Float
+  cost                Float
+  labor_cost          Float
+  total_amount        Float
+  file                File?
+  invoice_number      Int
 }
 
-
+model File {
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  invoiceId String   @unique
+  url       String
+  type      String
+}

@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaClient } from 'generated/prisma';
 import { createClient } from '@supabase/supabase-js';
+import { Injectable } from '@nestjs/common';
+
+import { CustomException } from 'src/common/errors/exceptions/custom.exception';
+import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
+import { PrismaClient } from 'generated/prisma';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseServiceRoleKey) {
-  throw new Error('Supabase environment variables are not set.');
+  throw new CustomException(
+    ErrorCode.SERVICE_UNAVAILABLE,
+    'Supabase environment variables are not set.'
+  );
 }
 
 const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
@@ -28,7 +34,10 @@ export class FilesService {
       });
 
     if (error) {
-      throw new Error('Error uploading file to Supabase:');
+      throw new CustomException(
+        ErrorCode.BAD_REQUEST,
+        error.message || 'Error uploading file to Supabase:'
+      );
     }
 
     const { data: publicUrlData } = supabase.storage

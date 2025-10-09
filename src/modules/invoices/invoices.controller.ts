@@ -1,50 +1,50 @@
 import { FileInterceptor } from '@nestjs/platform-express';
-// import { AuthGuard } from '@nestjs/passport';
 import {
   Get,
-  // Req,
   Body,
   Post,
   Query,
   Patch,
   Delete,
-  // UseGuards,
+  Param,
+  UseGuards,
   Controller,
   UploadedFile,
   UseInterceptors,
-  Param,
 } from '@nestjs/common';
 
-import { InvoicesService } from './invoices.service';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { CreateInvoiceDto } from './dto/create-invoice';
 import { UpdateInvoiceDto } from './dto/update-invoice';
-// import { type InvoiceRequest } from 'src/types/invoice';
+import { InvoicesService } from './invoices.service';
+
 @Controller('invoices')
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard)
   @Post('/create-invoice')
   @UseInterceptors(FileInterceptor('file'))
   createInvoice(
     @Body() CreateInvoiceDto: CreateInvoiceDto,
     @UploadedFile() file: Express.Multer.File
-    // @Req() req: InvoiceRequest
   ) {
     return this.invoicesService.createInvoice(CreateInvoiceDto, file);
   }
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard)
   @Get('/get-invoices')
   findAllInvoices(@Query('page') page = 1, @Query('per_page') per_page = 10) {
     return this.invoicesService.findAllInvoices(Number(page), Number(per_page));
   }
 
+  @UseGuards(AuthGuard)
   @Get('/get-invoice/:id')
   findInvoiceById(@Param('id') id: string) {
     return this.invoicesService.findInvoiceById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/update-invoice/:id')
   updateInvoice(
     @Param('id') id: string,
@@ -53,6 +53,7 @@ export class InvoicesController {
     return this.invoicesService.updateInvoice(id, updateInvoice);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/delete-invoice/:id')
   removeInvoice(@Param('id') id: string) {
     return this.invoicesService.removeInvoice(id);

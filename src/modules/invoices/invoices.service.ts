@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
+import { CustomException } from 'src/common/errors/exceptions/custom.exception';
+import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
 import { UpdateInvoiceDto } from './dto/update-invoice';
 import { CreateInvoiceDto } from './dto/create-invoice';
 import { FilesService } from '../files/files.service';
 import { PrismaClient } from 'generated/prisma';
+
 @Injectable()
 export class InvoicesService {
   private prisma = new PrismaClient();
@@ -21,6 +24,11 @@ export class InvoicesService {
       }),
       this.prisma.invoice.count(),
     ]);
+
+    if (!data || total === 0) {
+      throw new CustomException(ErrorCode.NOT_FOUND, 'No invoices found');
+    }
+
     return {
       data,
       total,
@@ -31,13 +39,19 @@ export class InvoicesService {
   }
 
   async findInvoiceById(id: string) {
-    return this.prisma.invoice.findUnique({
+    const invoice = await this.prisma.invoice.findUnique({
       where: { id },
       include: {
         user: true,
         file: true,
       },
     });
+
+    if (!invoice) {
+      throw new CustomException(ErrorCode.NOT_FOUND, 'Invoice not found');
+    }
+
+    return invoice;
   }
 
   async createInvoice(
@@ -58,6 +72,13 @@ export class InvoicesService {
       data: newInvoice,
     });
 
+    if (!invoice) {
+      throw new CustomException(
+        ErrorCode.INTERNAL_ERROR,
+        'Invoice creation failed'
+      );
+    }
+
     if (file) {
       const filePath = await this.filesService.uploadFileToSupabase(file);
       await this.prisma.file.create({
@@ -77,17 +98,31 @@ export class InvoicesService {
   }
 
   async updateInvoice(id: string, invoiceData: Partial<UpdateInvoiceDto>) {
-    await this.prisma.invoice.update({
+    const updatedInvoice = await this.prisma.invoice.update({
       where: { id },
       data: invoiceData,
     });
+
+    if (!updatedInvoice) {
+      throw new CustomException(ErrorCode.BAD_REQUEST, 'Invoice update failed');
+    }
+
     return this.findInvoiceById(id);
   }
 
   async removeInvoice(id: string) {
-    return this.prisma.invoice.delete({
+    const deletedInvoice = await this.prisma.invoice.delete({
       where: { id },
       include: { file: true },
     });
+
+    if (!deletedInvoice) {
+      throw new CustomException(
+        ErrorCode.INTERNAL_ERROR,
+        'Invoice deletion failed'
+      );
+    }
+
+    return deletedInvoice;
   }
 }
