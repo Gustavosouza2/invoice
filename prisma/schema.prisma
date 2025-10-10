@@ -9,98 +9,68 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  createdAt     DateTime @default(now())
-  emailVerified Boolean? @default(false)
-  updatedAt     DateTime @updatedAt
-  email         String   @unique
-  password      String?
-  image         String?
-  phone         String?
-  name          String
-
-  // Relations
-  credentials Credential[]
-  accounts    Account[]
-  sessions    Session[]
-  Invoice     Invoice[]
-}
-
-model Session {
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  token     String   @unique
-  expiresAt DateTime
-  userId    String
+  id        String    @id @default(uuid())
+  emailVerified Boolean @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  email     String    @unique
+  name      String
+  image     String?
+  password  String?
+  phone     String?
+  accounts  Account[]
+  sessions  Session[]
+  Invoice   Invoice[]
 }
 
 model Account {
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  id                String    @id @default(uuid())
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  expiresAt         DateTime?
-  accessToken       String?
-  refreshToken      String?
-  tokenType         String?
-  scope             String?
-  idToken           String?
-  userId            String
-  accountId         String?
-  providerId        String?   @default("credential")
-  providerAccountId String?   @default("")
-  provider          String?   @default("credential")
-  password          String?
+  id         String   @id
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  providerId String
+  accountId  String
+  password   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@unique([providerId, providerAccountId])
+  @@unique([providerId, accountId])
 }
 
-model VerificationToken {
-  token      String   @unique
-  expiresAt  DateTime
-  identifier String
-
-  @@unique([identifier, token])
-}
-
-model Credential {
-  id                String   @id @default(uuid())
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId            String
-  accountId         String
-  providerId        String
-  provider          String?  @default("credential")
-  providerAccountId String?  @default("")
-  password          String
+model Session {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime
+  ipAddress String
+  userAgent String
 }
 
 model Invoice {
-  user                User     @relation(fields: [userId], references: [id])
   id                  String   @id @default(uuid())
+  service_description String
+  invoice_number      Int
   date                DateTime @default(now())
   license_plate       String   @unique
-  userId              String
-  service_description String
   customer_name       String
   vehicle_model       String
-  part_name           String
-  service_price       Float
-  cost                Float
-  labor_cost          Float
   total_amount        Float
+  labor_cost          Float
+  part_name           String
+  userId              String
+  cost                Float
+  service_price       Float
   file                File?
-  invoice_number      Int
+  user                User     @relation(fields: [userId], references: [id])
 }
 
 model File {
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  invoiceId String   @unique
   url       String
   type      String
+  invoiceId String   @unique
+  createdAt DateTime @default(now())
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
 }

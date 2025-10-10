@@ -1,5 +1,6 @@
 import { Post, Body, Controller, UseGuards } from '@nestjs/common';
 import {
+  Public,
   Session,
   AuthGuard,
   type UserSession,
@@ -9,15 +10,17 @@ import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
-@Controller('')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('/register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
+  @Public()
   @Post('/login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -27,11 +30,5 @@ export class AuthController {
   @Post('/logout')
   async logout(@Session() session: UserSession) {
     return this.authService.logout(session.session.token);
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('jwt')
-  async jwt(@Session() session: UserSession) {
-    return this.authService.getJwtToken(session.session.token);
   }
 }

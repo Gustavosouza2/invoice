@@ -1,16 +1,20 @@
 import { Module } from '@nestjs/common';
-import { AuthModule as BetterAuthModule } from '@thallesp/nestjs-better-auth';
+import { JwtModule } from '@nestjs/jwt';
 
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { auth } from './auth';
+import { JwtGuard } from './jwt.guard';
 
 @Module({
-  imports: [UsersModule, BetterAuthModule.forRoot(auth)],
+  imports: [
+    JwtModule.register({
+      secret: process.env.JWT_SECRET ?? 'dev_jwt_secret',
+      signOptions: { expiresIn: '7d' },
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService],
-  exports: [AuthService],
+  providers: [AuthService, PrismaService, JwtGuard],
+  exports: [AuthService, JwtGuard, JwtModule],
 })
 export class ProjectAuthModule {}

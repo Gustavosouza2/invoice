@@ -1,15 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
-import { PrismaService } from '../../common/prisma/prisma.service';
 import type { RegisterDto } from './dto/register.dto';
 import type { LoginDto } from './dto/login.dto';
 import { auth } from './auth';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly jwtService: JwtService) {}
+
+  private generateJwtToken(user: {
+    id: string;
+    email: string;
+    name?: string | null;
+  }) {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      name: user.name ?? undefined,
+    };
+    return this.jwtService.sign(payload);
+  }
+
   async register(registerDto: RegisterDto) {
     try {
       const result = await auth.api.signUpEmail({
@@ -27,16 +41,24 @@ export class AuthService {
       if (!result.user)
         throw new CustomException(ErrorCode.NOT_FOUND, 'User not found');
 
+      const jwt = this.generateJwtToken({
+        id: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+      });
+
       return {
+        jwt,
         success: true,
         user: result.user,
         token: result.token,
         message: 'User registered successfully',
       };
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Internal server error';
-      throw new CustomException(ErrorCode.INTERNAL_ERROR, message);
+      throw new CustomException(
+        ErrorCode.INTERNAL_ERROR,
+        (error as string) ?? 'Internal server error'
+      );
     }
   }
 
@@ -55,7 +77,14 @@ export class AuthService {
       if (!signInResponse.token)
         throw new CustomException(ErrorCode.INTERNAL_ERROR, 'Token not found');
 
+      const jwt = this.generateJwtToken({
+        id: signInResponse.user.id,
+        email: signInResponse.user.email,
+        name: signInResponse.user.name,
+      });
+
       return {
+        jwt,
         success: true,
         user: signInResponse.user,
         token: signInResponse.token,
@@ -81,22 +110,6 @@ export class AuthService {
         throw new CustomException(ErrorCode.BAD_REQUEST, 'Sign out failed');
 
       return { success: true };
-    } catch (error) {
-      throw new CustomException(
-        ErrorCode.INTERNAL_ERROR,
-        (error as string) ?? 'Internal server error'
-      );
-    }
-  }
-
-  async getJwtToken(sessionToken: string) {
-    try {
-      const response = await auth.api.getToken({
-        headers: {
-          authorization: `Bearer ${sessionToken}`,
-        },
-      });
-      return response;
     } catch (error) {
       throw new CustomException(
         ErrorCode.INTERNAL_ERROR,
