@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
+import type {
+  LoginRequest,
+  LogoutRequest,
+  LoginResponse,
+  LogoutResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from './types/authentication';
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
-import type { RegisterDto } from './dto/register.dto';
-import type { LoginDto } from './dto/login.dto';
 import { auth } from './auth';
 
 @Injectable()
@@ -24,14 +30,14 @@ export class AuthService {
     return this.jwtService.sign(payload);
   }
 
-  async register(registerDto: RegisterDto) {
+  async register({ registerData }: RegisterRequest): Promise<RegisterResponse> {
     try {
       const result = await auth.api.signUpEmail({
         body: {
-          email: registerDto.email,
-          password: registerDto.password,
-          name: registerDto.name,
-          phone: registerDto.phone,
+          email: registerData.email,
+          password: registerData.password,
+          name: registerData.name,
+          phone: registerData.phone,
         },
       });
 
@@ -62,12 +68,12 @@ export class AuthService {
     }
   }
 
-  async login(payload: LoginDto) {
+  async login({ loginData }: LoginRequest): Promise<LoginResponse> {
     try {
       const signInResponse = await auth.api.signInEmail({
         body: {
-          email: payload.email,
-          password: payload.password,
+          email: loginData.email,
+          password: loginData.password,
         },
       });
 
@@ -98,11 +104,11 @@ export class AuthService {
     }
   }
 
-  async logout(sessionToken: string) {
+  async logout({ token }: LogoutRequest): Promise<LogoutResponse> {
     try {
       const signOutResponse = await auth.api.signOut({
         headers: {
-          authorization: `Bearer ${sessionToken}`,
+          authorization: `Bearer ${token}`,
         },
       });
 

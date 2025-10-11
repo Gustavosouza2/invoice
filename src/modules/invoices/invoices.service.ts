@@ -3,10 +3,19 @@ import { randomUUID } from 'node:crypto';
 
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
-import { UpdateInvoiceDto } from './dto/update-invoice';
-import { CreateInvoiceDto } from './dto/create-invoice';
 import { FilesService } from '../files/files.service';
 import { PrismaClient } from 'generated/prisma';
+import type {
+  GetInvoiceRequest,
+  GetInvoiceResponse,
+  DeleteInvoiceRequest,
+  CreateInvoiceRequest,
+  UpdateInvoiceRequest,
+  GetllInvoicesResponse,
+  GetAllInvoicesRequest,
+  CreateInvoiceResponse,
+  UpdateInvoiceResponse,
+} from './types/invoice';
 
 @Injectable()
 export class InvoicesService {
@@ -14,7 +23,10 @@ export class InvoicesService {
 
   constructor(private readonly filesService: FilesService) {}
 
-  async findAllInvoices(page = 1, per_page = 10) {
+  async findAllInvoices({
+    page,
+    per_page,
+  }: GetAllInvoicesRequest): Promise<GetllInvoicesResponse> {
     const skip = (page - 1) * per_page;
     const [data, total] = await Promise.all([
       this.prisma.invoice.findMany({
@@ -38,7 +50,9 @@ export class InvoicesService {
     };
   }
 
-  async findInvoiceById(id: string) {
+  async findInvoiceById({
+    id,
+  }: GetInvoiceRequest): Promise<GetInvoiceResponse> {
     const invoice = await this.prisma.invoice.findUnique({
       where: { id },
       include: {
@@ -54,10 +68,10 @@ export class InvoicesService {
     return invoice;
   }
 
-  async createInvoice(
-    invoiceData: CreateInvoiceDto,
-    file: Express.Multer.File
-  ) {
+  async createInvoice({
+    file,
+    invoiceData,
+  }: CreateInvoiceRequest): Promise<CreateInvoiceResponse> {
     const newInvoice = {
       ...invoiceData,
       id: randomUUID(),
@@ -80,7 +94,7 @@ export class InvoicesService {
     }
 
     if (file) {
-      const filePath = await this.filesService.uploadFileToSupabase(file);
+      const filePath = await this.filesService.uploadFileToSupabase({ file });
       await this.prisma.file.create({
         data: {
           id: randomUUID(),
@@ -91,13 +105,24 @@ export class InvoicesService {
       });
     }
 
-    return this.prisma.invoice.findUnique({
+    const invoiceWithRelations = await this.prisma.invoice.findUnique({
       where: { id: invoice.id },
       include: { file: true, user: true },
     });
+
+    if (!invoiceWithRelations)
+      throw new CustomException(
+        ErrorCode.INTERNAL_ERROR,
+        'Invoice not found after creation'
+      );
+
+    return invoiceWithRelations;
   }
 
-  async updateInvoice(id: string, invoiceData: Partial<UpdateInvoiceDto>) {
+  async updateInvoice({
+    id,
+    invoiceData,
+  }: UpdateInvoiceRequest): Promise<UpdateInvoiceResponse> {
     const updatedInvoice = await this.prisma.invoice.update({
       where: { id },
       data: invoiceData,
@@ -107,10 +132,11 @@ export class InvoicesService {
       throw new CustomException(ErrorCode.BAD_REQUEST, 'Invoice update failed');
     }
 
-    return this.findInvoiceById(id);
+    const invoice = await this.findInvoiceById({ id });
+    return invoice;
   }
 
-  async removeInvoice(id: string) {
+  async removeInvoice({ id }: DeleteInvoiceRequest): Promise<void> {
     const deletedInvoice = await this.prisma.invoice.delete({
       where: { id },
       include: { file: true },
@@ -122,7 +148,5 @@ export class InvoicesService {
         'Invoice deletion failed'
       );
     }
-
-    return deletedInvoice;
   }
 }

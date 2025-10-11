@@ -4,6 +4,7 @@ import {
   Patch,
   Param,
   Delete,
+  HttpCode,
   UseGuards,
   Controller,
 } from '@nestjs/common';
@@ -18,25 +19,29 @@ export class UsersController {
 
   @UseGuards(JwtGuard)
   @Get('/get-users')
-  findAllUsers() {
-    return this.usersService.findAllUsers();
+  async findAllUsers() {
+    return await this.usersService.findAllUsers();
   }
 
   @UseGuards(JwtGuard)
   @Get('/get-user/:id')
-  findUserById(@Param('id') id: string) {
-    return this.usersService.findUserById(id);
+  async findUserById(@Param('id') id: string) {
+    return await this.usersService.findUserById({ id });
   }
 
   @UseGuards(JwtGuard)
   @Patch('/update-user/:id')
-  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(id, updateUserDto);
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto
+  ) {
+    return await this.usersService.updateUser({ id, userData: updateUserDto });
   }
 
   @UseGuards(JwtGuard)
   @Delete('/delete-user/:id')
-  removeUser(@Param('id') id: string) {
-    return this.usersService.removeUser(id);
+  @HttpCode(204)
+  async removeUser(@Param('id') id: string) {
+    return await this.usersService.removeUser({ id });
   }
 }

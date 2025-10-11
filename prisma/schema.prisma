@@ -9,29 +9,29 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  emailVerified Boolean @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  email     String    @unique
-  name      String
-  image     String?
-  password  String?
-  phone     String?
-  accounts  Account[]
-  sessions  Session[]
-  Invoice   Invoice[]
+  id            String    @id @default(uuid())
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  email         String    @unique
+  accounts      Account[]
+  sessions      Session[]
+  Invoice       Invoice[]
+  image         String?
+  password      String?
+  phone         String?
+  name          String
 }
 
 model Account {
-  id         String   @id
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  id         String   @id
+  password   String?
   userId     String
   providerId String
   accountId  String
-  password   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 
   @@unique([providerId, accountId])
 }
@@ -39,38 +39,38 @@ model Account {
 model Session {
   id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  token     String   @unique
   expiresAt DateTime
+  userId    String
   ipAddress String
   userAgent String
 }
 
 model Invoice {
+  user                User     @relation(fields: [userId], references: [id])
   id                  String   @id @default(uuid())
-  service_description String
-  invoice_number      Int
   date                DateTime @default(now())
   license_plate       String   @unique
+  service_description String
   customer_name       String
   vehicle_model       String
-  total_amount        Float
-  labor_cost          Float
   part_name           String
   userId              String
   cost                Float
   service_price       Float
+  labor_cost          Float
+  total_amount        Float
   file                File?
-  user                User     @relation(fields: [userId], references: [id])
+  invoice_number      Int
 }
 
 model File {
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
   id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  invoiceId String   @unique
   url       String
   type      String
-  invoiceId String   @unique
-  createdAt DateTime @default(now())
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
 }

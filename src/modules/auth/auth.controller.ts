@@ -6,9 +6,9 @@ import {
   type UserSession,
 } from '@thallesp/nestjs-better-auth';
 
-import { RegisterDto } from './dto/register.dto';
+import { type RegisterDto } from './dto/register.dto';
+import { type LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -17,18 +17,18 @@ export class AuthController {
   @Public()
   @Post('/register')
   async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+    return this.authService.register({ registerData: registerDto });
   }
 
   @Public()
   @Post('/login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    return this.authService.login({ loginData: loginDto });
   }
 
   @UseGuards(AuthGuard)
   @Post('/logout')
   async logout(@Session() session: UserSession) {
-    return this.authService.logout(session.session.token);
+    return this.authService.logout({ token: session.session.token });
   }
 }

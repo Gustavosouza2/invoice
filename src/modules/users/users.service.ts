@@ -3,14 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { type GetUsersResponse, type User } from './types/user';
-import { type UpdateUserDto } from './dto/update-user.dto';
+import type {
+  GetUserRequest,
+  GetUserResponse,
+  UpdateUserRequest,
+  DeleteUserRequest,
+  UpdateUserResponse,
+  GetAllUsersResponse,
+} from './types/user';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAllUsers(): Promise<GetUsersResponse[]> {
+  async findAllUsers(): Promise<GetAllUsersResponse[]> {
     const users = await this.prisma.user.findMany({
       select: {
         id: true,
@@ -26,10 +32,10 @@ export class UsersService {
       throw new CustomException(ErrorCode.NOT_FOUND, 'Users not found');
     }
 
-    return users as GetUsersResponse[];
+    return users as GetAllUsersResponse[];
   }
 
-  async findUserById(id: string): Promise<User> {
+  async findUserById({ id }: GetUserRequest): Promise<GetUserResponse> {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -45,10 +51,13 @@ export class UsersService {
     if (!user) {
       throw new CustomException(ErrorCode.NOT_FOUND, 'User not found');
     }
-    return user as User;
+    return user;
   }
 
-  async updateUser(id: string, userData: Partial<UpdateUserDto>) {
+  async updateUser({
+    id,
+    userData,
+  }: UpdateUserRequest): Promise<UpdateUserResponse> {
     const updateUser = await this.prisma.user.update({
       where: { id },
       data: userData,
@@ -58,10 +67,11 @@ export class UsersService {
       throw new CustomException(ErrorCode.BAD_REQUEST, 'User not found');
     }
 
-    return this.findUserById(id);
+    const user = this.findUserById({ id });
+    return user;
   }
 
-  async removeUser(id: string) {
+  async removeUser({ id }: DeleteUserRequest): Promise<void> {
     const deleteUser = await this.prisma.user.delete({ where: { id } });
 
     if (!deleteUser) {
@@ -70,7 +80,5 @@ export class UsersService {
         'Something went wrong in deleting user'
       );
     }
-
-    return deleteUser;
   }
 }

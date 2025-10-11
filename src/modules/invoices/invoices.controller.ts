@@ -13,8 +13,8 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { CreateInvoiceDto } from './dto/create-invoice';
-import { UpdateInvoiceDto } from './dto/update-invoice';
+import { type CreateInvoiceDto } from './dto/create-invoice';
+import { type UpdateInvoiceDto } from './dto/update-invoice';
 import { InvoicesService } from './invoices.service';
 import { JwtGuard } from '../auth/jwt.guard';
 
@@ -29,19 +29,25 @@ export class InvoicesController {
     @Body() CreateInvoiceDto: CreateInvoiceDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    return this.invoicesService.createInvoice(CreateInvoiceDto, file);
+    return this.invoicesService.createInvoice({
+      file,
+      invoiceData: CreateInvoiceDto,
+    });
   }
 
   @UseGuards(JwtGuard)
   @Get('/get-invoices')
   findAllInvoices(@Query('page') page = 1, @Query('per_page') per_page = 10) {
-    return this.invoicesService.findAllInvoices(Number(page), Number(per_page));
+    return this.invoicesService.findAllInvoices({
+      page: Number(page),
+      per_page: Number(per_page),
+    });
   }
 
   @UseGuards(JwtGuard)
   @Get('/get-invoice/:id')
   findInvoiceById(@Param('id') id: string) {
-    return this.invoicesService.findInvoiceById(id);
+    return this.invoicesService.findInvoiceById({ id });
   }
 
   @UseGuards(JwtGuard)
@@ -50,12 +56,15 @@ export class InvoicesController {
     @Param('id') id: string,
     @Body() updateInvoice: Partial<UpdateInvoiceDto>
   ) {
-    return this.invoicesService.updateInvoice(id, updateInvoice);
+    return this.invoicesService.updateInvoice({
+      id,
+      invoiceData: updateInvoice,
+    });
   }
 
   @UseGuards(JwtGuard)
   @Delete('/delete-invoice/:id')
   removeInvoice(@Param('id') id: string) {
-    return this.invoicesService.removeInvoice(id);
+    return this.invoicesService.removeInvoice({ id });
   }
 }

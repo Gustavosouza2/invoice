@@ -1,3 +1,5 @@
+import { type UpdateUserDto } from '../dto/update-user.dto';
+
 export type Account = {
   password: string | null;
   providerId: string;
@@ -9,20 +11,47 @@ export type Account = {
 };
 
 export type User = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt: Date;
+  password: string | null;
+  emailVerified: boolean;
+  phone: string | null;
+  image: string | null;
   accounts: Account[];
-  password?: string;
+  updatedAt: Date;
+  createdAt: Date;
+  email: string;
+  name: string;
+  id: string;
 };
 
-export type GetUsersResponse = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  createdAt: Date;
+export type GetAllUsersResponse = {
   accounts: Account[];
+  createdAt: Date;
+  phone: string;
+  email: string;
+  name: string;
+  id: string;
+};
+
+export type GetUserRequest = {
+  id: string;
+};
+
+export type GetUserResponse = {
+  phone: string | null;
+  accounts: Account[];
+  createdAt: Date;
+  email: string;
+  name: string;
+  id: string;
+};
+
+export type UpdateUserRequest = {
+  id: string;
+  userData: Partial<UpdateUserDto>;
+};
+
+export type UpdateUserResponse = GetUserResponse;
+
+export type DeleteUserRequest = {
+  id: string;
 };

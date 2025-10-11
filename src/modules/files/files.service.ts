@@ -4,6 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
 import { PrismaClient } from 'generated/prisma';
+import type {
+  GetFileRequest,
+  GetFileResponse,
+  UpdateFileRequest,
+  UpdateFileResponse,
+} from './type/file';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -20,11 +26,19 @@ const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 export class FilesService {
   private prisma = new PrismaClient();
 
-  async findById(id: string) {
-    return this.prisma.file.findUnique({ where: { id } });
+  async findById({ id }: GetFileRequest): Promise<GetFileResponse> {
+    const file = await this.prisma.file.findUnique({ where: { id } });
+
+    if (!file) {
+      throw new CustomException(ErrorCode.NOT_FOUND, 'File not found');
+    }
+
+    return file;
   }
 
-  async uploadFileToSupabase(file: Express.Multer.File) {
+  async uploadFileToSupabase({
+    file,
+  }: UpdateFileRequest): Promise<UpdateFileResponse> {
     const filePath = `invoices/${Date.now()}_${file.originalname}`;
     const { error } = await supabase.storage
       .from('invoices')
