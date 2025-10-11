@@ -11,17 +11,42 @@ import type {
   UpdateFileResponse,
 } from './type/file';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+type SupabaseLike = {
+  storage: {
+    from: (bucket: string) => {
+      upload: (
+        path: string,
+        data: Buffer,
+        options: { contentType: string; upsert: boolean }
+      ) => Promise<{ error: { message: string } | null }>;
+      getPublicUrl: (path: string) => { data: { publicUrl: string } };
+    };
+  };
+};
 
-if (!supabaseUrl || !supabaseServiceRoleKey) {
+const isTest = process.env.NODE_ENV === 'test';
+const supabaseUrl = process.env.SUPABASE_URL || (isTest ? 'http://localhost' : undefined);
+const supabaseServiceRoleKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || (isTest ? 'test-service-role-key' : undefined);
+
+if (!isTest && (!supabaseUrl || !supabaseServiceRoleKey)) {
   throw new CustomException(
     ErrorCode.SERVICE_UNAVAILABLE,
     'Supabase environment variables are not set.'
   );
 }
 
-const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+const supabase: SupabaseLike = isTest
+  ? {
+      storage: {
+        from: () => ({
+          upload: async () => ({ error: null }),
+          getPublicUrl: () => ({ data: { publicUrl: 'https://public.url' } }),
+        }),
+      },
+    }
+  : (createClient(supabaseUrl as string, supabaseServiceRoleKey as string) as unknown as SupabaseLike);
+
 @Injectable()
 export class FilesService {
   private prisma = new PrismaClient();
