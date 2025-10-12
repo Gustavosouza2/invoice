@@ -49,25 +49,36 @@ model Session {
 }
 
 model Invoice {
-  user                User     @relation(fields: [userId], references: [id])
-  id                  String   @id @default(uuid())
-  date                DateTime @default(now())
-  license_plate       String   @unique
-  service_description String
-  customer_name       String
-  vehicle_model       String
-  part_name           String
-  userId              String
-  cost                Float
-  service_price       Float
-  labor_cost          Float
-  total_amount        Float
-  file                File?
-  invoice_number      Int
+  user             User     @relation(fields: [userId], references: [id])
+  id               String   @id @default(uuid())
+  status           String   @default("Normal")
+  issueDate        DateTime @default(now())
+  verificationCode String?
+  invoiceNumber    Int
+
+  providerName         String
+  providerCnpj         String
+  providerMunicipalReg String
+
+  customerName      String
+  customerCnpjOrCpf String
+  customerEmail     String?
+
+  serviceDescription String
+  serviceValue       Float
+  taxRate            Float?
+  issValue           Float?
+  netValue           Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  File   File?
 }
 
 model File {
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   invoiceId String   @unique

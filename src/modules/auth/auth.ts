@@ -54,7 +54,7 @@ export const auth = betterAuth({
 
   // Secrets Envs
   secret: process.env.BETTER_AUTH_SECRET ?? 'change_this_secret',
-  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000',
+  baseURL: process.env.BETTER_AUTH_URL ?? 'http://localhost:3000/api/auth',
 });
 
 export type Session = typeof auth.$Infer.Session;

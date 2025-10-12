@@ -1,17 +1,20 @@
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   Get,
+  Res,
   Body,
   Post,
   Query,
+  Param,
   Patch,
   Delete,
-  Param,
   UseGuards,
   Controller,
   UploadedFile,
   UseInterceptors,
+  NotFoundException,
 } from '@nestjs/common';
+import { type Response } from 'express';
 
 import { type CreateInvoiceDto } from './dto/create-invoice';
 import { type UpdateInvoiceDto } from './dto/update-invoice';
@@ -25,7 +28,7 @@ export class InvoicesController {
   @UseGuards(JwtGuard)
   @Post('/create-invoice')
   @UseInterceptors(FileInterceptor('file'))
-  createInvoice(
+  async createInvoice(
     @Body() CreateInvoiceDto: CreateInvoiceDto,
     @UploadedFile() file: Express.Multer.File
   ) {
@@ -37,7 +40,10 @@ export class InvoicesController {
 
   @UseGuards(JwtGuard)
   @Get('/get-invoices')
-  findAllInvoices(@Query('page') page = 1, @Query('per_page') per_page = 10) {
+  async findAllInvoices(
+    @Query('page') page: number,
+    @Query('per_page') per_page: number
+  ) {
     return this.invoicesService.findAllInvoices({
       page: Number(page),
       per_page: Number(per_page),
@@ -46,13 +52,13 @@ export class InvoicesController {
 
   @UseGuards(JwtGuard)
   @Get('/get-invoice/:id')
-  findInvoiceById(@Param('id') id: string) {
+  async findInvoiceById(@Param('id') id: string) {
     return this.invoicesService.findInvoiceById({ id });
   }
 
   @UseGuards(JwtGuard)
   @Patch('/update-invoice/:id')
-  updateInvoice(
+  async updateInvoice(
     @Param('id') id: string,
     @Body() updateInvoice: Partial<UpdateInvoiceDto>
   ) {
@@ -64,7 +70,26 @@ export class InvoicesController {
 
   @UseGuards(JwtGuard)
   @Delete('/delete-invoice/:id')
-  removeInvoice(@Param('id') id: string) {
+  async removeInvoice(@Param('id') id: string) {
     return this.invoicesService.removeInvoice({ id });
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id/document')
+  async viewInvoiceDocument(@Param('id') id: string, @Res() res: Response) {
+    const invoice = await this.invoicesService.findInvoiceById({ id });
+
+    const invoiceDocument = this.invoicesService.generateInvoiceHTML(invoice);
+
+    res.setHeader('Content-Type', 'text/html');
+    return res.send(invoiceDocument);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id/file')
+  async getInvoiceFile(@Param('id') id: string, @Res() res: Response) {
+    const invoice = await this.invoicesService.findInvoiceById({ id });
+    if (!invoice?.File) throw new NotFoundException('File not found');
+    return res.redirect(invoice.File.url);
   }
 }

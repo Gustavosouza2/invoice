@@ -12,10 +12,14 @@ import type {
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
 import { auth } from './auth';
+import { PrismaService } from 'src/common/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService
+  ) {}
 
   private generateJwtToken(user: {
     id: string;
@@ -108,7 +112,7 @@ export class AuthService {
     try {
       const signOutResponse = await auth.api.signOut({
         headers: {
-          authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -117,10 +121,16 @@ export class AuthService {
 
       return { success: true };
     } catch (error) {
-      throw new CustomException(
-        ErrorCode.INTERNAL_ERROR,
-        (error as string) ?? 'Internal server error'
-      );
+      // Fallback to delete session from DB if Better Auth failed
+      try {
+        await this.prisma.session.delete({ where: { token } });
+        return { success: true };
+      } catch {
+        throw new CustomException(
+          ErrorCode.INTERNAL_ERROR,
+          (error as string) ?? 'Internal server error'
+        );
+      }
     }
   }
 }

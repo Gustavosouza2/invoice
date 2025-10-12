@@ -1,9 +1,18 @@
-import { Post, Body, Controller, UseGuards } from '@nestjs/common';
+import type { Request } from 'express';
+import {
+  Req,
+  Post,
+  Body,
+  HttpCode,
+  UseGuards,
+  Controller,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   Public,
   Session,
+  Optional,
   AuthGuard,
-  type UserSession,
 } from '@thallesp/nestjs-better-auth';
 
 import { type RegisterDto } from './dto/register.dto';
@@ -26,9 +35,22 @@ export class AuthController {
     return this.authService.login({ loginData: loginDto });
   }
 
-  @UseGuards(AuthGuard)
   @Post('/logout')
-  async logout(@Session() session: UserSession) {
-    return this.authService.logout({ token: session.session.token });
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
+  @Optional()
+  async logout(@Req() req: Request, @Session() token: string) {
+    const authHeader = req.headers.authorization;
+    const headerToken =
+      typeof authHeader === 'string' && authHeader.startsWith('Bearer ')
+        ? authHeader.slice(7)
+        : undefined;
+
+    const finalToken = token ?? headerToken;
+    if (!finalToken) {
+      throw new BadRequestException('Missing session token');
+    }
+
+    return this.authService.logout({ token: finalToken });
   }
 }

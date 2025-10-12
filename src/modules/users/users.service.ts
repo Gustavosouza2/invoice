@@ -23,7 +23,16 @@ export class UsersService {
         name: true,
         email: true,
         phone: true,
-        accounts: true,
+        accounts: {
+          select: {
+            id: true,
+            userId: true,
+            providerId: true,
+            accountId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         createdAt: true,
       },
     });
@@ -43,7 +52,16 @@ export class UsersService {
         name: true,
         email: true,
         phone: true,
-        accounts: true,
+        accounts: {
+          select: {
+            id: true,
+            userId: true,
+            providerId: true,
+            accountId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
         createdAt: true,
       },
     });

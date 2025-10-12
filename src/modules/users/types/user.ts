@@ -1,7 +1,6 @@
 import { type UpdateUserDto } from '../dto/update-user.dto';
 
 export type Account = {
-  password: string | null;
   providerId: string;
   accountId: string;
   createdAt: Date;
@@ -11,7 +10,6 @@ export type Account = {
 };
 
 export type User = {
-  password: string | null;
   emailVerified: boolean;
   phone: string | null;
   image: string | null;

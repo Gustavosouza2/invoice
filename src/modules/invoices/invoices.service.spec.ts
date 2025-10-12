@@ -4,7 +4,16 @@ import type {
   GetAllInvoicesRequest,
   CreateInvoiceRequest,
 } from './types/invoice';
-import { FilesService } from '../files/files.service';
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: () => ({
+    storage: {
+      from: () => ({
+        upload: jest.fn().mockResolvedValue({ error: null }),
+        getPublicUrl: () => ({ data: { publicUrl: 'https://public.url' } }),
+      }),
+    },
+  }),
+}));
 import { InvoicesService } from './invoices.service';
 
 type InvoiceRow = { id: string };
@@ -43,16 +52,9 @@ describe('InvoicesService', () => {
     },
   };
 
-  const filesMock: FilesService = {
-    uploadFileToSupabase: jest.fn().mockResolvedValue('https://file.url'),
-  } as unknown as FilesService;
-
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        InvoicesService,
-        { provide: FilesService, useValue: filesMock },
-      ],
+      providers: [InvoicesService],
     }).compile();
 
     service = moduleRef.get(InvoicesService);
@@ -98,8 +100,5 @@ describe('InvoicesService', () => {
       file: { mimetype: 'image/png' } as unknown as Express.Multer.File,
     });
     expect((result as InvoiceRow).id).toBeDefined();
-    expect(() => {
-      (filesMock.uploadFileToSupabase as unknown as () => void)();
-    }).not.toThrow();
   });
 });
