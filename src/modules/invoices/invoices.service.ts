@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
-import { PrismaClient } from 'generated/prisma';
+import { PrismaService } from 'src/common/prisma/prisma.service';
 import type {
   Invoice,
   GetInvoiceRequest,
@@ -19,7 +19,7 @@ import type {
 
 @Injectable()
 export class InvoicesService {
-  private prisma = new PrismaClient();
+  constructor(private readonly prisma: PrismaService) {}
 
   private supabase = createClient(
     process.env.SUPABASE_URL ?? 'http://localhost',

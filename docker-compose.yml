@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: invoices
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  server:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:Gustavoeonsouza090402@db.comrfuwuvpntemcmwnbg.supabase.co:5432/postgres
+      JWT_SECRET: 4Ts1VOxXt12f5h8fmTOSIcf6gOTKMz9RJQ3ziWNiOKREdlmp5J72gX4acOkOJsfgJXPg1P2y0FtwLXnXtd2aBQ==
+      BETTER_AUTH_SECRET: 5ykLpwBCBzY4cBTk9eKcIY7rORFs3PYv
+      BETTER_AUTH_URL: http://localhost:3000
+      SUPABASE_URL: https://comrfuwuvpntemcmwnbg.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNvbXJmdXd1dnBudGVtY213bmJnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTQ0NTE1NSwiZXhwIjoyMDcxMDIxMTU1fQ.ujcEztO59zFmeJPo3Te98WoW0XW37lvQHa-sAg1SWPE
+      FRONTEND_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+volumes:
+  dbdata:
