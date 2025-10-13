@@ -24,12 +24,14 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
+  @HttpCode(201)
   @Post('/register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register({ registerData: registerDto });
   }
 
   @Public()
+  @HttpCode(200)
   @Post('/login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login({ loginData: loginDto });
