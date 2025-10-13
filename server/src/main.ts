@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ZodValidationPipe } from '@anatine/zod-nestjs';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
@@ -14,10 +14,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Global validation for safer input handling
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })
-  );
+  // Global validation using Zod schemas
+  app.useGlobalPipes(new ZodValidationPipe({ createValidationException: (error) => error }));
   app.enableShutdownHooks();
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port, '0.0.0.0');
