@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  email         String    @unique
+  accounts      Account[]
+  sessions      Session[]
+  Invoice       Invoice[]
+  image         String?
+  password      String?
+  phone         String?
+  name          String
+}
+
+model Account {
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  id         String   @id
+  password   String?
+  userId     String
+  providerId String
+  accountId  String
+
+  @@unique([providerId, accountId])
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  token     String   @unique
+  expiresAt DateTime
+  userId    String
+  ipAddress String
+  userAgent String
+}
+
+model Invoice {
+  user             User     @relation(fields: [userId], references: [id])
+  id               String   @id @default(uuid())
+  status           String   @default("Normal")
+  issueDate        DateTime @default(now())
+  verificationCode String?
+  invoiceNumber    Int
+
+  providerName         String
+  providerCnpj         String
+  providerMunicipalReg String
+
+  customerName      String
+  customerCnpjOrCpf String
+  customerEmail     String?
+
+  serviceDescription String
+  serviceValue       Float
+  taxRate            Float?
+  issValue           Float?
+  netValue           Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  File   File?
+}
+
+model File {
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  invoiceId String   @unique
+  url       String
+  type      String
+}
