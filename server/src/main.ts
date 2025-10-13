@@ -15,7 +15,7 @@ async function bootstrap() {
   });
 
   // Global validation using Zod schemas
-  app.useGlobalPipes(new ZodValidationPipe({ createValidationException: (error) => error }));
+  app.useGlobalPipes(new ZodValidationPipe());
   app.enableShutdownHooks();
   const port = process.env.PORT ? Number(process.env.PORT) : 3000;
   await app.listen(port, '0.0.0.0');
