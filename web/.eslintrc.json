@@ -1,0 +1,12 @@
+{
+  "extends": ["@rocketseat/eslint-config/next", "next/core-web-vitals"],
+  "settings": {
+    "import/resolver": {
+      "node": { "paths": ["."], "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+    }
+  },
+  "rules": {
+    "import/no-unresolved": ["error", { "ignore": ["^@/", "^geist/.*"] }],
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}
