@@ -1,5 +1,6 @@
 import { Button as ButtonShad } from '../../ui/button'
 import { Progress } from '../../ui/progress'
+import { cn } from '../../../lib/utils'
 import {
   type ButtonHTMLAttributes,
   type ReactNode,
@@ -12,11 +13,17 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children: ReactNode
 }
 
-export const Button = ({ isLoading, children, ...props }: ButtonProps) => {
+export const Button = ({
+  className,
+  isLoading,
+  children,
+  ...props
+}: ButtonProps) => {
   const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     if (isLoading) {
+      setProgress(0)
       const timer = setInterval(() => {
         setProgress((oldProgress) => {
           if (oldProgress === 100) {
@@ -28,6 +35,7 @@ export const Button = ({ isLoading, children, ...props }: ButtonProps) => {
 
       return () => {
         clearInterval(timer)
+        setProgress(0)
       }
     } else {
       setProgress(0)
@@ -36,20 +44,18 @@ export const Button = ({ isLoading, children, ...props }: ButtonProps) => {
 
   return (
     <ButtonShad
-      className="w-full rounded h-10 bg-[#212121] text-[#FFFFFF] font-sans font-medium hover:bg-neutral-900 hover:text-slate-300 relative"
+      className={cn('relative', className)}
       disabled={isLoading}
       {...props}
     >
-      <div className="absolute inset-0 overflow-hidden rounded">
-        {isLoading && (
-          <div className="absolute inset-0 w-full h-full ">
-            <Progress
-              value={progress}
-              className="w-full h-full rounded-none bg-transparent [&>div]:bg-white/20 [&>div]:transition-all [&>div]:duration-500"
-            />
-          </div>
-        )}
-      </div>
+      {isLoading && (
+        <div className="absolute inset-0 overflow-hidden rounded pointer-events-none">
+          <Progress
+            value={progress}
+            className="w-full h-full rounded-none bg-transparent [&>div]:bg-white/20 [&>div]:transition-all [&>div]:duration-500"
+          />
+        </div>
+      )}
       <span className="relative z-10">{children}</span>
     </ButtonShad>
   )

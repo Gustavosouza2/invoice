@@ -1,7 +1,7 @@
 import { getCustomersList } from '@/hooks/custom/useCustomers'
-import { PAGE_SIZE } from '@/constants/pageSize'
-
 import HomeView from './view/HomeView'
+
+const PAGE_SIZE = 10
 
 type HomeProps = {
   searchParams: { page?: string }

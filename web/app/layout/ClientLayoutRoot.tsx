@@ -9,8 +9,8 @@ import { UserContextProvider } from '../context/userContext'
 import { SidebarProvider } from '../components/ui/sidebar'
 import { CustomerIcon, HomeIcon } from '../assets/icons'
 import AppSidebar from '../components/features/SideBar'
+import { Toaster } from '../components/ui/sonner'
 
-import { Toaster } from '../components/ui/toaster'
 import '../styles/globals.css'
 
 const poppins = Poppins({

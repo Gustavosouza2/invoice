@@ -2,13 +2,13 @@
 
 import React, { ReactNode } from 'react'
 
-import { useMobile } from '@/hooks/custom/useCustomMobile'
+import { useIsMobile } from '@/hooks/ui/use-mobile'
 import { HeaderDashboard } from './Header'
 import { NavItems } from './NavItem'
 
 export const DashBoardLayout = React.memo(
   ({ children }: { children: ReactNode }) => {
-    const isMobile = useMobile()
+    const isMobile = useIsMobile()
 
     return (
       <div className="w-full h-full flex flex-col justify-center items-center py-7 overflow-scroll md:overflow-visible">

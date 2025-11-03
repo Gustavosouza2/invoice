@@ -19,7 +19,6 @@ export const Input = ({
   onChangeCurrency,
   onValueChange,
   placeholder,
-  register,
   options,
   onChange,
   type,
@@ -43,7 +42,6 @@ export const Input = ({
                   bg-input-default pl-10"
                 onChange={onChange}
                 placeholder={placeholder}
-                {...register}
                 type="text"
                 {...props}
               />
