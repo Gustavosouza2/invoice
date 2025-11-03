@@ -1,72 +1,67 @@
 'use client'
 
-import { useFormStatus, useFormState } from 'react-dom'
-import { useCallback, useEffect } from 'react'
-import { FaGoogle } from 'react-icons/fa6'
-import { redirect } from 'next/navigation'
-import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { Field, FieldSet, FieldGroup } from '@/components/ui/field'
-import { loginAction } from '@/server-actions/server-login'
+import type { LoginRequest } from '@/services/auth/types'
 import { Button } from '@/components/features/Button'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { LoginSchema } from '@/(auth)/login-schema'
+import LoginImage from '@/assets/images/boy-img.png'
 import { Input } from '@/components/features/Input'
-import { useToast } from '@/hooks/ui/use-toast'
-
-const initialState = {
-  error: '',
-  success: false,
-}
+import { LoginSchema } from '@/(auth)/login-schema'
 
 export function LoginForm() {
-  const { pending: isPending } = useFormStatus()
-  const [state, formAction] = useFormState(loginAction, initialState)
+  const router = useRouter()
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const { toast } = useToast()
+  const isValid = LoginSchema.safeParse({ email, password }).success
 
-  const stateActionValidate = useCallback(
-    (state: typeof initialState) => {
-      if (state?.error) {
-        toast({
-          title: 'O Login falhou!',
-          description: 'O Email ou a senha estão incorretos, tente novamente!',
-          variant: 'default',
-        })
+  const handleSubmit = async (data: LoginRequest) => {
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.message || 'Erro ao fazer login')
+        return
       }
-      if (state.success) {
-        toast({
-          title: 'Login realizado com sucesso!',
-          description: 'Você está sendo redirecionado para a dashboard!',
-          variant: 'default',
-        })
-        redirect('/dashboard/home')
-      }
-    },
-    [toast],
-  )
 
-  useEffect(() => {
-    stateActionValidate(state as typeof initialState)
-  }, [state?.error, state?.success, stateActionValidate, state])
-
-  const form = useForm({
-    defaultValues: { email: '', password: '' },
-    resolver: zodResolver(LoginSchema),
-    shouldUnregister: true,
-  })
-
-  const {
-    register,
-    formState: { isValid },
-  } = form
+      toast.success('Login realizado com sucesso!')
+      router.replace('/dashboard/home')
+      return result
+    } catch (err) {
+      toast.error('Erro ao fazer login. Tente novamente.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <main className="relative h-screen w-screen flex items-center justify-between overflow-hidden">
       <div className="w-full flex justify-center">
         <div className="w-[29rem] bg-bg-primary/50 backdrop-blur rounded-2xl p-6 shadow-xl border border-white/5">
-          <form action={formAction} className="flex flex-col gap-4" noValidate>
+          <form
+            noValidate
+            className="flex flex-col gap-4"
+            onSubmit={async (e) => {
+              e.preventDefault()
+              if (!isValid) return
+              await handleSubmit({ email, password })
+            }}
+          >
             <FieldSet>
               <div className="w-full flex justify-center mt-6">
                 <h1 className="font-poppins font-semibold text-4xl text-center">
@@ -75,52 +70,38 @@ export function LoginForm() {
               </div>
               <FieldGroup className="mt-6 gap-2">
                 <Field>
-                  <Input register={register} type="text" placeholder="Email" />
+                  <Input
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setEmail(e.target.value)
+                    }
+                    type="text"
+                    placeholder="Email"
+                  />
                 </Field>
                 <Field>
                   <Input
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setPassword(e.target.value)
+                    }
                     type="password"
-                    register={register}
                     placeholder="Senha"
                   />
                 </Field>
               </FieldGroup>
             </FieldSet>
 
-            <div className="text-end">
-              <Link href="/auth/forgot-password">
-                <span className="text-xs font-inter font-normal text-text-secondary hover:underline">
-                  Esqueceu a senha?
-                </span>
-              </Link>
-            </div>
-
             <div className="mt-2 flex flex-col gap-2">
               <Button
                 type="submit"
-                isLoading={isPending}
-                disabled
+                disabled={!isValid || isLoading}
+                isLoading={isLoading}
                 className="
                 w-full h-11 rounded bg-bg-secondary
                 font-inter font-medium disabled:opacity-60
                 hover:bg-hover-yellow
                 text-text-quaternary"
               >
-                Entrar
-              </Button>
-
-              <Button
-                type="button"
-                disabled
-                className="
-                w-full h-11 rounded bg-button-gray
-                text-text-tertiary hover:bg-hover-gray
-                font-inter font-medium"
-              >
-                <span className="inline-flex items-center gap-2 justify-center">
-                  <FaGoogle className="w-4 h-4" />
-                  Continuar com o Google
-                </span>
+                {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
 
               <div className="flex w-full justify-center my-7">
@@ -137,7 +118,17 @@ export function LoginForm() {
           </form>
         </div>
       </div>
-      <div className="block custom:hidden bg-bg-secondary w-full h-full rounded-s-3xl" />
+      <div className="hidden custom:flex bg-bg-secondary w-full h-full rounded-s-3xl justify-center items-center flex-col gap-10">
+        <h1 className="text-text-quaternary text-center text-3xl font-bold font-poppins">
+          Suas notas fiscais em um só lugar.
+        </h1>
+        <Image
+          alt="Login Background"
+          src={LoginImage}
+          quality={100}
+          height={350}
+        />
+      </div>
     </main>
   )
 }
