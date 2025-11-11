@@ -67,7 +67,7 @@ export default function ClientLayoutRoot({
         <body className="bg-bg-default flex w-screen h-screen overflow-hidden">
           <Toaster />
           <SidebarProvider>
-            {pathname !== '/login' && (
+            {pathname !== '/login' && pathname !== '/register' && (
               <AppSidebar
                 user={user}
                 navItems={navigationItems}
