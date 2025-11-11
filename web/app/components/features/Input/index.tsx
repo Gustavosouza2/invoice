@@ -42,6 +42,7 @@ export const Input = ({
                   bg-input-default pl-10"
                 onChange={onChange}
                 placeholder={placeholder}
+                autoComplete="off"
                 type="text"
                 {...props}
               />
@@ -116,10 +117,11 @@ export const Input = ({
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 onChange={onChange}
+                autoComplete="off"
                 {...props}
               />
               <Button
-                className="absolute inset-y-0 right-0 flex items-center px-4 mt-2 hover:bg-transparent"
+                className="absolute right-2 top-1/2 -translate-y-1/2 z-10 flex items-center px-2 hover:bg-transparent pointer-events-auto"
                 onClick={() => setShowPassword((prev) => !prev)}
                 variant="ghost"
                 type="button"

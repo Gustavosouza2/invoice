@@ -33,3 +33,13 @@ export type RegisterResponse = {
   jwt: string
   user: User
 }
+
+export type RefreshTokenRequest = {
+  token: string
+}
+
+export type RefreshTokenResponse = {
+  success: boolean
+  token: string
+  jwt: string
+}

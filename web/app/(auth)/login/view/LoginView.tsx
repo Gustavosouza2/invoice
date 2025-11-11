@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
+import axios from 'axios'
 
 import { Field, FieldSet, FieldGroup } from '@/components/ui/field'
 import type { LoginRequest } from '@/services/auth/types'
@@ -12,6 +13,7 @@ import { Button } from '@/components/features/Button'
 import LoginImage from '@/assets/images/boy-img.png'
 import { Input } from '@/components/features/Input'
 import { LoginSchema } from '@/(auth)/login-schema'
+import { Toast } from '@/components/features/Toast'
 
 export function LoginForm() {
   const router = useRouter()
@@ -21,32 +23,50 @@ export function LoginForm() {
 
   const isValid = LoginSchema.safeParse({ email, password }).success
 
-  const handleSubmit = async (data: LoginRequest) => {
+  const onSubmit = async (data: LoginRequest) => {
     setIsLoading(true)
 
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
+    await axios
+      .post('/api/login', {
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
         body: JSON.stringify(data),
       })
+      .then((response) => {
+        const result = response.data
 
-      const result = await response.json()
+        if (response.status !== 200) {
+          toast.error(result.message || 'Erro ao fazer login')
+          return
+        }
 
-      if (!response.ok) {
-        toast.error(result.message || 'Erro ao fazer login')
-        return
-      }
+        Toast({
+          type: 'success',
+          message: 'Login realizado com sucesso!',
+          description: 'Você será redirecionado para a dashboard.',
+          duration: 5000,
+          position: 'top-right',
+        })
+        router.replace('/dashboard/home')
+        return result
+      })
+      .catch(() => {
+        Toast({
+          type: 'error',
+          duration: 5000,
+          position: 'top-right',
+          message: 'Erro ao fazer login. Tente novamente.',
+        })
+      })
+      .finally(() => {
+        setIsLoading(false)
+      })
+  }
 
-      toast.success('Login realizado com sucesso!')
-      router.replace('/dashboard/home')
-      return result
-    } catch (err) {
-      toast.error('Erro ao fazer login. Tente novamente.')
-    } finally {
-      setIsLoading(false)
-    }
+  const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    if (!isValid) return
+    await onSubmit({ email, password })
   }
 
   return (
@@ -56,11 +76,7 @@ export function LoginForm() {
           <form
             noValidate
             className="flex flex-col gap-4"
-            onSubmit={async (e) => {
-              e.preventDefault()
-              if (!isValid) return
-              await handleSubmit({ email, password })
-            }}
+            onSubmit={handleSubmitForm}
           >
             <FieldSet>
               <div className="w-full flex justify-center mt-6">
@@ -93,13 +109,8 @@ export function LoginForm() {
             <div className="mt-2 flex flex-col gap-2">
               <Button
                 type="submit"
-                disabled={!isValid || isLoading}
                 isLoading={isLoading}
-                className="
-                w-full h-11 rounded bg-bg-secondary
-                font-inter font-medium disabled:opacity-60
-                hover:bg-hover-yellow
-                text-text-quaternary"
+                disabled={!isValid || isLoading}
               >
                 {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
@@ -107,7 +118,7 @@ export function LoginForm() {
               <div className="flex w-full justify-center my-7">
                 <p className="text-xs font-inter font-normal text-text-tertiary">
                   Não tem uma conta?
-                  <Link href="/auth/register">
+                  <Link href="/register">
                     <span className="ml-1 text-text-secondary hover:underline">
                       Clique aqui
                     </span>

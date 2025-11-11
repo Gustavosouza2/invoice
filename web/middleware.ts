@@ -4,7 +4,7 @@ export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname
   const token = req.cookies.get('token')
 
-  const publicRoutes = ['/login']
+  const publicRoutes = ['/login', '/register']
   if (publicRoutes.includes(pathname)) {
     return NextResponse.next()
   }
