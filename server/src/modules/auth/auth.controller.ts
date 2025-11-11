@@ -1,4 +1,3 @@
-import type { Request } from 'express';
 import {
   Req,
   Post,
@@ -18,6 +17,7 @@ import {
 import { type RegisterDto } from './dto/register.dto';
 import { type LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
+import { type Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -54,5 +54,24 @@ export class AuthController {
     }
 
     return this.authService.logout({ token: finalToken });
+  }
+
+  @Public()
+  @HttpCode(200)
+  @Post('/refresh')
+  @Optional()
+  async refresh(@Req() req: Request, @Session() token: string) {
+    const authHeader = req.headers.authorization;
+    const headerToken =
+      typeof authHeader === 'string' && authHeader.startsWith('Bearer ')
+        ? authHeader.slice(7)
+        : undefined;
+
+    const finalToken = token ?? headerToken;
+    if (!finalToken) {
+      throw new BadRequestException('Missing session token');
+    }
+
+    return this.authService.refresh({ token: finalToken });
   }
 }

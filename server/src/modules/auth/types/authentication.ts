@@ -38,3 +38,12 @@ export type LogoutRequest = {
 export type LogoutResponse = Awaited<{
   success: boolean;
 }>;
+
+export type RefreshRequest = {
+  token: string;
+};
+
+export type RefreshResponse = Awaited<{
+  jwt: string;
+  success: boolean;
+}>;

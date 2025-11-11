@@ -7,6 +7,8 @@ import type {
   LogoutResponse,
   RegisterRequest,
   RegisterResponse,
+  RefreshTokenRequest,
+  RefreshTokenResponse,
 } from './types'
 
 export class AuthAPI extends BaseApi {
@@ -35,6 +37,15 @@ export class AuthAPI extends BaseApi {
     const response = await this.post<RegisterRequest, RegisterResponse>(
       '/auth/register',
       { email, name, password, phone },
+    )
+
+    if (response.success) return response
+  }
+
+  public async refreshToken({ token }: RefreshTokenRequest) {
+    const response = await this.post<RefreshTokenRequest, RefreshTokenResponse>(
+      '/auth/refresh',
+      { token },
     )
 
     if (response.success) return response

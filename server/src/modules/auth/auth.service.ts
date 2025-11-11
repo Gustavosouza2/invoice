@@ -8,6 +8,8 @@ import type {
   LogoutResponse,
   RegisterRequest,
   RegisterResponse,
+  RefreshRequest,
+  RefreshResponse,
 } from './types/authentication';
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
@@ -131,6 +133,48 @@ export class AuthService {
           (error as string) ?? 'Internal server error'
         );
       }
+    }
+  }
+
+  async refresh({ token }: RefreshRequest): Promise<RefreshResponse> {
+    try {
+      // Validate session via DB as source of truth
+      const session = await this.prisma.session.findUnique({
+        where: { token },
+      });
+
+      if (!session) {
+        throw new CustomException(ErrorCode.UNAUTHORIZED, 'Invalid session');
+      }
+
+      if (new Date(session.expiresAt) <= new Date()) {
+        throw new CustomException(ErrorCode.UNAUTHORIZED, 'Session expired');
+      }
+
+      const user = await this.prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { id: true, email: true, name: true },
+      });
+
+      if (!user) {
+        throw new CustomException(ErrorCode.NOT_FOUND, 'User not found');
+      }
+
+      const jwt = this.generateJwtToken({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      });
+
+      return { jwt, success: true };
+    } catch (error) {
+      if (error instanceof CustomException) {
+        throw error;
+      }
+      throw new CustomException(
+        ErrorCode.INTERNAL_ERROR,
+        (error as string) ?? 'Internal server error'
+      );
     }
   }
 }
