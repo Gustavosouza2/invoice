@@ -15,13 +15,21 @@ export async function POST(req: Request) {
   }
 
   try {
-    const response = await authService.register({
+    const result = await authService.register({
       name,
       phone,
       email,
       password,
     })
-    return response
+    if (result instanceof Response) {
+      return result
+    }
+    return NextResponse.json(
+      result ?? { message: 'Registro realizado com sucesso' },
+      {
+        status: 201,
+      },
+    )
   } catch (error) {
     console.error(error)
     return NextResponse.json(

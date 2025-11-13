@@ -1,5 +1,3 @@
-// import scrollbarHide from 'tailwind-scrollbar-hide'
-
 module.exports = {
   darkMode: ['class'],
   content: [
@@ -108,6 +106,7 @@ module.exports = {
         },
         input: {
           default: '#3E3E3F',
+          primary: '#2B2B2B',
         },
         text: {
           primary: '#ECE8E8',
@@ -118,6 +117,4 @@ module.exports = {
       },
     },
   },
-  // plugins: [require('tailwindcss-anim ated'), scrollbarHide],
 }
-// export default config

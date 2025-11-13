@@ -1,4 +1,9 @@
-import { MdOutlineEmail, MdOutlineLock } from 'react-icons/md'
+import {
+  MdOutlineEmail,
+  MdOutlineLock,
+  MdOutlinePerson,
+  MdOutlinePhone,
+} from 'react-icons/md'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6'
 import CurrencyInput from 'react-currency-input-field'
 import { useState } from 'react'
@@ -19,12 +24,20 @@ export const Input = ({
   onChangeCurrency,
   onValueChange,
   placeholder,
+  iconType,
   options,
   onChange,
   type,
   ...props
 }: AbstractInputsProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const iconRender: Record<typeof iconType, JSX.Element> = {
+    email: <MdOutlineEmail className="text-text-tertiary" />,
+    password: <MdOutlineLock className="text-text-tertiary" />,
+    phone: <MdOutlinePhone className="text-text-tertiary" />,
+    name: <MdOutlinePerson className="text-text-tertiary" />,
+  }
 
   return (
     <>
@@ -33,7 +46,7 @@ export const Input = ({
           <>
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                <MdOutlineEmail className="text-text-tertiary" />
+                {iconRender[iconType]}
               </div>
               <InputShad
                 className="h-11 rounded placeholder:text-text-tertiary
@@ -110,7 +123,7 @@ export const Input = ({
           <>
             <div className="relative flex">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <MdOutlineLock className="text-text-tertiary" />
+                {iconRender[iconType]}
               </div>
               <InputShad
                 className="h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pl-10 pr-10"

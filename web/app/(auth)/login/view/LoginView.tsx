@@ -12,8 +12,8 @@ import type { LoginRequest } from '@/services/auth/types'
 import { Button } from '@/components/features/Button'
 import LoginImage from '@/assets/images/boy-img.png'
 import { Input } from '@/components/features/Input'
-import { LoginSchema } from '@/(auth)/login-schema'
 import { Toast } from '@/components/features/Toast'
+import { LoginSchema } from '../login-schema'
 
 export function LoginForm() {
   const router = useRouter()
@@ -27,14 +27,13 @@ export function LoginForm() {
     setIsLoading(true)
 
     await axios
-      .post('/api/login', {
+      .post('/api/login', data, {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
       })
       .then((response) => {
         const result = response.data
 
-        if (response.status !== 200) {
+        if (response.status < 200 || response.status >= 300) {
           toast.error(result.message || 'Erro ao fazer login')
           return
         }
@@ -92,6 +91,7 @@ export function LoginForm() {
                     }
                     type="text"
                     placeholder="Email"
+                    iconType="email"
                   />
                 </Field>
                 <Field>
@@ -101,6 +101,7 @@ export function LoginForm() {
                     }
                     type="password"
                     placeholder="Senha"
+                    iconType="password"
                   />
                 </Field>
               </FieldGroup>
