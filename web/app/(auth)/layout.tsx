@@ -1,7 +1,6 @@
-import '../styles/globals.css'
+import '../globals.css'
 
 import { Toaster } from '@/components/ui/toaster'
-import { LoginLayoutComponent } from './layout/public'
 
 export const metadata = {
   title: 'Login',
@@ -15,10 +14,8 @@ export default async function LoginLayout({
 }) {
   return (
     <>
-      <LoginLayoutComponent>
-        {children}
-        <Toaster />
-      </LoginLayoutComponent>
+      {children}
+      <Toaster />
     </>
   )
 }

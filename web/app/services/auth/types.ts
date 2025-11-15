@@ -1,5 +1,6 @@
 import { type User } from '@/types/user'
 
+// Auth
 export type LoginRequest = {
   password: string
   email: string

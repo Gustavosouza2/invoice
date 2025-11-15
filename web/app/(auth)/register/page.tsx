@@ -1,5 +1,5 @@
-import { OnboardingForm } from './view/RegisterView'
+import { RegisterForm } from './form/RegisterForm'
 
 export default function RegisterPage() {
-  return <OnboardingForm />
+  return <RegisterForm />
 }

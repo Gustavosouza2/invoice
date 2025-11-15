@@ -1,8 +1,6 @@
 'use client'
 
-import { redirect, usePathname } from 'next/navigation'
-import { Poppins } from 'next/font/google'
-import { Inter } from 'next/font/google'
+import { usePathname, useRouter } from 'next/navigation'
 import { Cookies } from 'react-cookie'
 
 import { UserContextProvider } from '../context/userContext'
@@ -10,26 +8,10 @@ import { SidebarProvider } from '../components/ui/sidebar'
 import { CustomerIcon, HomeIcon } from '../assets/icons'
 import AppSidebar from '../components/features/SideBar'
 import { Toaster } from '../components/ui/sonner'
+import { SWRConfig } from 'swr'
+import { swrFetcher } from '@/lib/fetcher'
 
-import '../styles/globals.css'
-
-const poppins = Poppins({
-  weight: ['400', '500', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-poppins',
-  fallback: ['sans-serif'],
-  subsets: ['latin'],
-  preload: true,
-})
-
-const inter = Inter({
-  weight: ['400', '500', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-inter',
-  fallback: ['sans-serif'],
-  subsets: ['latin'],
-  preload: true,
-})
+import '../globals.css'
 
 const navigationItems = [
   {
@@ -49,6 +31,7 @@ export default function ClientLayoutRoot({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const router = useRouter()
   const cookieStore = new Cookies()
   const pathname = usePathname()
 
@@ -58,26 +41,30 @@ export default function ClientLayoutRoot({
   const handleLogout = async () => {
     cookieStore.remove('token')
     cookieStore.remove('user')
-    redirect('/login')
+    router.replace('/login')
   }
 
   return (
     <UserContextProvider token={token} user={user}>
-      <html lang="pt-BR" className={`${poppins.className} ${inter.className}`}>
-        <body className="bg-bg-default flex w-screen h-screen overflow-hidden">
-          <Toaster />
-          <SidebarProvider>
-            {pathname !== '/login' && pathname !== '/register' && (
-              <AppSidebar
-                user={user}
-                navItems={navigationItems}
-                logout={handleLogout}
-              />
-            )}
-            {children}
-          </SidebarProvider>
-        </body>
-      </html>
+      <SWRConfig
+        value={{
+          fetcher: swrFetcher,
+          revalidateOnFocus: false,
+          shouldRetryOnError: false,
+        }}
+      >
+        <Toaster />
+        <SidebarProvider>
+          {pathname !== '/login' && pathname !== '/register' && (
+            <AppSidebar
+              user={user}
+              navItems={navigationItems}
+              logout={handleLogout}
+            />
+          )}
+          {children}
+        </SidebarProvider>
+      </SWRConfig>
     </UserContextProvider>
   )
 }

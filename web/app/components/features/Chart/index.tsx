@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useMemo } from 'react'
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts'
+import React, { useMemo } from 'react'
 import { format, parse } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -20,11 +20,11 @@ import {
 
 import { capitalizeFirstLetter } from '@/utils/capitalize'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Customer } from '@/types/customer'
+import { type Invoice } from '@/types/invoice'
 
 type ChartProps = {
   isLoading: boolean
-  data: Customer[]
+  data: Invoice[]
 }
 
 const processDataByMonth = (data: ChartProps['data']) => {
