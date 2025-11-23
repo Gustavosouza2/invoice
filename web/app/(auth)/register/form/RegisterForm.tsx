@@ -46,8 +46,6 @@ export function RegisterForm() {
         Toast({
           type: 'error',
           message: 'Erro ao fazer registro. Tente novamente.',
-          duration: 5000,
-          position: 'top-right',
         })
         return
       }
@@ -56,8 +54,6 @@ export function RegisterForm() {
         type: 'success',
         message: 'Registro realizado com sucesso!',
         description: 'Você será redirecionado para a dashboard.',
-        duration: 5000,
-        position: 'top-right',
       })
 
       router.replace('/dashboard/home')
@@ -65,8 +61,6 @@ export function RegisterForm() {
       Toast({
         type: 'error',
         message: 'Erro ao fazer registro. Tente novamente.',
-        duration: 5000,
-        position: 'top-right',
       })
     } finally {
       setIsLoading(false)

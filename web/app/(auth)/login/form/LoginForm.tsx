@@ -46,8 +46,6 @@ export function LoginForm() {
           type: 'success',
           message: 'Login realizado com sucesso!',
           description: 'Você será redirecionado para a dashboard.',
-          duration: 5000,
-          position: 'top-right',
         })
         router.replace('/dashboard/home')
         return result
@@ -55,8 +53,6 @@ export function LoginForm() {
       .catch(() => {
         Toast({
           type: 'error',
-          duration: 5000,
-          position: 'top-right',
           message: 'Erro ao fazer login. Tente novamente.',
         })
       })

@@ -2,24 +2,14 @@ import { toast } from 'sonner'
 
 type ToastProps = {
   type: 'success' | 'error' | 'warning' | 'info'
-  position?:
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right'
   onClose?: () => void
   description?: string
-  duration?: number
   message: string
 }
 
 export const Toast = ({
-  position = 'top-right',
   type = 'info',
   description,
-  duration,
   onClose,
   message,
 }: ToastProps) => {
@@ -54,8 +44,8 @@ export const Toast = ({
   const desc = 'text-sm opacity-90 mt-1'
 
   const options: Record<string, unknown> = {
-    duration,
-    position,
+    position: 'top-right',
+    duration: 5000,
     unstyled: true,
   }
   if (onClose) options.onDismiss = onClose

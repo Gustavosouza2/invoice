@@ -26,16 +26,16 @@ export const Card = ({ data, isLoading }: CardMapProps) => {
         <Skeleton className="w-full h-36 rounded-xl" />
       ) : (
         <CardShadcn
-          className="w-full rounded-xl border border-[#FFFA]/10 bg-[#0E0E10]"
+          className="w-full rounded-xl border border-bg-secondary bg-bg-primary shadow-xl/30"
           key={index}
         >
           <CardHeader>
             {item.typeInfo === 'text' ? (
-              <CardTitle className="text-[#D1D1D2] font-mono text-md whitespace-normal tracking-wide">
+              <CardTitle className="text-[#D1D1D2] font-poppins text-md whitespace-normal tracking-wide">
                 {item.title}
               </CardTitle>
             ) : (
-              <div className="text-[#D1D1D2] font-mono text-lg font-bold whitespace-normal">
+              <div className="text-[#D1D1D2] font-poppins text-lg font-bold whitespace-normal">
                 <h1 className="text-2xl font-semibold text-start">
                   {item.title}
                 </h1>

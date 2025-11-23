@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 
-import ClientLayoutRoot from './layout/ClientLayoutRoot'
 import { Poppins, Inter } from 'next/font/google'
 import './globals.css'
 
@@ -37,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${poppins.className} ${inter.className}`}>
       <body className="bg-bg-default flex w-screen h-screen overflow-hidden">
-        <ClientLayoutRoot>{children}</ClientLayoutRoot>
+        {children}
       </body>
     </html>
   )

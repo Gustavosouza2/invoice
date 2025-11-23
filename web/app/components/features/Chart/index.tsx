@@ -39,7 +39,7 @@ const processDataByMonth = (data: ChartProps['data']) => {
     if (!monthlyTotals[monthKey]) {
       monthlyTotals[monthKey] = 0
     }
-    monthlyTotals[monthKey] += item.amount
+    monthlyTotals[monthKey] += item.serviceValue
   })
 
   return Object.entries(monthlyTotals)
@@ -79,7 +79,7 @@ export const Chart = React.memo(({ isLoading, data }: ChartProps) => {
       {isLoading ? (
         <Skeleton className="w-full h-72 rounded-xl" />
       ) : (
-        <Card className="h-[300px] rounded-xl border border-[#FFFA]/10 bg-[#0E0E10]">
+        <Card className="h-[300px] rounded-xl border-bg-secondary bg-bg-primary">
           <CardHeader className="pb-2">
             <CardTitle className="text-[#D1D1D2]">Situação Mensal</CardTitle>
             <CardDescription className="text-[#A1A1AA]">
