@@ -18,8 +18,8 @@ export class AuthAPI extends BaseApi {
       { email, password },
     )
 
-    if (response?.token) {
-      setToken(response.token)
+    if (response?.jwt) {
+      setToken(response.jwt)
       return response
     }
   }

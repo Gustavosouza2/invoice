@@ -8,8 +8,8 @@ export type GetAllInvoicesRequest = {
 
 export type GetAllInvoicesResponse = {
   total_pages: number
-  invoices: Invoice[]
-  perPage: number
+  per_page: number
+  data: Invoice[]
   total: number
   page: number
 }

@@ -30,7 +30,7 @@ export default function HomeView() {
   const searchParams = new URLSearchParams()
   const page = searchParams.get('page') || '1'
 
-  const { data: invoices, isLoading } = useGetInvoicesList({
+  const { data, isLoading } = useGetInvoicesList({
     page: Number(page),
     perPage: PAGE_SIZE,
   })
@@ -87,7 +87,7 @@ export default function HomeView() {
       </div>
 
       <div className="w-full max-w-7xl">
-        <Chart isLoading={isLoading} data={invoices ?? []} />
+        <Chart isLoading={isLoading} data={data?.data ?? []} />
       </div>
     </main>
   )

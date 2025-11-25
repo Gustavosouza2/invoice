@@ -1,22 +1,30 @@
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
+
 import { invoiceApi } from '@/services/invoice/invoiceApi'
+import { setToken } from '@/services/token'
 
 export async function GET(req: Request) {
-  const searchParams = new URLSearchParams(req.url.split('?')[1])
-  const page = searchParams.get('page') || '1'
-  const perPage = searchParams.get('per_page') || '10'
+  const url = new URL(req.url)
+  const searchParams = url.searchParams
+  const page = Number(searchParams.get('page') ?? '1')
+  const perPage = Number(
+    searchParams.get('per_page') ?? searchParams.get('perPage') ?? '10',
+  )
 
   try {
-    const response = await invoiceApi.getAllInvoices({
-      page: Number(page),
-      perPage: Number(perPage),
-    })
+    const cookieStore = cookies()
+    const token =
+      cookieStore.get('access_token')?.value ?? cookieStore.get('token')?.value
+    if (token) setToken(token)
 
-    return response
+    const data = await invoiceApi.getAllInvoices({ page, perPage })
+
+    return NextResponse.json(data)
   } catch (err) {
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 },
-    )
+    const anyErr = err as { message?: string; status?: number }
+    const status = typeof anyErr?.status === 'number' ? anyErr.status : 500
+    const message = anyErr?.message ?? 'Internal Server Error'
+    return NextResponse.json({ error: message }, { status })
   }
 }

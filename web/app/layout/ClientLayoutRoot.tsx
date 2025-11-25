@@ -2,14 +2,17 @@
 
 import { usePathname, useRouter } from 'next/navigation'
 import { Cookies } from 'react-cookie'
+import { useEffect } from 'react'
+import { SWRConfig } from 'swr'
+
+import { clearToken, setToken } from '@/services/token'
+import { swrFetcher } from '@/lib/fetcher'
 
 import { UserContextProvider } from '../context/userContext'
 import { SidebarProvider } from '../components/ui/sidebar'
 import { CustomerIcon, HomeIcon } from '../assets/icons'
 import AppSidebar from '../components/features/SideBar'
 import { Toaster } from '../components/ui/sonner'
-import { SWRConfig } from 'swr'
-import { swrFetcher } from '@/lib/fetcher'
 
 import '../globals.css'
 
@@ -36,11 +39,16 @@ export default function ClientLayoutRoot({
   const pathname = usePathname()
 
   const user = cookieStore.get('user')
-  const token = cookieStore.get('token')
+  const token = cookieStore.get('access_token') ?? cookieStore.get('token')
+
+  useEffect(() => {
+    if (token) setToken(token)
+  }, [token])
 
   const handleLogout = async () => {
     cookieStore.remove('token')
     cookieStore.remove('user')
+    clearToken()
     router.replace('/login')
   }
 
