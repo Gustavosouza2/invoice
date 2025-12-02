@@ -1,43 +1,22 @@
 import * as React from 'react'
 
+import type { SideBarProps } from './type'
+import { NavMain } from './NavMain'
 import {
   SidebarContent,
-  SidebarFooter,
   SidebarRail,
   Sidebar,
 } from '../../../components/ui/sidebar'
 
-import { NavMain } from './NavMain'
-import { NavUser } from './NavUser'
-
-type SideBarProps = {
-  navItems: {
-    icon?: () => React.JSX.Element
-    isActive?: boolean
-    title: string
-    url: string
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-
-  user: {
-    name: string
-    email: string
-  }
-
-  logout: () => Promise<void>
-}
-export default function AppSidebar({ navItems, user, logout }: SideBarProps) {
+export default function AppSidebar({ navItems }: SideBarProps) {
   return (
-    <Sidebar collapsible="icon" className="w-52 bg-[#0F0F10]">
-      <SidebarContent>
+    <Sidebar
+      collapsible="icon"
+      className="w-52 border-bg-secondary/10 bg-transparent"
+    >
+      <SidebarContent className="bg-gradient-to-b from-bg-primary to-bg-default">
         <NavMain items={navItems} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} logout={logout} />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )

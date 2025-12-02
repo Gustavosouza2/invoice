@@ -1,6 +1,5 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 
 import {
   CollapsibleTrigger,
@@ -12,9 +11,8 @@ import {
   SidebarMenuItem,
   SidebarGroup,
   SidebarMenu,
+  useSidebar,
 } from '../../../components/ui/sidebar'
-
-import Logo from '../../../assets/images/logo.png'
 
 export function NavMain({
   items,
@@ -31,28 +29,39 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const { state } = useSidebar()
+  const isSideBarOpen = state === 'collapsed'
+
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel className="text-md mb-10 mt-5 flex justify-center tracking-widest">
-        <Image src={Logo} alt="logo" height={40} width={40} quality={100} />
+    <SidebarGroup className={`${isSideBarOpen && 'mt-10'}`}>
+      <SidebarGroupLabel className="text-md mb-10 mt-20 flex justify-center tracking-widest">
+        Dashboard
       </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <Collapsible
-            key={item.title}
             asChild
+            key={item.title}
             defaultOpen={item.isActive}
             disabled={item.isDisabled === true}
             className="group/collapsible text-md"
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton>
-                  <Link href={item.url} prefetch className="cursor-pointer">
-                    <div className="flex justify-between items-center gap-2">
-                      {item.icon && <item.icon />}
-                      <span className="text-[0.9rem] font-mono text-zinc-300">
-                        {item.title}
+                <SidebarMenuButton className="text-text-tertiary bg-transparent transition-all duration-200 group rounded-lg">
+                  <Link
+                    prefetch
+                    href={item.url}
+                    className="cursor-pointer w-full"
+                  >
+                    <div className="flex items-center gap-2">
+                      {item.icon && (
+                        <span className="hover:text-text-secondary text-text-tertiary ">
+                          <item.icon />
+                        </span>
+                      )}
+                      <span className="text-[1rem] font-inter hover:text-text-secondary font-normal">
+                        {item.title.toUpperCase()}
                       </span>
                     </div>
                   </Link>

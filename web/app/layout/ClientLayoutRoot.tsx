@@ -1,11 +1,11 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { Cookies } from 'react-cookie'
 import { useEffect } from 'react'
 import { SWRConfig } from 'swr'
 
-import { clearToken, setToken } from '@/services/token'
+import { setToken } from '@/services/token'
 import { swrFetcher } from '@/lib/fetcher'
 
 import { UserContextProvider } from '../context/userContext'
@@ -34,7 +34,6 @@ export default function ClientLayoutRoot({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const router = useRouter()
   const cookieStore = new Cookies()
   const pathname = usePathname()
 
@@ -44,13 +43,6 @@ export default function ClientLayoutRoot({
   useEffect(() => {
     if (token) setToken(token)
   }, [token])
-
-  const handleLogout = async () => {
-    cookieStore.remove('token')
-    cookieStore.remove('user')
-    clearToken()
-    router.replace('/login')
-  }
 
   return (
     <UserContextProvider token={token} user={user}>
@@ -64,11 +56,7 @@ export default function ClientLayoutRoot({
         <Toaster />
         <SidebarProvider>
           {pathname !== '/login' && pathname !== '/register' && (
-            <AppSidebar
-              user={user}
-              navItems={navigationItems}
-              logout={handleLogout}
-            />
+            <AppSidebar navItems={navigationItems} />
           )}
           {children}
         </SidebarProvider>

@@ -39,7 +39,7 @@ const processDataByMonth = (data: ChartProps['data']) => {
     if (!monthlyTotals[monthKey]) {
       monthlyTotals[monthKey] = 0
     }
-    monthlyTotals[monthKey] += item.serviceValue
+    monthlyTotals[monthKey] += item.netValue || item.serviceValue || 0
   })
 
   return Object.entries(monthlyTotals)
@@ -64,7 +64,7 @@ const processDataByMonth = (data: ChartProps['data']) => {
 
 const chartConfig = {
   desktop: {
-    label: 'Desktop',
+    label: 'Receita Líquida',
     color: 'hsl(var(--chart-1))',
   },
 }
@@ -79,10 +79,10 @@ export const Chart = React.memo(({ isLoading, data }: ChartProps) => {
       {isLoading ? (
         <Skeleton className="w-full h-72 rounded-xl" />
       ) : (
-        <Card className="h-[300px] rounded-xl border-bg-secondary bg-bg-primary">
+        <Card className="h-[300px] rounded-xl border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary shadow-xl/40 hover:shadow-xl/60 transition-all duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-[#D1D1D2]">Situação Mensal</CardTitle>
-            <CardDescription className="text-[#A1A1AA]">
+            <CardTitle className="text-text-primary">Situação Mensal</CardTitle>
+            <CardDescription className="text-text-tertiary">
               {capitalizeFirstLetter(currentMonth)}
             </CardDescription>
           </CardHeader>
@@ -91,18 +91,19 @@ export const Chart = React.memo(({ isLoading, data }: ChartProps) => {
               <ChartContainer config={chartConfig} className="h-full w-full">
                 <BarChart
                   margin={{ top: 15, right: 15, bottom: 0, left: 0 }}
-                  className="text-[#D1D1D2]"
+                  className="text-text-primary"
                   data={chartData}
                   height={180}
                   width={500}
                 >
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid vertical={false} stroke="hsl(var(--muted))" />
                   <XAxis
                     tickFormatter={(value) => value.slice(0, 3)}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={10}
                     dataKey="month"
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
                   />
                   <ChartTooltip
                     cursor={false}
@@ -110,7 +111,7 @@ export const Chart = React.memo(({ isLoading, data }: ChartProps) => {
                   />
                   <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
                     <LabelList
-                      className="fill-#A1A1AA bg-transparent"
+                      className="fill-text-tertiary bg-transparent"
                       position="top"
                       offset={12}
                     />

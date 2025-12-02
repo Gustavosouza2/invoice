@@ -14,39 +14,46 @@ interface UserMenuProps {
 export const UserMenu = ({ email, name }: UserMenuProps) => {
   return (
     <Popover>
-      <PopoverTrigger
-        asChild
-        className="md:mr-16 bg-transparent border-1 border-[#FFFA]/10 hover:bg-[#1E1E20] hover:text-[#373738]"
-      >
-        <Button variant="outline" size="icon" className="hover:bg-transparent">
-          <ChevronDown className="text-[#fafafaaf]" />
+      <PopoverTrigger asChild>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary transition-all duration-200 rounded-xl"
+        >
+          <ChevronDown className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex border-[#FFFA]/10 bg-[#0E0E10] mr-10 mt-2 rounded-xl">
-        <div className=" flex-col gap-2 justify-end items-center">
-          <div className="flex flex-row gap-2">
-            <p className="text-[#fafafaaf] text-sm font-mono font-semibold">
-              Name:
+      <PopoverContent
+        className="flex border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary mr-10 mt-2 rounded-xl shadow-xl w-64"
+        align="end"
+      >
+        <div className="flex flex-col gap-3 py-2">
+          <div className="flex flex-row items-center gap-1">
+            <p className="text-text-primary text-sm font-inter font-semibold">
+              Nome:
             </p>
-            <p className="text-[#fafafaaf] text-sm font-mono font-light">
-              {name}
+            <p className="text-text-tertiary text-sm font-inter font-medium">
+              {name || 'Admin'}
             </p>
           </div>
 
-          <div className="flex flex-row gap-2">
-            <p className="text-[#fafafaaf] text-sm font-mono font-semibold">
+          <div className="flex flex-row items-center gap-1 pb-2 border-b border-bg-secondary/20">
+            <p className="text-text-primary text-sm font-inter font-semibold">
               Email:
             </p>
-            <p className="text-[#fafafaaf] text-sm font-mono font-light">
-              {email}
+            <p className="text-text-tertiary text-sm font-inter font-medium">
+              {email || 'Admin'}
             </p>
           </div>
 
-          <div className="flex row items-center gap-2 mt-2" aria-disabled>
-            <LogOut className="w-4 h-4 text-[#fafafa]" />
+          <div
+            className="flex items-center gap-2 cursor-not-allowed opacity-60"
+            aria-disabled
+          >
+            <LogOut className="w-4 h-4 text-text-tertiary" />
             <Link
               href=""
-              className="text-[#fafafa] text-sm font-mono font-bold"
+              className="text-text-tertiary text-sm font-inter font-medium"
             >
               Sair (Em breve!)
             </Link>
