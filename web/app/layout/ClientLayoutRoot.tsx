@@ -1,8 +1,8 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { useEffect, useMemo } from 'react'
 import { Cookies } from 'react-cookie'
-import { useEffect } from 'react'
 import { SWRConfig } from 'swr'
 
 import { setToken } from '@/services/token'
@@ -16,19 +16,6 @@ import { Toaster } from '../components/ui/sonner'
 
 import '../globals.css'
 
-const navigationItems = [
-  {
-    title: 'Home',
-    url: '/dashboard/home',
-    icon: HomeIcon,
-  },
-  {
-    title: 'Clientes',
-    url: '/dashboard/customers',
-    icon: CustomerIcon,
-  },
-]
-
 export default function ClientLayoutRoot({
   children,
 }: Readonly<{
@@ -39,6 +26,22 @@ export default function ClientLayoutRoot({
 
   const user = cookieStore.get('user')
   const token = cookieStore.get('access_token') ?? cookieStore.get('token')
+
+  const navigationItems = useMemo(
+    () => [
+      {
+        title: 'Home',
+        url: '/dashboard/home',
+        icon: HomeIcon,
+      },
+      {
+        title: 'Notas',
+        url: '/dashboard/invoices',
+        icon: CustomerIcon,
+      },
+    ],
+    [],
+  )
 
   useEffect(() => {
     if (token) setToken(token)

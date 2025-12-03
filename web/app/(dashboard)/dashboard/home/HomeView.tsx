@@ -1,10 +1,10 @@
 'use client'
+import dynamic from 'next/dynamic'
+import { useMemo } from 'react'
 
 import { Card, type CardProps } from '@/components/features/Card'
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { useUserContext } from '@/context/userContext'
-import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
 
 const PAGE_SIZE = 10
 
