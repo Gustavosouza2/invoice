@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
@@ -36,12 +35,6 @@ export function LoginForm() {
       })
       .then((response) => {
         const result = response.data
-
-        if (response.status < 200 || response.status >= 300) {
-          toast.error(result.message || 'Erro ao fazer login')
-          return
-        }
-
         Toast({
           type: 'success',
           message: 'Login realizado com sucesso!',

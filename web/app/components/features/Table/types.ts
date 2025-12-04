@@ -1,3 +1,5 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
+
 import { type ContextMenuItemsProps } from '@/components/features/ContextMenuItems/types'
 import { type IconType } from 'react-icons'
 

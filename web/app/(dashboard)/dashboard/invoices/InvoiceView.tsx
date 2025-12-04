@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { MdEdit } from 'react-icons/md'
+import { MdEdit, MdVisibility } from 'react-icons/md'
 
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { DataTable } from '@/components/features/Table'
@@ -22,16 +22,17 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
   const columns = useMemo(
     () =>
       [
-        { name: 'invoiceName', label: 'Nota Fiscal', size: '10' },
-        { name: 'vehicleMake', label: 'Data da Nota', size: '10' },
-        { name: 'customerName', label: 'Valor da Nota', size: '10' },
+        { name: 'customerName', label: 'Nome do cliente', size: '80' },
+        { name: 'invoiceNumber', label: 'Número da nota', size: '20' },
+        { name: 'serviceValue', label: 'Valor do serviço', size: '20' },
+        { name: 'actions', label: '', size: '0' },
       ] as const,
     [],
   )
 
   const handlePageChange = useCallback(
     (page: number) => {
-      push(`/dashboard/customers?page=${page}`)
+      push(`/dashboard/invoices?page=${page}`)
     },
     [push],
   )
@@ -48,6 +49,11 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
   const ItemsContextMenu = useCallback(
     (rowData: Invoice) => [
       {
+        label: 'Visualizar',
+        icon: () => <MdVisibility className="h-4 w-4 fill-current" />,
+        onClick: () => handleIsOpenEditModal(rowData.id),
+      },
+      {
         label: 'Editar',
         icon: () => <MdEdit className="h-4 w-4 fill-current" />,
         onClick: () => handleIsOpenEditModal(rowData.id),
@@ -57,7 +63,7 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
   )
 
   return (
-    <main className="flex">
+    <main className="gap-5 items-center justify-center scrollbar-hide">
       <DataTable
         columns={columns}
         currentPage={page}

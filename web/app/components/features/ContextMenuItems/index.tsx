@@ -13,18 +13,24 @@ import { ContextMenuItemsProps } from './types'
 export const ContextMenuItems = ({ items }: ContextMenuItemsProps) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <VscKebabVertical className="w-5 h-5 flex items-center" />
+      <DropdownMenuTrigger className="outline-none focus:outline-none p-1 hover:opacity-80 transition-opacity">
+        <VscKebabVertical className="w-5 h-5 text-gray-400 hover:text-gray-300" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex items-center justify-center gap-1.5 flex-col bg-[#09090b] rounded overflow-hidden p-0">
+      <DropdownMenuContent
+        className="flex items-center justify-center gap-1.5 flex-col
+        border border-bg-secondary/20
+        bg-gradient-to-br from-bg-default to-bg-primary rounded-xl overflow-hidden p-0"
+      >
         {items.map((item) => (
           <DropdownMenuItem
             key={item.label}
             onClick={item.onClick}
-            className="w-full flex items-center gap-2 px-3 py-2 focus:outline-none hover:bg-zinc-900 cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-2 focus:outline-none cursor-pointer"
           >
-            <div className="w-5 h-5 flex items-center">{item.icon()}</div>
-            <span className="text-sm font-mono font-medium text-zinc-300">
+            <div className="w-5 h-5 flex items-center hover:text-text-secondary">
+              {item.icon()}
+            </div>
+            <span className="text-sm font-inter font-medium text-zinc-300 hover:text-text-secondary">
               {item.label}
             </span>
           </DropdownMenuItem>

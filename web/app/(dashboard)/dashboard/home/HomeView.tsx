@@ -85,13 +85,13 @@ export default function HomeView() {
   ]
 
   return (
-    <main className="flex flex-col gap-6 py-6 px-10 items-center justify-center scrollbar-hide">
+    <main className="flex flex-col gap-5 py-6 px-10 items-center justify-center scrollbar-hide">
       <div className="max-w-7xl">
-        <div className="mb-6">
+        <div className="mb-4">
           <Card data={[cardItems[0]]} isLoading={isLoading} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 mb-4">
           <Card data={[cardItems[1]]} isLoading={isLoading} />
           <Card data={[cardItems[2]]} isLoading={isLoading} />
           <Card data={[cardItems[3]]} isLoading={isLoading} />
