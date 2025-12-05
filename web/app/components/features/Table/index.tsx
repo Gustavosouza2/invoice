@@ -63,6 +63,7 @@ export const DataTable = React.memo(
         ) : (
           <div
             className="w-full border border-bg-secondary/20
+            hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60
             bg-gradient-to-br from-bg-default to-bg-primary rounded-xl"
           >
             <div className="rounded-xl p-3 sm:p-4 lg:p-5 w-full">
@@ -129,8 +130,9 @@ export const DataTable = React.memo(
                   <div className="space-y-4">
                     {data.map(({ onClickRow, ...data }, dataIndex) => {
                       const primaryColumn = columns[0]
-                      const secondaryColumn = columns[columns.length - 1]
-                      const middleColumns = columns.slice(1, -1)
+                      const secondaryColumn = columns[columns.length - 2]
+                      const actionColumn = columns[columns.length - 1]
+                      const tercenaryColumn = columns[columns.length - 3]
 
                       return (
                         <div
@@ -139,10 +141,10 @@ export const DataTable = React.memo(
                           transition-colors rounded-lg p-3 -m-3 cursor-pointer"
                           onClick={onClickRow}
                         >
-                          <div className="flex justify-between items-start w-full gap-4">
+                          <div className="flex justify-between items-start w-full gap-4 p-3">
                             <div className="flex flex-col space-y-2 flex-1 min-w-0">
                               {primaryColumn && (
-                                <div className="flex flex-col space-y-1">
+                                <div className="flex flex-col space-y-1 mb-6">
                                   <div className="text-xs text-gray-400 uppercase tracking-wide">
                                     {primaryColumn.label}
                                   </div>
@@ -157,36 +159,49 @@ export const DataTable = React.memo(
                                 </div>
                               )}
 
-                              {middleColumns.map((column, idx) => (
-                                <div
-                                  key={`mobile-middle-${idx}`}
-                                  className="flex flex-col space-y-1"
-                                >
+                              {secondaryColumn && (
+                                <div className="flex flex-col space-y-1 mb-6">
                                   <div className="text-xs text-gray-400 uppercase tracking-wide">
-                                    {column.label}
+                                    {secondaryColumn.label}
                                   </div>
-                                  <div className="text-sm text-gray-300 break-words">
+                                  <div className="text-sm font-medium text-gray-200 break-words">
                                     {parsedDataTable(
                                       items,
                                       BADGE_PROPS_COLOR,
-                                      column,
+                                      secondaryColumn,
                                       data,
                                     )}
                                   </div>
                                 </div>
-                              ))}
+                              )}
+
+                              {tercenaryColumn && (
+                                <div className="flex flex-col space-y-1">
+                                  <div className="text-xs text-gray-400 uppercase tracking-wide mt-6">
+                                    {tercenaryColumn.label}
+                                  </div>
+                                  <div className="text-sm font-medium text-gray-200">
+                                    {parsedDataTable(
+                                      items,
+                                      BADGE_PROPS_COLOR,
+                                      tercenaryColumn,
+                                      data,
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
 
-                            {secondaryColumn && (
-                              <div className="flex flex-col items-end space-y-1 flex-shrink-0">
+                            {actionColumn && (
+                              <div className="flex flex-col items-end space-y-1 flex-shrink-0 ">
                                 <div className="text-xs text-gray-400 uppercase tracking-wide">
-                                  {secondaryColumn.label}
+                                  {actionColumn.label}
                                 </div>
                                 <div className="text-sm font-medium text-gray-200">
                                   {parsedDataTable(
                                     items,
                                     BADGE_PROPS_COLOR,
-                                    secondaryColumn,
+                                    actionColumn,
                                     data,
                                   )}
                                 </div>

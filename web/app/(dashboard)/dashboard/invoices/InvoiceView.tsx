@@ -1,11 +1,12 @@
 'use client'
 
+import { MdEdit, MdVisibility } from 'react-icons/md'
 import { useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { MdEdit, MdVisibility } from 'react-icons/md'
 
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { DataTable } from '@/components/features/Table'
+import { Filter } from '@/components/features/Filter'
 import type { Invoice } from '@/types/invoice'
 
 type InvoiceViewProps = {
@@ -63,17 +64,23 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
   )
 
   return (
-    <main className="gap-5 items-center justify-center scrollbar-hide">
-      <DataTable
-        columns={columns}
-        currentPage={page}
-        title="Notas Fiscais"
-        isLoading={isLoading}
-        items={ItemsContextMenu}
-        data={formattedInvoiceData}
-        onPageChange={handlePageChange}
-        totalPages={invoices?.total_pages || 10}
-      />
+    <main className="gap-5 scrollbar-hide flex flex-col md-mobile:flex-row">
+      <div className="w-full md-mobile:w-auto order-2 md-mobile:order-1">
+        <DataTable
+          columns={columns}
+          currentPage={page}
+          title="Notas Fiscais"
+          isLoading={isLoading}
+          items={ItemsContextMenu}
+          data={formattedInvoiceData}
+          onPageChange={handlePageChange}
+          totalPages={invoices?.total_pages || 10}
+        />
+      </div>
+
+      <div className="w-full md-mobile:w-auto order-1 md-mobile:order-2 h-full">
+        <Filter />
+      </div>
     </main>
   )
 }

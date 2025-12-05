@@ -1,5 +1,6 @@
 'use client'
 
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { usePathname } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import { Cookies } from 'react-cookie'
@@ -56,13 +57,15 @@ export default function ClientLayoutRoot({
           shouldRetryOnError: false,
         }}
       >
-        <Toaster />
-        <SidebarProvider>
-          {pathname !== '/login' && pathname !== '/register' && (
-            <AppSidebar navItems={navigationItems} />
-          )}
-          {children}
-        </SidebarProvider>
+        <NuqsAdapter>
+          <Toaster />
+          <SidebarProvider>
+            {pathname !== '/login' && pathname !== '/register' && (
+              <AppSidebar navItems={navigationItems} />
+            )}
+            {children}
+          </SidebarProvider>
+        </NuqsAdapter>
       </SWRConfig>
     </UserContextProvider>
   )
