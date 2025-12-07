@@ -69,7 +69,6 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
         <DataTable
           columns={columns}
           currentPage={page}
-          title="Notas Fiscais"
           isLoading={isLoading}
           items={ItemsContextMenu}
           data={formattedInvoiceData}
@@ -79,7 +78,7 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
       </div>
 
       <div className="w-full md-mobile:w-auto order-1 md-mobile:order-2 h-full">
-        <Filter />
+        <Filter isLoading={isLoading} />
       </div>
     </main>
   )
