@@ -2,6 +2,7 @@ import type { Invoice } from '@/types/invoice'
 
 // Invoice
 export type GetAllInvoicesRequest = {
+  customerName?: string
   perPage: number
   page: number
 }

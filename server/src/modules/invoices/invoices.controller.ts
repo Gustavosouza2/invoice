@@ -42,11 +42,13 @@ export class InvoicesController {
   @Get('/get-invoices')
   async findAllInvoices(
     @Query('page') page: number,
+    @Query('name') name: string,
     @Query('per_page') per_page: number
   ) {
     return this.invoicesService.findAllInvoices({
       page: Number(page),
       per_page: Number(per_page),
+      customer_name: String(name),
     });
   }
 

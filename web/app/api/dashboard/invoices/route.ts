@@ -11,6 +11,7 @@ export async function GET(req: Request) {
   const perPage = Number(
     searchParams.get('per_page') ?? searchParams.get('perPage') ?? '10',
   )
+  const customerName = searchParams.get('name') ?? ''
 
   try {
     const cookieStore = cookies()
@@ -18,7 +19,11 @@ export async function GET(req: Request) {
       cookieStore.get('access_token')?.value ?? cookieStore.get('token')?.value
     if (token) setToken(token)
 
-    const data = await invoiceApi.getAllInvoices({ page, perPage })
+    const data = await invoiceApi.getAllInvoices({
+      page,
+      perPage,
+      customerName,
+    })
 
     return NextResponse.json(data)
   } catch (err) {

@@ -7,9 +7,13 @@ import type {
 } from './type'
 
 class Invoice extends BaseApi {
-  public async getAllInvoices({ page, perPage }: GetAllInvoicesRequest) {
+  public async getAllInvoices({
+    page,
+    perPage,
+    customerName,
+  }: GetAllInvoicesRequest) {
     const response = await this.get<GetAllInvoicesResponse>(
-      `/invoices/get-invoices?page=${page}&per_page=${perPage}`,
+      `/invoices/get-invoices?page=${page}&per_page=${perPage}&name=${customerName}`,
     )
     return response
   }
