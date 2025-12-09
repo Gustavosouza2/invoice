@@ -7,16 +7,15 @@ import { useRouter } from 'next/navigation'
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { DataTable } from '@/components/features/Table'
 import { Filter } from '@/components/features/Filter'
+import { usePagination } from '@/hooks/usePagination'
 import type { Invoice } from '@/types/invoice'
 
-type InvoiceViewProps = {
-  page: number
-}
+export default function InvoiceView() {
+  const { filters, setFilters } = usePagination()
 
-export default function InvoiceView({ page }: InvoiceViewProps) {
   const { data: invoices, isLoading } = useGetInvoicesList({
-    page,
-    perPage: 10,
+    page: filters.page,
+    perPage: filters.pageSize,
   })
   const { push } = useRouter()
 
@@ -33,9 +32,10 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
 
   const handlePageChange = useCallback(
     (page: number) => {
+      setFilters({ ...filters, page })
       push(`/dashboard/invoices?page=${page}`)
     },
-    [push],
+    [push, setFilters, filters],
   )
 
   const handleIsOpenEditModal = useCallback((id: string) => {}, [])
@@ -68,9 +68,9 @@ export default function InvoiceView({ page }: InvoiceViewProps) {
       <div className="w-full md-mobile:w-auto order-2 md-mobile:order-1">
         <DataTable
           columns={columns}
-          currentPage={page}
           isLoading={isLoading}
           items={ItemsContextMenu}
+          currentPage={filters.page}
           data={formattedInvoiceData}
           onPageChange={handlePageChange}
           totalPages={invoices?.total_pages || 10}
