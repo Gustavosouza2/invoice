@@ -1,8 +1,8 @@
+import { usePagination } from '@/hooks/usePagination'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TbFileInvoice } from 'react-icons/tb'
 import { Card } from '@/components/ui/card'
-import { useQueryState } from 'nuqs'
 
 import { NoteButton } from '../NoteButton'
 import { Input } from '../Input'
@@ -12,7 +12,12 @@ type FilterProps = {
 }
 
 export const Filter = ({ isLoading }: FilterProps) => {
-  const [name, setName] = useQueryState('name')
+  const { filters, setFilters } = usePagination()
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters({ ...filters, name: e.target.value })
+  }
+
   const { state } = useSidebar()
 
   return (
@@ -32,9 +37,9 @@ export const Filter = ({ isLoading }: FilterProps) => {
             <Input
               type="text"
               iconType="name"
-              value={name ?? ''}
+              value={filters.name ?? ''}
+              onChange={handleNameChange}
               placeholder="Filtrar pelo nome"
-              onChange={(e) => setName(e.target.value)}
             />
             <div className="flex flex-row mt-10 gap-5">
               <NoteButton

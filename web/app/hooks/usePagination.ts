@@ -4,7 +4,12 @@ export const usePagination = () => {
   const [filters, setFilters] = useQueryStates({
     pageSize: parseAsInteger.withDefault(10),
     page: parseAsInteger.withDefault(1),
-    name: parseAsString.withDefault(''),
+    name: parseAsString.withDefault('').withOptions({
+      limitUrlUpdates: {
+        method: 'debounce',
+        timeMs: 300,
+      },
+    }),
   })
 
   return {
