@@ -3,6 +3,7 @@ import { type CreateInvoiceDto } from '../dto/create-invoice';
 import type { Prisma } from 'generated/prisma';
 
 export type GetAllInvoicesRequest = {
+  customer_name: string;
   per_page: number;
   page: number;
 };

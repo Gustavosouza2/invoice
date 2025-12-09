@@ -29,18 +29,38 @@ export class InvoicesService {
   async findAllInvoices({
     page,
     per_page,
+    customer_name,
   }: GetAllInvoicesRequest): Promise<GetAllInvoicesResponse> {
     const skip = (page - 1) * per_page;
+
+    const where: {
+      customerName?: {
+        contains: string;
+        mode: 'insensitive';
+      };
+    } = {};
+
+    if (customer_name) {
+      where.customerName = {
+        contains: customer_name,
+        mode: 'insensitive',
+      };
+    }
+
     const [data, total] = await Promise.all([
       this.prisma.invoice.findMany({
         skip,
         take: per_page,
-        include: { user: { include: { accounts: false } }, File: true },
+        where,
+        include: {
+          user: { include: { accounts: false } },
+          File: true,
+        },
       }),
-      this.prisma.invoice.count(),
+      this.prisma.invoice.count({ where }),
     ]);
 
-    if (!data || total === 0) {
+    if (!data.length) {
       throw new CustomException(ErrorCode.NOT_FOUND, 'No invoices found');
     }
 
