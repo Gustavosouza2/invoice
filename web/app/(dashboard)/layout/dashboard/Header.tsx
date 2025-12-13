@@ -1,16 +1,40 @@
+import { useCallback } from 'react'
+import { Menu } from 'lucide-react'
+import axios from 'axios'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserMenu } from '@/components/features/UserMenu'
 import { useUserContext } from '@/context/userContext'
 import { useSidebar } from '@/components/ui/sidebar'
+import { Toast } from '@/components/features/Toast'
+import { getSessionToken } from '@/services/token'
 import { Button } from '@/components/ui/button'
-import { Menu } from 'lucide-react'
 
 export const HeaderDashboard = () => {
   const { toggleSidebar, isMobile } = useSidebar()
-  const { userData } = useUserContext()
+  const { userData, handleLogout } = useUserContext()
 
-  const email = userData?.email
-  const rawUserName = email?.slice(0, 7)
+  const handleSubmitLogout = useCallback(async () => {
+    const sessionToken = getSessionToken()
+
+    await axios
+      .post(
+        '/api/auth/logout',
+        { token: sessionToken },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      )
+      .then(() => handleLogout())
+      .catch(() =>
+        Toast({
+          type: 'error',
+          message: 'Falha ao sair',
+        }),
+      )
+  }, [handleLogout])
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center h-16 px-4 border-b border-bg-secondary/10 bg-gradient-to-r from-bg-primary to-bg-default shadow-lg">
@@ -36,12 +60,13 @@ export const HeaderDashboard = () => {
             width={32}
           />
           <AvatarFallback className="bg-bg-tertiary text-text-primary text-xs">
-            {rawUserName?.slice(0, 2).toUpperCase() || 'AD'}
+            {userData?.name?.slice(0, 2).toUpperCase() || 'AD'}
           </AvatarFallback>
         </Avatar>
         <UserMenu
-          name={rawUserName || 'Admin'}
-          email={email || 'Admin@gmail.com'}
+          name={userData?.name || 'Admin'}
+          handleLogout={handleSubmitLogout}
+          email={userData?.email || 'Admin@gmail.com'}
         />
       </div>
     </header>

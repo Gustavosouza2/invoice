@@ -44,7 +44,7 @@ export class AuthController {
   async logout(@Req() req: Request, @Session() token: string) {
     const authHeader = req.headers.authorization;
     const headerToken =
-      typeof authHeader === 'string' && authHeader.startsWith('Bearer ')
+      typeof authHeader === 'string' && authHeader.startsWith('Bearer')
         ? authHeader.slice(7)
         : undefined;
 

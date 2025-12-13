@@ -1,27 +1,35 @@
 import { decodeJwt, JWTPayload } from 'jose'
 
-let token: string | undefined
+let jwtToken: string | undefined
 let payload: JWTPayload | null = null
+let sessionToken: string | undefined
 
 export const setToken = (newToken: string) => {
-  token = newToken
+  jwtToken = newToken
   payload = decodeToken()
 }
 
-export const getToken = () => token
+export const setSessionToken = (token: string) => {
+  sessionToken = token
+}
+
+export const getToken = () => jwtToken
+
+export const getSessionToken = () => sessionToken
 
 export const getPayload = (): JWTPayload | null => payload
 
 export function clearToken() {
-  token = undefined
+  jwtToken = undefined
+  sessionToken = undefined
   payload = null
 }
 
 export function decodeToken(): JWTPayload | null {
-  if (!token) return null
+  if (!jwtToken) return null
 
   try {
-    return decodeJwt(token)
+    return decodeJwt(jwtToken)
   } catch {
     return null
   }
