@@ -1,4 +1,4 @@
-import { getToken } from './token'
+import { getToken, getSessionToken } from './token'
 
 export class BaseApi {
   protected baseUrl: string
@@ -22,10 +22,15 @@ export class BaseApi {
     return response.json()
   }
 
-  protected async post<T, R>(path: string, body?: T): Promise<R> {
+  protected async post<T, R>(
+    path: string,
+    body?: T,
+    useSessionToken = false,
+    customToken?: string,
+  ): Promise<R> {
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
-      headers: this.buildHeaders(),
+      headers: this.buildHeaders(useSessionToken, customToken),
       body: JSON.stringify(body),
     })
 
@@ -62,8 +67,13 @@ export class BaseApi {
     return response.json()
   }
 
-  private buildHeaders() {
-    const token = getToken()
+  private buildHeaders(useSessionToken = false, customToken?: string) {
+    let token: string | undefined
+    if (customToken) {
+      token = customToken
+    } else {
+      token = useSessionToken ? getSessionToken() : getToken()
+    }
     return {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),

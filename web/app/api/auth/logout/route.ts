@@ -10,13 +10,17 @@ export async function POST(req: Request) {
   }
 
   try {
-    const response = await authService.logout({ token })
-    return response
+    const response = await authService.logout({ token }, token)
+
+    const res = NextResponse.json(response, { status: 200 })
+    res.cookies.delete('token')
+    res.cookies.delete('access_token')
+
+    return res
   } catch (error) {
-    console.error(error)
-    return NextResponse.json(
-      { message: 'Internal server error' },
-      { status: 500 },
-    )
+    console.error('Logout error:', error)
+    const errorMessage =
+      error instanceof Error ? error.message : 'Internal server error'
+    return NextResponse.json({ message: errorMessage }, { status: 500 })
   }
 }

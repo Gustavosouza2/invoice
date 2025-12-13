@@ -1,10 +1,9 @@
-import { Session, User, WeakPassword } from '@supabase/supabase-js'
+import type { User } from './user'
 
 export interface LoginResponseSuccess {
+  success: boolean
+  message: string
+  token: string
+  jwt: string
   user: User
-  session: Session
-  weakPassword?:
-    | WeakPassword
-    | undefined
-    | { user: null; session: null; weakPassword?: null | undefined }
 }
