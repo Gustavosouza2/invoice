@@ -1,4 +1,4 @@
-import { clearToken, setToken } from '../token'
+import { clearToken, setToken, setSessionToken } from '../token'
 import { BaseApi } from '../base'
 import type {
   LoginRequest,
@@ -20,17 +20,23 @@ export class AuthAPI extends BaseApi {
 
     if (response?.jwt) {
       setToken(response.jwt)
-      return response
     }
+    if (response?.token) {
+      setSessionToken(response.token)
+    }
+    return response
   }
 
-  public async logout({ token }: LogoutRequest) {
+  public async logout({ token }: LogoutRequest, customToken?: string) {
     const response = await this.post<LogoutRequest, LogoutResponse>(
       '/auth/logout',
       { token },
+      true,
+      customToken,
     )
 
     if (response.success) clearToken()
+    return response
   }
 
   public async register({ email, name, password, phone }: RegisterRequest) {
@@ -39,6 +45,14 @@ export class AuthAPI extends BaseApi {
       { email, name, password, phone },
     )
 
+    if (response?.jwt) {
+      setToken(response.jwt)
+    }
+
+    if (response?.token) {
+      setSessionToken(response.token)
+    }
+
     if (response.success) return response
   }
 
@@ -46,7 +60,16 @@ export class AuthAPI extends BaseApi {
     const response = await this.post<RefreshTokenRequest, RefreshTokenResponse>(
       '/auth/refresh',
       { token },
+      true,
     )
+
+    if (response?.jwt) {
+      setToken(response.jwt)
+    }
+
+    if (response?.token) {
+      setSessionToken(response.token)
+    }
 
     if (response.success) return response
   }

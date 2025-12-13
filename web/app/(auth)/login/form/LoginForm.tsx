@@ -1,21 +1,24 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
 
 import { Field, FieldSet, FieldGroup } from '@/components/ui/field'
+import { setToken, setSessionToken } from '@/services/token'
 import type { LoginRequest } from '@/services/auth/types'
+import { useUserContext } from '@/context/userContext'
 import { Button } from '@/components/features/Button'
+import { LoginSchema } from '../schema/login-schema'
 import LoginImage from '@/assets/images/boy-img.png'
 import { Input } from '@/components/features/Input'
 import { Toast } from '@/components/features/Toast'
-import { LoginSchema } from '../schema/login-schema'
 
 export function LoginForm() {
   const router = useRouter()
+  const { handleLogin } = useUserContext()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -26,38 +29,46 @@ export function LoginForm() {
     router.prefetch('/dashboard/home')
   }, [router])
 
-  const onSubmit = async (data: LoginRequest) => {
-    setIsLoading(true)
+  const onSubmit = useCallback(
+    async (data: LoginRequest) => {
+      setIsLoading(true)
 
-    await axios
-      .post('/api/auth/login', data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      .then((response) => {
-        const result = response.data
-        Toast({
-          type: 'success',
-          message: 'Login realizado com sucesso!',
-          description: 'Você será redirecionado para a dashboard.',
+      await axios
+        .post('/api/auth/login', data)
+        .then((res) => {
+          handleLogin({
+            user: res?.data.user,
+            token: res?.data.token,
+          })
+
+          setToken(res?.data.jwt)
+          setSessionToken(res?.data.token)
+
+          Toast({
+            type: 'success',
+            message: 'Login realizado com sucesso!',
+            description: 'Você será redirecionado para a dashboard.',
+          })
+
+          router.replace('/dashboard/home')
+
+          return res
         })
-        router.replace('/dashboard/home')
-        return result
-      })
-      .catch(() => {
-        Toast({
-          type: 'error',
-          message: 'Erro ao fazer login. Tente novamente.',
-        })
-      })
-      .finally(() => {
-        setIsLoading(false)
-      })
-  }
+        .catch(() =>
+          Toast({
+            type: 'error',
+            message: 'Erro ao fazer login. Tente novamente.',
+          }),
+        )
+        .finally(() => setIsLoading(false))
+    },
+    [router, handleLogin],
+  )
 
   const handleSubmitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     if (!isValid) return
+
     await onSubmit({ email, password })
   }
 

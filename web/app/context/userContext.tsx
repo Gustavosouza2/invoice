@@ -1,68 +1,60 @@
 'use client'
 
-import { LoginResponseSuccess } from '@/types/login'
 import {
   createContext,
   useContext,
   ReactNode,
-  useEffect,
   useState,
   useMemo,
+  useCallback,
 } from 'react'
 import { useRouter } from 'next/navigation'
-import { UserData } from '@/types/user'
+
+import type { User, UserData } from '@/types/user'
 
 type UserContextProps = {
-  handleLogin: (e: LoginResponseSuccess) => void
+  handleLogin: (data: { user: User; token: string }) => void
+  push: (path: string) => void
   userData: UserData | null
   handleLogout: () => void
   token: string | null
-  push: (path: string) => void
 }
 
 export const UserContext = createContext<UserContextProps>({
   handleLogout: () => {},
   handleLogin: () => {},
+  push: () => {},
   userData: null,
   token: null,
-  push: () => {},
 })
 
 export const UserContextProvider: React.FC<{
   children?: ReactNode
-  user: UserData
-  token: string
-}> = ({ token: tokenCookie, user, children }) => {
-  const [userData, setUserData] = useState<UserContextProps['userData']>(
-    user ?? null,
-  )
+  token?: string
+}> = ({ token: tokenCookie = '', children }) => {
+  const [userData, setUserData] = useState<UserData | null>(null)
 
   const { push, replace } = useRouter()
+  const [token, setToken] = useState<string | null>(tokenCookie || null)
 
-  const [token, setToken] = useState<string | null>(tokenCookie)
-
-  useEffect(() => {
-    if (!userData && user) setUserData(user)
-  }, [userData, user])
-
-  const handleLogin = useMemo(
-    () =>
-      ({ user, session }: LoginResponseSuccess) => {
-        setUserData({ userName: user.phone, email: user.email, id: user.id })
-        setToken(session.access_token)
-        return push('/dashboard/home')
-      },
-    [push],
-  )
-
-  const handleLogout = useMemo(
-    () => () => {
-      setToken(null)
-      setUserData(null)
-      replace('/login')
+  const handleLogin = useCallback(
+    ({ user, token }: { user: User; token: string }) => {
+      setUserData({
+        name: user.name,
+        email: user.email ?? '',
+        id: user.id,
+      })
+      setToken(token)
     },
-    [replace],
+    [],
   )
+
+  const handleLogout = useCallback(() => {
+    setToken(null)
+    setUserData(null)
+
+    replace('/login')
+  }, [replace])
 
   const contextValue = useMemo(
     () => ({

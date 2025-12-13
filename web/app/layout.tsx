@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { Poppins, Inter } from 'next/font/google'
+import { Providers } from './layout/Providers'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -36,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${poppins.className} ${inter.className}`}>
       <body className="bg-gradient-to-br from-bg-primary via-bg-default to-bg-primary flex w-screen h-screen overflow-hidden">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

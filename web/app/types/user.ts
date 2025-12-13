@@ -7,3 +7,8 @@ export interface User {
   name: string
   id: string
 }
+
+export type UserData = Omit<
+  User,
+  'createdAt' | 'updatedAt' | 'emailVerified' | 'image'
+>

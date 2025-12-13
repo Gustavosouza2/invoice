@@ -1,4 +1,5 @@
 'use client'
+
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 
@@ -7,6 +8,7 @@ import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { useUserContext } from '@/context/userContext'
 
 const PAGE_SIZE = 10
+const PAGE = 1
 
 const Chart = dynamic(
   () => import('@/components/features/Chart').then((m) => m.Chart),
@@ -21,17 +23,10 @@ const Chart = dynamic(
 )
 
 export default function HomeView() {
-  const { userData: userFromContext } = useUserContext()
-  const userData = {
-    email: userFromContext?.email,
-    name: userFromContext?.userName,
-  }
-
-  const searchParams = new URLSearchParams()
-  const page = searchParams.get('page') || '1'
+  const { userData } = useUserContext()
 
   const { data: invoices, isLoading } = useGetInvoicesList({
-    page: Number(page),
+    page: PAGE,
     perPage: PAGE_SIZE,
   })
 
@@ -54,7 +49,7 @@ export default function HomeView() {
 
   const cardItems: CardProps[] = [
     {
-      title: `Bem vindo de volta ${userData?.name || userData?.email?.slice(0, 7) || 'Admin'}!`,
+      title: `Bem vindo de volta ${userData?.name || 'Admin'}!`,
       description: 'Veja as principais métricas da sua empresa',
       isFirstCard: true,
     },
