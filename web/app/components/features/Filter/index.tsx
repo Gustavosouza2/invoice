@@ -1,7 +1,8 @@
+import { TbFileInvoice } from 'react-icons/tb'
+
 import { usePagination } from '@/hooks/usePagination'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { TbFileInvoice } from 'react-icons/tb'
 import { Card } from '@/components/ui/card'
 
 import { NoteButton } from '../NoteButton'
@@ -9,9 +10,10 @@ import { Input } from '../Input'
 
 type FilterProps = {
   isLoading: boolean
+  handleCreateInvoice: () => void
 }
 
-export const Filter = ({ isLoading }: FilterProps) => {
+export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
   const { filters, setFilters } = usePagination()
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +46,9 @@ export const Filter = ({ isLoading }: FilterProps) => {
             <div className="flex flex-row mt-10 gap-5">
               <NoteButton
                 text="Criar Nota"
-                onClick={() => {}}
+                onClick={handleCreateInvoice}
                 icon={<TbFileInvoice size={25} />}
+                className="w-24 h-20 flex justify-center items-center rounded-xl"
               />
             </div>
           </div>

@@ -1,17 +1,25 @@
 'use client'
 
+import { useCallback, useMemo, useState } from 'react'
 import { MdEdit, MdVisibility } from 'react-icons/md'
-import { useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { DataTable } from '@/components/features/Table'
-import { Filter } from '@/components/features/Filter'
 import { usePagination } from '@/hooks/usePagination'
+import { Filter } from '@/components/features/Filter'
 import type { Invoice } from '@/types/invoice'
+
+import { CreateInvoiceContextProvider } from './create/context'
+import { CreateInvoiceModal } from './create'
 
 export default function InvoiceView() {
   const { filters, setFilters } = usePagination()
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false)
+
+  const handleIsOpenCreateInvoiceModal = useCallback(() => {
+    setIsOpenCreateModal(!isOpenCreateModal)
+  }, [isOpenCreateModal])
 
   const { data: invoices, isLoading } = useGetInvoicesList({
     page: filters.page,
@@ -78,8 +86,18 @@ export default function InvoiceView() {
       </div>
 
       <div className="w-full md-mobile:w-auto order-1 md-mobile:order-2 h-full">
-        <Filter isLoading={isLoading} />
+        <Filter
+          isLoading={isLoading}
+          handleCreateInvoice={handleIsOpenCreateInvoiceModal}
+        />
       </div>
+
+      <CreateInvoiceContextProvider>
+        <CreateInvoiceModal
+          isOpen={isOpenCreateModal}
+          onClose={handleIsOpenCreateInvoiceModal}
+        />
+      </CreateInvoiceContextProvider>
     </main>
   )
 }

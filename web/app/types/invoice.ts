@@ -1,4 +1,4 @@
-import { User } from './user'
+import type { User } from './user'
 
 export interface Invoice {
   providerMunicipalReg: string
@@ -21,5 +21,4 @@ export interface Invoice {
   status: string
   id: string
   user: User
-  File: File
 }
