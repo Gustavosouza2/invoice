@@ -7,7 +7,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 
-import { Button } from '../../ui/button'
+import { IconButton } from '../Button/IconButton'
 
 type UserMenuProps = {
   name: string | null
@@ -29,13 +29,7 @@ export const UserMenu = ({ email, name, handleLogout }: UserMenuProps) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary transition-all duration-200 rounded-xl"
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
+        <IconButton Icon={<ChevronDown className="h-4 w-4" />} />
       </PopoverTrigger>
       <PopoverContent
         className="flex border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary

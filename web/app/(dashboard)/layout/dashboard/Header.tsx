@@ -3,12 +3,12 @@ import { Menu } from 'lucide-react'
 import axios from 'axios'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { IconButton } from '@/components/features/Button/IconButton'
 import { UserMenu } from '@/components/features/UserMenu'
 import { useUserContext } from '@/context/userContext'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Toast } from '@/components/features/Toast'
 import { getSessionToken } from '@/services/token'
-import { Button } from '@/components/ui/button'
 
 export const HeaderDashboard = () => {
   const { toggleSidebar, isMobile } = useSidebar()
@@ -40,14 +40,10 @@ export const HeaderDashboard = () => {
     <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center h-16 px-4 border-b border-bg-secondary/10 bg-gradient-to-r from-bg-primary to-bg-default shadow-lg">
       {!isMobile && (
         <div className="flex items-center gap-4 mt-3">
-          <Button
-            size="icon"
-            variant="ghost"
+          <IconButton
+            Icon={<Menu className="h-5 w-5" />}
             onClick={toggleSidebar}
-            className="text-text-tertiary hover:text-text-secondary hover:bg-bg-tertiary rounded-xl transition-all duration-200"
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
+          />
         </div>
       )}
 
