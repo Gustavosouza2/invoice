@@ -11,9 +11,13 @@ type CreateInvoiceProps = {
 }
 
 export const CreateInvoiceModal = ({ isOpen, onClose }: CreateInvoiceProps) => {
-  const { step, setStep, clearFormData } = useCreateInvoiceContext()
+  const {
+    setStep,
+    clearFormData,
+    step: currentStep,
+  } = useCreateInvoiceContext()
 
-  const currentStep: Record<number, JSX.Element> = {
+  const steps: Record<number, JSX.Element> = {
     1: <SelectType />,
   }
 
@@ -26,7 +30,7 @@ export const CreateInvoiceModal = ({ isOpen, onClose }: CreateInvoiceProps) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      {currentStep[step]}
+      {steps[currentStep]}
     </Modal>
   )
 }

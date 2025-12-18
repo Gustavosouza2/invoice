@@ -25,6 +25,7 @@ export default function InvoiceView() {
     page: filters.page,
     perPage: filters.pageSize,
   })
+
   const { push } = useRouter()
 
   const columns = useMemo(

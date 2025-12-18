@@ -1,11 +1,11 @@
 import { TbFileInvoice } from 'react-icons/tb'
 
+import { NoteButton } from '@/components/features/Button/NoteButton'
 import { usePagination } from '@/hooks/usePagination'
 import { useSidebar } from '@/components/ui/sidebar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Card } from '@/components/ui/card'
 
-import { NoteButton } from '../NoteButton'
 import { Input } from '../Input'
 
 type FilterProps = {

@@ -1,7 +1,7 @@
 import { FaHandSparkles, FaHands } from 'react-icons/fa6'
 
-import { NoteButton } from '@/components/features/NoteButton'
-import { Button } from '@/components/features/Button'
+import { NoteButton } from '@/components/features/Button/NoteButton'
+import { Button } from '@/components/features/Button/DefaultButton'
 
 import { useCreateInvoiceContext } from '../context'
 
@@ -12,8 +12,8 @@ export const SelectType = () => {
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center">
-      <h2 className="text-2xl font-poppins font-semibold text-text-primary">
-        Selecione o tipo de nota
+      <h2 className="text-2xl font-poppins font-semibold text-text-primary text-center">
+        Selecione o tipo de preenchimento nota
       </h2>
       <div className="flex flex-row items-center gap-5 justify-center mt-16">
         <NoteButton
