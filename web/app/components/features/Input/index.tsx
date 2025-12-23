@@ -1,18 +1,11 @@
 'use client'
 
-import {
-  MdOutlineEmail,
-  MdOutlineLock,
-  MdOutlinePerson,
-  MdOutlinePhone,
-} from 'react-icons/md'
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6'
 import CurrencyInput from 'react-currency-input-field'
 import { useState } from 'react'
 
 import { Input as InputShad } from '@/components/ui/input'
-import { type AbstractInputsProps } from './types'
-import { Button } from '../../ui/button'
+import { cn } from '@/lib/utils'
 import {
   SelectTrigger,
   SelectContent,
@@ -20,6 +13,10 @@ import {
   SelectItem,
   Select,
 } from '@/components/ui/select'
+
+import { type AbstractInputsProps } from './types'
+import { Button } from '../../ui/button'
+import { inputIcons } from './icons'
 
 export const Input = ({
   showPasswordTips,
@@ -34,35 +31,28 @@ export const Input = ({
 }: AbstractInputsProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
 
-  const iconRender: Record<typeof iconType, JSX.Element> = {
-    email: <MdOutlineEmail className="text-text-tertiary" />,
-    password: <MdOutlineLock className="text-text-tertiary" />,
-    phone: <MdOutlinePhone className="text-text-tertiary" />,
-    name: <MdOutlinePerson className="text-text-tertiary" />,
-  }
-
   return (
     <>
       <div className="relative">
         {type === 'text' && (
-          <>
-            <div className="relative">
+          <div className="relative">
+            {iconType && (
               <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                {iconRender[iconType]}
+                {inputIcons({ iconType })}
               </div>
-              <InputShad
-                className="h-11 rounded placeholder:text-text-tertiary
-                  text-text-tertiary border border-transparent
-                  focus-visible:ring-0 focus:border-zinc-700
-                  bg-input-default pl-10"
-                onChange={onChange}
-                placeholder={placeholder}
-                autoComplete="off"
-                type="text"
-                {...props}
-              />
-            </div>
-          </>
+            )}
+            <InputShad
+              className={cn(
+                'h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
+                iconType ? 'pl-10' : 'pl-3',
+              )}
+              onChange={onChange}
+              placeholder={placeholder}
+              autoComplete="off"
+              type="text"
+              {...props}
+            />
+          </div>
         )}
 
         {type === 'currency' && (
@@ -124,11 +114,16 @@ export const Input = ({
         {type === 'password' && (
           <>
             <div className="relative flex">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                {iconRender[iconType]}
-              </div>
+              {iconType && (
+                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  {inputIcons({ iconType })}
+                </div>
+              )}
               <InputShad
-                className="h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pl-10 pr-10"
+                className={cn(
+                  'h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pr-10',
+                  iconType ? 'pl-10' : 'pl-3',
+                )}
                 type={showPassword ? 'text' : 'password'}
                 placeholder={placeholder}
                 onChange={onChange}

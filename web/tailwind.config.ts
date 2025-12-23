@@ -29,6 +29,9 @@ module.exports = {
         custom: '1200px',
         // => @media (min-width: 1200px) { ... }
       },
+      fontSize: {
+        'modal-title': ['1.85rem', { lineHeight: '2.2rem', fontWeight: '700' }],
+      },
       fontFamily: {
         poppins: ['var(--font-poppins)'],
         inter: ['var(--font-inter)'],

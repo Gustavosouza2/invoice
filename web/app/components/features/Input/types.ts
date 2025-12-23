@@ -5,7 +5,7 @@ import { type UseFormRegister } from 'react-hook-form'
 type InputProperty = InputProps & {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   type: 'email' | 'password' | 'select' | 'currency' | 'text'
-  iconType: 'email' | 'password' | 'phone' | 'name'
+  iconType?: 'email' | 'password' | 'phone' | 'name'
   register?: UseFormRegister<any> //eslint-disable-line
   showPasswordTips?: boolean
   placeholder: string
