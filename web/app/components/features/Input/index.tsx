@@ -2,7 +2,9 @@
 
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6'
 import CurrencyInput from 'react-currency-input-field'
+import InputMask from 'react-input-mask'
 import { useState } from 'react'
+import type React from 'react'
 
 import { Input as InputShad } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
@@ -23,6 +25,7 @@ export const Input = ({
   onChangeCurrency,
   onValueChange,
   placeholder,
+  maxLength,
   iconType,
   options,
   onChange,
@@ -48,6 +51,7 @@ export const Input = ({
               )}
               onChange={onChange}
               placeholder={placeholder}
+              maxLength={maxLength}
               autoComplete="off"
               type="text"
               {...props}
@@ -57,14 +61,10 @@ export const Input = ({
 
         {type === 'currency' && (
           <CurrencyInput
-            className="h-10 rounded px-3 text-sm w-full
-          placeholder:text-[#A1A1AA] text-zinc-200
-          bg-zinc-900
-          border border-transparent
-          focus:border-zinc-700
-          ring-0 focus:ring-0 focus:ring-offset-0
-          focus-visible:ring-0 focus-visible:ring-offset-0
-          focus:outline-none focus-visible:outline-none"
+            className={cn(
+              'w-full h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
+              iconType ? 'pl-10' : 'pl-3',
+            )}
             intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
             placeholder={placeholder}
             name={props.name}
@@ -128,6 +128,7 @@ export const Input = ({
                 placeholder={placeholder}
                 onChange={onChange}
                 autoComplete="off"
+                maxLength={maxLength}
                 {...props}
               />
               <Button
@@ -161,6 +162,56 @@ export const Input = ({
               </div>
             )}
           </>
+        )}
+
+        {type === 'number' && (
+          <InputShad
+            className={cn(
+              'h-11 rounded border border-transparent bg-input-default',
+              'text-text-tertiary placeholder:text-text-tertiary',
+              'focus-visible:ring-0 focus:border-zinc-700',
+              iconType ? 'pl-10' : 'pl-3',
+
+              '[appearance:textfield]',
+              '[&::-webkit-inner-spin-button]:appearance-none',
+              '[&::-webkit-outer-spin-button]:appearance-none',
+              '[&::-webkit-inner-spin-button]:m-0',
+            )}
+            placeholder={placeholder}
+            onChange={(e) => {
+              if (maxLength && e.target.value.length > maxLength) {
+                e.target.value = e.target.value.slice(0, maxLength)
+              }
+              onChange?.(e)
+            }}
+            autoComplete="off"
+            type="number"
+            {...props}
+          />
+        )}
+
+        {type === 'date' && (
+          <InputMask
+            mask="99/99/9999"
+            maskChar={null}
+            value={(props.value as string | undefined) || ''}
+            onChange={onChange}
+          >
+            {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
+              <InputShad
+                {...inputProps}
+                placeholder={placeholder || 'DD/MM/YYYY'}
+                className={cn(
+                  'h-11 rounded border border-transparent bg-input-default',
+                  'text-text-tertiary placeholder:text-text-tertiary',
+                  'focus-visible:ring-0 focus:border-zinc-700',
+                  iconType ? 'pl-10' : 'pl-3',
+                )}
+                autoComplete="off"
+                type="text"
+              />
+            )}
+          </InputMask>
         )}
       </div>
     </>

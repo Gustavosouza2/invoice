@@ -37,12 +37,16 @@ export const HeaderDashboard = () => {
   }, [handleLogout])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center h-16 px-4 border-b border-bg-secondary/10 bg-gradient-to-r from-bg-primary to-bg-default shadow-lg">
+    <header
+      className="fixed top-0 left-0 right-0 z-50 flex
+      justify-between items-center h-16 px-4 border-b border-bg-secondary/10
+      bg-gradient-to-r from-bg-primary to-bg-default shadow-lg"
+    >
       {!isMobile && (
         <div className="flex items-center gap-4 mt-3">
           <IconButton
-            Icon={<Menu className="h-5 w-5" />}
             onClick={toggleSidebar}
+            Icon={<Menu className="h-5 w-5" />}
           />
         </div>
       )}

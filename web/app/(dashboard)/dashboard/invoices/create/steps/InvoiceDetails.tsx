@@ -1,14 +1,25 @@
-import { FieldSet, FieldGroup, FieldLabel, Field } from '@/components/ui/field'
+import {
+  Field,
+  FieldSet,
+  FieldGroup,
+  FieldLabel,
+  FieldError,
+} from '@/components/ui/field'
+import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 import { Button } from '@/components/features/Button/DefaultButton'
 import { Input } from '@/components/features/Input'
-import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 
 import { useCreateInvoiceContext } from '../context'
+import { stepTwoSchema } from '../schema'
 
 export const InvoiceDetails = () => {
   const { formData, setFormData, setStep } = useCreateInvoiceContext()
-  const isDisabled =
-    !formData.invoiceNumber || !formData.verificationCode || !formData.issueDate
+  const isDisabled = !formData.invoiceNumber || !formData.issueDate
+
+  const handleNextStep = () => {
+    const stepTwoValidated = stepTwoSchema.safeParse(formData)
+    if (stepTwoValidated.success) setStep(3)
+  }
 
   return (
     <div className="flex flex-col h-full min-h-[29rem] justify-between">
@@ -23,35 +34,28 @@ export const InvoiceDetails = () => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setFormData({ invoiceNumber: Number(e.target.value) })
               }
-              type="text"
-              placeholder="Digite o número"
+              type="number"
+              maxLength={9}
+              placeholder="Digite o número da nota"
             />
-          </Field>
-          <Field>
-            <FieldLabel className="-mb-1">Código de verificação:</FieldLabel>
-            <Input
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData({ verificationCode: e.target.value })
-              }
-              type="text"
-              placeholder="Digite o código"
-            />
+            <FieldError>{}</FieldError>
           </Field>
           <Field>
             <FieldLabel className="-mb-1">Data da Nota:</FieldLabel>
             <Input
+              value={formData.issueDate || ''}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setFormData({ issueDate: e.target.value })
               }
-              type="text"
-              placeholder="Data"
+              type="date"
+              placeholder="Digite a Data da nota"
             />
           </Field>
         </FieldGroup>
       </FieldSet>
 
       <ModalFooter>
-        <Button disabled={isDisabled} onClick={() => setStep(3)}>
+        <Button disabled={isDisabled} onClick={handleNextStep}>
           CONTINUAR
         </Button>
       </ModalFooter>

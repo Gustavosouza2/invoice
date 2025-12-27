@@ -1,15 +1,21 @@
 import { FaHandSparkles, FaHands } from 'react-icons/fa6'
 
+import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 import { NoteButton } from '@/components/features/Button/NoteButton'
 import { Button } from '@/components/features/Button/DefaultButton'
-import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 
 import { useCreateInvoiceContext } from '../context'
+import { stepOneSchema } from '../schema'
 
 export const SelectType = () => {
   const { formData, setFormData, setStep } = useCreateInvoiceContext()
-
   const isDisabled = !formData.type
+
+  const handleNextStep = () => {
+    const stepOneValidated = stepOneSchema.safeParse(formData)
+
+    if (stepOneValidated.success) setStep(2)
+  }
 
   return (
     <div className="flex flex-col h-full min-h-[29rem] justify-between">
@@ -36,7 +42,7 @@ export const SelectType = () => {
       </div>
 
       <ModalFooter>
-        <Button disabled={isDisabled} onClick={() => setStep(2)}>
+        <Button disabled={isDisabled} onClick={handleNextStep}>
           CONTINUAR
         </Button>
       </ModalFooter>

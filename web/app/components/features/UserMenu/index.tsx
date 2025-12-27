@@ -33,7 +33,7 @@ export const UserMenu = ({ email, name, handleLogout }: UserMenuProps) => {
       </PopoverTrigger>
       <PopoverContent
         className="flex border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary
-        mr-10 mt-2 rounded-xl shadow-xl w-auto"
+        mr-10 mt-2 rounded-xl shadow-xl w-auto z-[100]"
         align="end"
       >
         <div className="flex flex-col gap-3 py-2">
@@ -45,7 +45,6 @@ export const UserMenu = ({ email, name, handleLogout }: UserMenuProps) => {
               {name || 'Admin'}
             </p>
           </div>
-
           <div className="flex items-center gap-1 pb-5">
             <p className="text-text-primary text-sm font-inter font-semibold">
               Email:
