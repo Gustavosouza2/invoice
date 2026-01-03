@@ -1,12 +1,12 @@
 'use client'
 
 import {
+  useMemo,
   useState,
   useContext,
+  useCallback,
   createContext,
   type ReactNode,
-  useMemo,
-  useCallback,
 } from 'react'
 
 export type CreateFormData = {
@@ -76,7 +76,7 @@ export const CreateInvoiceContextProvider: React.FC<{
       setFormData,
       clearFormData,
     }),
-    [formData, setFormData, setStep, step, clearFormData],
+    [step, setStep, formData, setFormData, clearFormData],
   )
 
   return (

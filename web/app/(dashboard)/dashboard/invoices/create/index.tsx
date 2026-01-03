@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 
 import { Modal } from '@/components/features/Modal'
 
-import { useCreateInvoiceContext } from './context'
+import { CustomerDetails } from './steps/CustomerDetails'
 import { InvoiceDetails } from './steps/InvoiceDetails'
+import { useCreateInvoiceContext } from './context'
 import { SelectType } from './steps/SelectType'
 
 type CreateInvoiceProps = {
@@ -21,6 +22,7 @@ export const CreateInvoiceModal = ({ isOpen, onClose }: CreateInvoiceProps) => {
   const steps: Record<number, JSX.Element> = {
     1: <SelectType />,
     2: <InvoiceDetails />,
+    3: <CustomerDetails />,
   }
 
   useEffect(() => {

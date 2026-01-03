@@ -1,21 +1,36 @@
 import { FaHandSparkles, FaHands } from 'react-icons/fa6'
+import { useForm } from 'react-hook-form'
 
 import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 import { NoteButton } from '@/components/features/Button/NoteButton'
 import { Button } from '@/components/features/Button/DefaultButton'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useCreateInvoiceContext } from '../context'
 import { stepOneSchema } from '../schema'
 
+type SelectTypeFormData = {
+  type: string
+}
+
 export const SelectType = () => {
   const { formData, setFormData, setStep } = useCreateInvoiceContext()
-  const isDisabled = !formData.type
 
-  const handleNextStep = () => {
-    const stepOneValidated = stepOneSchema.safeParse(formData)
+  const form = useForm<SelectTypeFormData>({
+    resolver: zodResolver(stepOneSchema),
+    mode: 'onChange',
+    defaultValues: {
+      type: formData.type || 'WithoutIA',
+    },
+  })
 
-    if (stepOneValidated.success) setStep(2)
-  }
+  const {
+    formState: { isValid },
+  } = form
+
+  const isDisabled = !isValid
+
+  const onSubmit = () => setStep(2)
 
   return (
     <div className="flex flex-col h-full min-h-[29rem] justify-between">
@@ -42,7 +57,7 @@ export const SelectType = () => {
       </div>
 
       <ModalFooter>
-        <Button disabled={isDisabled} onClick={handleNextStep}>
+        <Button disabled={isDisabled} onClick={onSubmit}>
           CONTINUAR
         </Button>
       </ModalFooter>

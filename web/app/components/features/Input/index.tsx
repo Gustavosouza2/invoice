@@ -27,12 +27,27 @@ export const Input = ({
   placeholder,
   maxLength,
   iconType,
-  options,
   onChange,
+  options,
+  mask,
   type,
   ...props
 }: AbstractInputsProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const handleBlockKeyDownValuesInput = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (
+      e.key === 'e' ||
+      e.key === 'E' ||
+      e.key === '+' ||
+      e.key === '-' ||
+      e.key === '.'
+    ) {
+      e.preventDefault()
+    }
+  }
 
   return (
     <>
@@ -44,25 +59,35 @@ export const Input = ({
                 {inputIcons({ iconType })}
               </div>
             )}
-            <InputShad
-              className={cn(
-                'h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
-                iconType ? 'pl-10' : 'pl-3',
-              )}
+            <InputMask
+              maskChar={null}
+              mask={mask ?? ''}
               onChange={onChange}
-              placeholder={placeholder}
-              maxLength={maxLength}
-              autoComplete="off"
-              type="text"
-              {...props}
-            />
+              value={(props.value as string | undefined) || ''}
+            >
+              {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
+                <InputShad
+                  {...inputProps}
+                  placeholder={placeholder || ''}
+                  className={cn(
+                    'h-11 rounded border border-transparent bg-input-default',
+                    'text-text-tertiary placeholder:text-text-tertiary/70',
+                    'focus-visible:ring-0 focus:border-zinc-700',
+                    iconType ? 'pl-10' : 'pl-3',
+                  )}
+                  onChange={onChange}
+                  autoComplete="off"
+                  type="text"
+                />
+              )}
+            </InputMask>
           </div>
         )}
 
         {type === 'currency' && (
           <CurrencyInput
             className={cn(
-              'w-full h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
+              'w-full h-11 rounded placeholder:text-text-tertiary/70 text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
               iconType ? 'pl-10' : 'pl-3',
             )}
             intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
@@ -121,7 +146,7 @@ export const Input = ({
               )}
               <InputShad
                 className={cn(
-                  'h-11 rounded placeholder:text-text-tertiary text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pr-10',
+                  'h-11 rounded placeholder:text-text-tertiary/70 text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pr-10',
                   iconType ? 'pl-10' : 'pl-3',
                 )}
                 type={showPassword ? 'text' : 'password'}
@@ -166,9 +191,10 @@ export const Input = ({
 
         {type === 'number' && (
           <InputShad
+            onKeyDown={handleBlockKeyDownValuesInput}
             className={cn(
               'h-11 rounded border border-transparent bg-input-default',
-              'text-text-tertiary placeholder:text-text-tertiary',
+              'text-text-tertiary placeholder:text-text-tertiary/70',
               'focus-visible:ring-0 focus:border-zinc-700',
               iconType ? 'pl-10' : 'pl-3',
 
@@ -178,13 +204,21 @@ export const Input = ({
               '[&::-webkit-inner-spin-button]:m-0',
             )}
             placeholder={placeholder}
+            value={
+              typeof props.value === 'number'
+                ? String(props.value)
+                : (props.value as string | undefined) || ''
+            }
             onChange={(e) => {
               if (maxLength && e.target.value.length > maxLength) {
-                e.target.value = e.target.value.slice(0, maxLength)
+                e.target.value = e.target.value
+                  .slice(0, maxLength)
+                  .replace(/[^0-9.]/g, '')
               }
               onChange?.(e)
             }}
             autoComplete="off"
+            pattern="[0-9]*"
             type="number"
             {...props}
           />
@@ -192,7 +226,7 @@ export const Input = ({
 
         {type === 'date' && (
           <InputMask
-            mask="99/99/9999"
+            mask={mask ?? ''}
             maskChar={null}
             value={(props.value as string | undefined) || ''}
             onChange={onChange}
@@ -203,7 +237,7 @@ export const Input = ({
                 placeholder={placeholder || 'DD/MM/YYYY'}
                 className={cn(
                   'h-11 rounded border border-transparent bg-input-default',
-                  'text-text-tertiary placeholder:text-text-tertiary',
+                  'text-text-tertiary placeholder:text-text-tertiary/70',
                   'focus-visible:ring-0 focus:border-zinc-700',
                   iconType ? 'pl-10' : 'pl-3',
                 )}
