@@ -54,6 +54,17 @@ export const stepThreeSchema = z.object({
     .regex(EMAIL_REGEX, { message: 'Insira um email válido' }),
 })
 
+export const stepFourSchema = z.object({
+  serviceDescription: z.string().min(1, 'A descrição do serviço é obrigatória'),
+  serviceValue: z.number().min(1, 'O valor do serviço é obrigatório'),
+})
+
+export const stepFiveSchema = z.object({
+  taxRate: z.number().min(0, 'A taxa de imposto é obrigatória'),
+  issValue: z.number().min(0, 'O valor do ISS é obrigatório'),
+  netValue: z.number().min(0, 'O valor da nota é obrigatório'),
+})
+
 export const fileUploadSchema = z.object({
   file: z
     .instanceof(File, { message: 'Por favor, selecione um arquivo' })
@@ -76,4 +87,6 @@ export const fileUploadSchema = z.object({
 export const createInvoiceSchema = stepOneSchema
   .merge(stepTwoSchema)
   .merge(stepThreeSchema)
+  .merge(stepFourSchema)
+  .merge(stepFiveSchema)
   .merge(fileUploadSchema)

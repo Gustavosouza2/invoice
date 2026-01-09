@@ -4,7 +4,14 @@ import { type UseFormRegister } from 'react-hook-form'
 import { type InputProps } from '@/components/ui/input'
 
 type InputProperty = InputProps & {
-  type: 'password' | 'select' | 'currency' | 'text' | 'number' | 'date'
+  type:
+    | 'password'
+    | 'select'
+    | 'currency'
+    | 'text'
+    | 'number'
+    | 'date'
+    | 'textArea'
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
   iconType?: 'email' | 'password' | 'phone' | 'name'
   register?: UseFormRegister<any> //eslint-disable-line

@@ -4,8 +4,10 @@ import { Modal } from '@/components/features/Modal'
 
 import { CustomerDetails } from './steps/CustomerDetails'
 import { InvoiceDetails } from './steps/InvoiceDetails'
+import { ServiceDetails } from './steps/ServiceDetails'
 import { useCreateInvoiceContext } from './context'
 import { SelectType } from './steps/SelectType'
+import { TaxValues } from './steps/TaxValues'
 
 type CreateInvoiceProps = {
   isOpen: boolean
@@ -23,6 +25,8 @@ export const CreateInvoiceModal = ({ isOpen, onClose }: CreateInvoiceProps) => {
     1: <SelectType />,
     2: <InvoiceDetails />,
     3: <CustomerDetails />,
+    4: <ServiceDetails />,
+    5: <TaxValues onClose={onClose} />,
   }
 
   useEffect(() => {

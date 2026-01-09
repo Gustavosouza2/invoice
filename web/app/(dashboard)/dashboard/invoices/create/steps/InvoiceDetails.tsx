@@ -59,14 +59,16 @@ export const InvoiceDetails = () => {
                 label="Numero da Nota:"
                 labelClassName="-mb-1"
                 render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="number"
-                    maxLength={9}
-                    placeholder="Digite o número da nota"
-                    onChange={(e) => field.onChange(e.target.value)}
-                    value={field.value ?? ''}
-                  />
+                  <>
+                    <Input
+                      {...field}
+                      type="number"
+                      maxLength={9}
+                      value={field.value ?? ''}
+                      placeholder="Digite o número da nota"
+                      onChange={(e) => field.onChange(e.target.value)}
+                    />
+                  </>
                 )}
               />
               <FormField

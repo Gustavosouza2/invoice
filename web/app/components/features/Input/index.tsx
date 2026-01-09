@@ -7,6 +7,7 @@ import { useState } from 'react'
 import type React from 'react'
 
 import { Input as InputShad } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import {
   SelectTrigger,
@@ -87,7 +88,11 @@ export const Input = ({
         {type === 'currency' && (
           <CurrencyInput
             className={cn(
-              'w-full h-11 rounded placeholder:text-text-tertiary/70 text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default',
+              'w-full h-11 rounded text-sm',
+              'border border-transparent bg-input-default',
+              'text-text-tertiary placeholder:text-text-tertiary/70',
+              'focus:outline-none focus:ring-0 focus:border-zinc-700',
+              'focus-visible:outline-none focus-visible:ring-0 focus-visible:border-zinc-700',
               iconType ? 'pl-10' : 'pl-3',
             )}
             intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
@@ -190,38 +195,45 @@ export const Input = ({
         )}
 
         {type === 'number' && (
-          <InputShad
-            onKeyDown={handleBlockKeyDownValuesInput}
-            className={cn(
-              'h-11 rounded border border-transparent bg-input-default',
-              'text-text-tertiary placeholder:text-text-tertiary/70',
-              'focus-visible:ring-0 focus:border-zinc-700',
-              iconType ? 'pl-10' : 'pl-3',
+          <>
+            <InputShad
+              onKeyDown={handleBlockKeyDownValuesInput}
+              className={cn(
+                'h-11 rounded border border-transparent bg-input-default',
+                'text-text-tertiary placeholder:text-text-tertiary/70',
+                'focus-visible:ring-0 focus:border-zinc-700',
+                iconType ? 'pl-10' : 'pl-3',
 
-              '[appearance:textfield]',
-              '[&::-webkit-inner-spin-button]:appearance-none',
-              '[&::-webkit-outer-spin-button]:appearance-none',
-              '[&::-webkit-inner-spin-button]:m-0',
-            )}
-            placeholder={placeholder}
-            value={
-              typeof props.value === 'number'
-                ? String(props.value)
-                : (props.value as string | undefined) || ''
-            }
-            onChange={(e) => {
-              if (maxLength && e.target.value.length > maxLength) {
-                e.target.value = e.target.value
-                  .slice(0, maxLength)
-                  .replace(/[^0-9.]/g, '')
+                '[appearance:textfield]',
+                '[&::-webkit-inner-spin-button]:appearance-none',
+                '[&::-webkit-outer-spin-button]:appearance-none',
+                '[&::-webkit-inner-spin-button]:m-0',
+              )}
+              placeholder={placeholder}
+              value={
+                typeof props.value === 'number'
+                  ? String(props.value)
+                  : (props.value as string | undefined) || ''
               }
-              onChange?.(e)
-            }}
-            autoComplete="off"
-            pattern="[0-9]*"
-            type="number"
-            {...props}
-          />
+              onChange={(e) => {
+                if (maxLength && e.target.value.length > maxLength) {
+                  e.target.value = e.target.value
+                    .slice(0, maxLength)
+                    .replace(/[^0-9.]/g, '')
+                }
+                onChange?.(e)
+              }}
+              autoComplete="off"
+              pattern="[0-9]*"
+              type="number"
+              {...props}
+            />
+            {maxLength && (
+              <h1 className="text-xs text-text-tertiary/70 absolute bottom-3 right-4">
+                {String(props.value).length} / {maxLength}
+              </h1>
+            )}
+          </>
         )}
 
         {type === 'date' && (
@@ -246,6 +258,21 @@ export const Input = ({
               />
             )}
           </InputMask>
+        )}
+
+        {type === 'textArea' && (
+          <Textarea
+            placeholder={placeholder}
+            onChange={(e) =>
+              onChange?.(e as unknown as React.ChangeEvent<HTMLInputElement>)
+            }
+            className={cn(
+              'h-11 rounded border border-transparent bg-input-default',
+              'text-text-tertiary placeholder:text-text-tertiary/70',
+              'focus-visible:ring-0 focus:border-zinc-700 resize-y max-h-28',
+              iconType ? 'pl-10' : 'pl-3',
+            )}
+          />
         )}
       </div>
     </>
