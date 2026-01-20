@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState, useEffect } from 'react'
 import { MdEdit, MdVisibility } from 'react-icons/md'
 import { useRouter } from 'next/navigation'
 
@@ -10,22 +10,58 @@ import { usePagination } from '@/hooks/usePagination'
 import { Filter } from '@/components/features/Filter'
 import type { Invoice } from '@/types/invoice'
 
-import { CreateInvoiceContextProvider } from './create/context'
-import { CreateInvoiceModal } from './create'
+import { InvoiceFormProvider, type InvoiceFormData } from './form/context'
+import { InvoiceFormModal } from './form'
 
 export default function InvoiceView() {
-  const { filters, setFilters } = usePagination()
   const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false)
+  const [editInvoiceId, setEditInvoiceId] = useState<string | undefined>()
+  const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
+  const [editInvoiceData, setEditInvoiceData] =
+    useState<InvoiceFormData | null>(null)
+  const { filters, setFilters } = usePagination()
+
+  const [debouncedName, setDebouncedName] = useState(filters.name ?? '')
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedName(filters.name ?? '')
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [filters.name])
 
   const handleIsOpenCreateInvoiceModal = useCallback(() => {
     setIsOpenCreateModal(!isOpenCreateModal)
   }, [isOpenCreateModal])
 
+  const handleOpenEditModal = useCallback((invoice: Invoice) => {
+    const { issueDate, ...invoiceFormFields } = invoice
+
+    setEditInvoiceData({
+      ...invoiceFormFields,
+      issueDate: issueDate?.split('T')[0],
+    } as InvoiceFormData)
+
+    setEditInvoiceId(invoice.id)
+    setIsOpenEditModal(true)
+  }, [])
+
+  const handleCloseEditModal = useCallback(() => {
+    setIsOpenEditModal(false)
+    setEditInvoiceData(null)
+    setEditInvoiceId(undefined)
+  }, [])
+
   const { data: invoices, isLoading } = useGetInvoicesList({
     page: filters.page,
     perPage: filters.pageSize,
-    name: filters.name ?? '',
+    name: debouncedName,
   })
+
+  const showSkeleton = useMemo(
+    () => isLoading && !invoices,
+    [isLoading, invoices],
+  )
 
   const { push } = useRouter()
 
@@ -48,29 +84,27 @@ export default function InvoiceView() {
     [push, setFilters, filters],
   )
 
-  const handleIsOpenEditModal = useCallback((id: string) => {}, [])
-
   const formattedInvoiceData = useMemo(() => {
     return invoices?.data?.map((invoice) => ({
       ...invoice,
-      onClickRow: () => handleIsOpenEditModal(invoice.id),
+      onClickRow: () => handleOpenEditModal(invoice),
     }))
-  }, [invoices?.data, handleIsOpenEditModal]) as Invoice[]
+  }, [invoices?.data, handleOpenEditModal]) as Invoice[]
 
   const ItemsContextMenu = useCallback(
     (rowData: Invoice) => [
       {
         label: 'Visualizar',
         icon: () => <MdVisibility className="h-4 w-4 fill-current" />,
-        onClick: () => handleIsOpenEditModal(rowData.id),
+        onClick: () => handleOpenEditModal(rowData),
       },
       {
         label: 'Editar',
         icon: () => <MdEdit className="h-4 w-4 fill-current" />,
-        onClick: () => handleIsOpenEditModal(rowData.id),
+        onClick: () => handleOpenEditModal(rowData),
       },
     ],
-    [handleIsOpenEditModal],
+    [handleOpenEditModal],
   )
 
   return (
@@ -78,7 +112,7 @@ export default function InvoiceView() {
       <div className="w-full md-mobile:w-auto order-2 md-mobile:order-1">
         <DataTable
           columns={columns}
-          isLoading={isLoading}
+          isLoading={showSkeleton}
           items={ItemsContextMenu}
           currentPage={filters.page}
           data={formattedInvoiceData}
@@ -89,17 +123,30 @@ export default function InvoiceView() {
 
       <div className="w-full md-mobile:w-auto order-1 md-mobile:order-2 h-full">
         <Filter
-          isLoading={isLoading}
+          isLoading={showSkeleton}
           handleCreateInvoice={handleIsOpenCreateInvoiceModal}
         />
       </div>
 
-      <CreateInvoiceContextProvider>
-        <CreateInvoiceModal
+      <InvoiceFormProvider mode="create">
+        <InvoiceFormModal
           isOpen={isOpenCreateModal}
           onClose={handleIsOpenCreateInvoiceModal}
         />
-      </CreateInvoiceContextProvider>
+      </InvoiceFormProvider>
+
+      {editInvoiceData && (
+        <InvoiceFormProvider
+          mode="edit"
+          initialData={editInvoiceData}
+          invoiceId={editInvoiceId}
+        >
+          <InvoiceFormModal
+            isOpen={isOpenEditModal}
+            onClose={handleCloseEditModal}
+          />
+        </InvoiceFormProvider>
+      )}
     </main>
   )
 }

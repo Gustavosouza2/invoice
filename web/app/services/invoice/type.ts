@@ -38,3 +38,24 @@ export type CreateInvoiceRequest = {
 export type CreateInvoiceResponse = {
   invoice: Invoice
 }
+
+export type UpdateInvoiceRequest = {
+  id: string
+  serviceDescription?: string
+  customerCnpjOrCpf?: string
+  customerEmail?: string
+  providerName?: string
+  providerCnpj?: string
+  customerName?: string
+  serviceValue?: number
+  issueDate?: string
+  invoiceNumber?: number
+  taxRate?: number
+  issValue?: number
+  netValue?: number
+  status?: string
+}
+
+export type UpdateInvoiceResponse = {
+  invoice: Invoice
+}

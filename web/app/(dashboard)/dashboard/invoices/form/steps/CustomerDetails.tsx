@@ -7,20 +7,22 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { FormField } from '@/components/ui/form-field'
 import { Input } from '@/components/features/Input'
 
-import { useCreateInvoiceContext } from '../context'
-import { stepThreeSchema } from '../schema'
+import { useInvoiceFormContext } from '../context'
+import { customerDetailsSchema } from '../schema'
 
 type CustomerDetailsFormData = {
-  customerCnpjOrCpf: string
+  customerCnpjOrCpf?: string
   customerEmail?: string
-  customerName: string
+  customerName?: string
 }
 
 export const CustomerDetails = () => {
-  const { setStep, formData, setFormData } = useCreateInvoiceContext()
+  const { setStep, formData, setFormData, mode } = useInvoiceFormContext()
+
+  const schema = customerDetailsSchema[mode]
 
   const form = useForm<CustomerDetailsFormData>({
-    resolver: zodResolver(stepThreeSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
       customerName: formData.customerName || '',
@@ -43,6 +45,8 @@ export const CustomerDetails = () => {
     })
     setStep(4)
   }
+
+  const isButtonDisabled = mode === 'create' ? !isValid : false
 
   return (
     <FormProvider {...form}>
@@ -102,7 +106,7 @@ export const CustomerDetails = () => {
           </FieldSet>
 
           <ModalFooter>
-            <Button type="submit" disabled={!isValid}>
+            <Button type="submit" disabled={isButtonDisabled}>
               CONTINUAR
             </Button>
           </ModalFooter>

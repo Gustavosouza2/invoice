@@ -56,16 +56,61 @@ export const DataTable = React.memo(
     currentPage,
     onPageChange,
   }: DataTableProps<T>) => {
+    const containerClassName = `w-full border border-bg-secondary/20
+      hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60
+      bg-gradient-to-br from-bg-default to-bg-primary rounded-xl`
+
     return (
       <>
         {isLoading ? (
-          <Skeleton className="w-full h-96 rounded-xl" />
+          <div className={containerClassName}>
+            <div className="rounded-xl p-3 sm:p-4 lg:p-5 w-full">
+              <div className="hidden sm:block">
+                <div className="w-full overflow-x-auto">
+                  <div className="w-full min-w-[600px] lg:min-w-[800px]">
+                    <div className="space-y-4">
+                      <div className="flex gap-4 pb-4 border-b border-bg-secondary/20">
+                        <Skeleton className="flex-1 h-6 rounded" />
+                        <Skeleton className="w-[27.5%] h-6 rounded" />
+                        <Skeleton className="w-[27.5%] h-6 rounded" />
+                        <Skeleton className="w-[50px] h-6 rounded" />
+                      </div>
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex gap-4 py-3">
+                          <Skeleton className="flex-1 h-8 rounded" />
+                          <Skeleton className="w-[27.5%] h-8 rounded" />
+                          <Skeleton className="w-[27.5%] h-8 rounded" />
+                          <Skeleton className="w-[50px] h-8 rounded" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="block sm:hidden space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="border-b border-[#FFFA]/10 pb-4 last:border-b-0 rounded-lg p-3"
+                  >
+                    <Skeleton className="w-3/4 h-6 mb-4 rounded" />
+                    <Skeleton className="w-1/2 h-5 mb-4 rounded" />
+                    <Skeleton className="w-2/3 h-5 rounded" />
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-center items-center gap-2 mt-6">
+                <Skeleton className="w-8 h-8 rounded" />
+                <Skeleton className="w-8 h-8 rounded" />
+                <Skeleton className="w-8 h-8 rounded" />
+                <Skeleton className="w-12 h-8 rounded" />
+              </div>
+            </div>
+          </div>
         ) : (
-          <div
-            className="w-full border border-bg-secondary/20
-            hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60
-            bg-gradient-to-br from-bg-default to-bg-primary rounded-xl"
-          >
+          <div className={containerClassName}>
             <div className="rounded-xl p-3 sm:p-4 lg:p-5 w-full">
               {/* RESPONSIVE DESKTOP & TABLET */}
               <div className="hidden sm:block">

@@ -9,7 +9,9 @@ import {
   type ReactNode,
 } from 'react'
 
-export type CreateFormData = {
+export type InvoiceFormMode = 'create' | 'edit'
+
+export type InvoiceFormData = {
   providerMunicipalReg?: string
   type?: 'WithIA' | 'WithoutIA'
   serviceDescription?: string
@@ -28,37 +30,50 @@ export type CreateFormData = {
   taxRate?: number
   userId?: string
   status?: string
+  id?: string
 }
 
-type CreateInvoiceContextProps = {
-  setFormData: (data: Partial<CreateFormData>) => void
+type InvoiceFormContextProps = {
+  setFormData: (data: Partial<InvoiceFormData>) => void
   setStep: (step: number) => void
   clearFormData: () => void
-  formData: CreateFormData
+  formData: InvoiceFormData
+  mode: InvoiceFormMode
+  invoiceId?: string
   step: number
 }
 
-const initialFormData: CreateFormData = {}
+const initialFormData: InvoiceFormData = {}
 
-export const CreateInvoiceContext = createContext<CreateInvoiceContextProps>({
+export const InvoiceFormContext = createContext<InvoiceFormContextProps>({
   formData: initialFormData,
   clearFormData: () => {},
   setFormData: () => {},
   setStep: () => {},
+  mode: 'create',
   step: 1,
 })
 
-export const CreateInvoiceContextProvider: React.FC<{
+type InvoiceFormProviderProps = {
   children?: ReactNode
-  initialData?: CreateFormData
-}> = ({ children, initialData }) => {
-  const [step, setStep] = useState<number>(1)
-  const [formData, setFormDataState] = useState<CreateFormData>(
+  initialData?: InvoiceFormData
+  mode: InvoiceFormMode
+  invoiceId?: string
+}
+
+export const InvoiceFormProvider: React.FC<InvoiceFormProviderProps> = ({
+  children,
+  initialData,
+  mode,
+  invoiceId,
+}) => {
+  const [step, setStep] = useState<number>(mode === 'create' ? 1 : 1)
+  const [formData, setFormDataState] = useState<InvoiceFormData>(
     initialData ?? initialFormData,
   )
 
   const setFormData = useCallback(
-    (data: Partial<CreateFormData>) => {
+    (data: Partial<InvoiceFormData>) => {
       setFormDataState((prev) => ({ ...prev, ...data }))
     },
     [setFormDataState],
@@ -75,15 +90,17 @@ export const CreateInvoiceContextProvider: React.FC<{
       formData,
       setFormData,
       clearFormData,
+      mode,
+      invoiceId,
     }),
-    [step, setStep, formData, setFormData, clearFormData],
+    [step, setStep, formData, setFormData, clearFormData, mode, invoiceId],
   )
 
   return (
-    <CreateInvoiceContext.Provider value={valueContext}>
+    <InvoiceFormContext.Provider value={valueContext}>
       {children}
-    </CreateInvoiceContext.Provider>
+    </InvoiceFormContext.Provider>
   )
 }
 
-export const useCreateInvoiceContext = () => useContext(CreateInvoiceContext)
+export const useInvoiceFormContext = () => useContext(InvoiceFormContext)

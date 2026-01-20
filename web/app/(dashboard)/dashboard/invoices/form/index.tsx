@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 
 import { Modal } from '@/components/features/Modal'
@@ -6,20 +8,19 @@ import { CustomerDetails } from './steps/CustomerDetails'
 import { ProviderDetails } from './steps/ProviderDetails'
 import { InvoiceDetails } from './steps/InvoiceDetails'
 import { ServiceDetails } from './steps/ServiceDetails'
-import { useCreateInvoiceContext } from './context'
+import { useInvoiceFormContext } from './context'
 import { SelectType } from './steps/SelectType'
 
-type CreateInvoiceProps = {
+type InvoiceFormModalProps = {
   isOpen: boolean
   onClose: () => void
 }
 
-export const CreateInvoiceModal = ({ isOpen, onClose }: CreateInvoiceProps) => {
-  const {
-    setStep,
-    clearFormData,
-    step: currentStep,
-  } = useCreateInvoiceContext()
+export const InvoiceFormModal = ({
+  isOpen,
+  onClose,
+}: InvoiceFormModalProps) => {
+  const { setStep, clearFormData, step: currentStep } = useInvoiceFormContext()
 
   const steps: Record<number, JSX.Element> = {
     1: <SelectType />,

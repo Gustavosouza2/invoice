@@ -68,6 +68,7 @@ describe('InvoicesService', () => {
     const req: GetAllInvoicesRequest = {
       page: 1,
       per_page: 10,
+      customer_name: 'customer_name',
     };
     const result = await service.findAllInvoices(req);
     expect(result.total).toBe(1);

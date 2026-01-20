@@ -7,19 +7,21 @@ import { FormField } from '@/components/ui/form-field'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/features/Input'
 
-import { useCreateInvoiceContext } from '../context'
-import { stepTwoSchema } from '../schema'
+import { useInvoiceFormContext } from '../context'
+import { invoiceDetailsSchema } from '../schema'
 
 type InvoiceDetailsFormData = {
-  invoiceNumber: number
-  issueDate: string
+  invoiceNumber?: number
+  issueDate?: string
 }
 
 export const InvoiceDetails = () => {
-  const { formData, setFormData, setStep } = useCreateInvoiceContext()
+  const { formData, setFormData, setStep, mode } = useInvoiceFormContext()
+
+  const schema = invoiceDetailsSchema[mode]
 
   const form = useForm<InvoiceDetailsFormData>({
-    resolver: zodResolver(stepTwoSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
       issueDate: formData.issueDate || '',
@@ -41,6 +43,8 @@ export const InvoiceDetails = () => {
     setStep(3)
   }
 
+  const isButtonDisabled = mode === 'create' ? !isValid : false
+
   return (
     <FormProvider {...form}>
       <div className="flex flex-col h-full min-h-[29rem] justify-between">
@@ -59,16 +63,14 @@ export const InvoiceDetails = () => {
                 label="Numero da Nota:"
                 labelClassName="-mb-1"
                 render={({ field }) => (
-                  <>
-                    <Input
-                      {...field}
-                      type="number"
-                      maxLength={9}
-                      value={field.value ?? ''}
-                      placeholder="Digite o número da nota"
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  </>
+                  <Input
+                    {...field}
+                    type="number"
+                    maxLength={9}
+                    value={field.value ?? ''}
+                    placeholder="Digite o número da nota"
+                    onChange={(e) => field.onChange(e.target.value)}
+                  />
                 )}
               />
               <FormField
@@ -89,7 +91,7 @@ export const InvoiceDetails = () => {
           </FieldSet>
 
           <ModalFooter>
-            <Button disabled={!isValid} type="submit">
+            <Button disabled={isButtonDisabled} type="submit">
               CONTINUAR
             </Button>
           </ModalFooter>

@@ -4,17 +4,19 @@ import type { GetAllInvoicesResponse } from '@/services/invoice/type'
 
 type GetAllInvoicesList = {
   page: number
-  perPage: number
   name?: string
+  perPage: number
 }
 
 export const useGetInvoicesList = ({
   page = 1,
-  perPage = 10,
   name = '',
+  perPage = 10,
 }: GetAllInvoicesList) => {
-  const { data, error, isLoading } = useSWR<GetAllInvoicesResponse>(
-    `/api/dashboard/invoices?page=${page}&perPage=${perPage}&name=${encodeURIComponent(name)}`,
-  )
-  return { data, error, isLoading }
+  const { data, error, isLoading, isValidating } =
+    useSWR<GetAllInvoicesResponse>(
+      `/api/dashboard/invoices?page=${page}&perPage=${perPage}&name=${name}`,
+      { keepPreviousData: true },
+    )
+  return { data, error, isLoading, isValidating }
 }

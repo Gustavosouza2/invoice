@@ -6,18 +6,18 @@ import { NoteButton } from '@/components/features/Button/NoteButton'
 import { Button } from '@/components/features/Button/DefaultButton'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { useCreateInvoiceContext } from '../context'
-import { stepOneSchema } from '../schema'
+import { useInvoiceFormContext } from '../context'
+import { selectTypeSchema } from '../schema'
 
 type SelectTypeFormData = {
   type: string
 }
 
 export const SelectType = () => {
-  const { formData, setFormData, setStep } = useCreateInvoiceContext()
+  const { formData, setFormData, setStep } = useInvoiceFormContext()
 
   const form = useForm<SelectTypeFormData>({
-    resolver: zodResolver(stepOneSchema),
+    resolver: zodResolver(selectTypeSchema),
     mode: 'onChange',
     defaultValues: {
       type: formData.type || 'WithoutIA',
@@ -29,8 +29,6 @@ export const SelectType = () => {
   } = form
 
   const isDisabled = !isValid
-
-  const onSubmit = () => setStep(2)
 
   return (
     <div className="flex flex-col h-full min-h-[29rem] justify-between">
@@ -57,7 +55,7 @@ export const SelectType = () => {
       </div>
 
       <ModalFooter>
-        <Button disabled={isDisabled} onClick={onSubmit}>
+        <Button disabled={isDisabled} onClick={() => setStep(2)}>
           CONTINUAR
         </Button>
       </ModalFooter>

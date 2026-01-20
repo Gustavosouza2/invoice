@@ -4,6 +4,8 @@ import type {
   GetInvoiceResponse,
   CreateInvoiceRequest,
   CreateInvoiceResponse,
+  UpdateInvoiceRequest,
+  UpdateInvoiceResponse,
   GetAllInvoicesRequest,
   GetAllInvoicesResponse,
 } from './type'
@@ -32,6 +34,14 @@ class Invoice extends BaseApi {
       CreateInvoiceRequest,
       CreateInvoiceResponse
     >(`/invoices/create-invoice`, data)
+    return response
+  }
+
+  public async updateInvoice({ id, ...data }: UpdateInvoiceRequest) {
+    const response = (await this.patch(
+      `/invoices/update-invoice/${id}`,
+      data,
+    )) as UpdateInvoiceResponse
     return response
   }
 }

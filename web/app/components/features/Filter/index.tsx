@@ -22,18 +22,30 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
 
   const { state } = useSidebar()
 
+  const cardClassName = `
+    ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
+    h-auto px-8 py-6 rounded-xl border border-bg-secondary/40
+    bg-gradient-to-br from-bg-default to-bg-primary shadow-xl/40
+    hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60`
+
   return (
     <>
       {isLoading ? (
-        <Skeleton className="w-64 h-64 rounded-xl" />
-      ) : (
-        <Card
+        <div
           className={`
-        ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
-        h-auto px-8 py-6 rounded-xl border border-bg-secondary/40
-        bg-gradient-to-br from-bg-default to-bg-primary shadow-xl/40
-        hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60`}
+            ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
+            w-full px-8 py-6 rounded-xl border border-bg-secondary/40
+            bg-gradient-to-br from-bg-default to-bg-primary
+          `}
         >
+          <div className="flex flex-col space-y-4">
+            <Skeleton className="w-16 h-5 rounded" />
+            <Skeleton className="w-full h-10 rounded" />
+            <Skeleton className="w-24 h-20 rounded-xl mt-6" />
+          </div>
+        </div>
+      ) : (
+        <Card className={cardClassName}>
           <div className="flex flex-col">
             <div className="text-md font-poppins mb-4">Filtros</div>
             <Input

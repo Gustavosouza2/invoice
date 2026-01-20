@@ -17,6 +17,23 @@ const createInvoiceSchema = z.object({
   userId: z.string().min(1),
 })
 
+const updateInvoiceSchema = z.object({
+  id: z.string().min(1),
+  issueDate: z.string().optional(),
+  providerName: z.string().optional(),
+  providerCnpj: z.string().optional(),
+  customerName: z.string().optional(),
+  customerCnpjOrCpf: z.string().optional(),
+  serviceDescription: z.string().optional(),
+  serviceValue: z.coerce.number().positive().optional(),
+  customerEmail: z.string().email().optional(),
+  invoiceNumber: z.coerce.number().optional(),
+  taxRate: z.coerce.number().optional(),
+  issValue: z.coerce.number().optional(),
+  netValue: z.coerce.number().optional(),
+  status: z.string().optional(),
+})
+
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const searchParams = url.searchParams
@@ -48,6 +65,17 @@ export async function GET(req: Request) {
     return NextResponse.json(data)
   } catch (err) {
     const anyErr = err as { message?: string; status?: number }
+
+    if (anyErr?.message?.includes('404')) {
+      return NextResponse.json({
+        data: [],
+        total: 0,
+        page,
+        per_page: perPage,
+        total_pages: 0,
+      })
+    }
+
     const status = typeof anyErr?.status === 'number' ? anyErr.status : 500
     const message = anyErr?.message ?? 'Internal Server Error'
     return NextResponse.json({ error: message }, { status })
@@ -79,6 +107,40 @@ export async function POST(req: Request) {
 
   try {
     const data = await invoiceApi.createInvoice(parsed.data)
+    return NextResponse.json(data)
+  } catch {
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    )
+  }
+}
+
+export async function PATCH(req: Request) {
+  const body = await req.json()
+
+  const parsed = updateInvoiceSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Dados inválidos', details: parsed.error.flatten() },
+      { status: 400 },
+    )
+  }
+
+  const cookieStore = cookies()
+  const token = cookieStore.get('access_token')?.value
+
+  if (!token) {
+    return NextResponse.json(
+      { error: 'Sessão expirada. Faça login novamente.' },
+      { status: 401 },
+    )
+  }
+
+  setToken(token)
+
+  try {
+    const data = await invoiceApi.updateInvoice(parsed.data)
     return NextResponse.json(data)
   } catch (err) {
     console.log('error', err)

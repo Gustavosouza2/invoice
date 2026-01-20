@@ -25,6 +25,7 @@ import { JwtGuard } from '../auth/jwt.guard';
 export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
+  @UseGuards(JwtGuard)
   @Post('/create-invoice')
   @UseInterceptors(FileInterceptor('file'))
   async createInvoice(

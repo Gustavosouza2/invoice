@@ -10,20 +10,22 @@ import { useUserContext } from '@/context/userContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/features/Input'
 
-import { useCreateInvoiceContext } from '../context'
-import { stepProviderSchema } from '../schema'
+import { useInvoiceFormContext } from '../context'
+import { providerDetailsSchema } from '../schema'
 
 type ProviderDetailsFormData = {
-  providerName: string
-  providerCnpj: string
+  providerName?: string
+  providerCnpj?: string
 }
 
 export const ProviderDetails = () => {
   const { userData } = useUserContext()
-  const { formData, setFormData, setStep } = useCreateInvoiceContext()
+  const { formData, setFormData, setStep, mode } = useInvoiceFormContext()
+
+  const schema = providerDetailsSchema[mode]
 
   const form = useForm<ProviderDetailsFormData>({
-    resolver: zodResolver(stepProviderSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
       providerName: formData.providerName || userData?.name || '',
@@ -44,6 +46,8 @@ export const ProviderDetails = () => {
     })
     setStep(5)
   }
+
+  const isButtonDisabled = mode === 'create' ? !isValid : false
 
   return (
     <FormProvider {...form}>
@@ -89,7 +93,7 @@ export const ProviderDetails = () => {
           </FieldSet>
 
           <ModalFooter>
-            <Button type="submit" disabled={!isValid}>
+            <Button type="submit" disabled={isButtonDisabled}>
               CONTINUAR
             </Button>
           </ModalFooter>

@@ -3,27 +3,35 @@ import axios from 'axios'
 
 import { ModalFooter, ModalHeader } from '@/components/features/Modal'
 import { Button } from '@/components/features/Button/DefaultButton'
+import { removeEmptyValues } from '@/utils/removeEmptyValues'
 import { FieldGroup, FieldSet } from '@/components/ui/field'
 import { FormField } from '@/components/ui/form-field'
 import { useUserContext } from '@/context/userContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/features/Input'
 import { Toast } from '@/components/features/Toast'
+import { decodeToken } from '@/services/token'
 
-import { useCreateInvoiceContext } from '../context'
-import { stepFourSchema } from '../schema'
+import { useInvoiceFormContext } from '../context'
+import { serviceDetailsSchema } from '../schema'
 
 type ServiceDetailsFormData = {
-  serviceDescription: string
+  serviceDescription?: string
   serviceValue?: number
 }
 
-export const ServiceDetails = ({ onClose }: { onClose: () => void }) => {
-  const { formData, setFormData } = useCreateInvoiceContext()
+type ServiceDetailsProps = {
+  onClose: () => void
+}
+
+export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
+  const { formData, setFormData, mode, invoiceId } = useInvoiceFormContext()
   const { userData } = useUserContext()
 
+  const schema = serviceDetailsSchema[mode]
+
   const form = useForm<ServiceDetailsFormData>({
-    resolver: zodResolver(stepFourSchema),
+    resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: {
       serviceDescription: formData.serviceDescription || '',
@@ -45,32 +53,81 @@ export const ServiceDetails = ({ onClose }: { onClose: () => void }) => {
 
     setFormData(nextFormData)
 
-    const payload = {
-      issueDate: formData.issueDate ?? '',
-      providerName: formData.providerName ?? '',
-      providerCnpj: formData.providerCnpj ?? '',
-      customerName: formData.customerName ?? '',
-      customerCnpjOrCpf: formData.customerCnpjOrCpf ?? '',
-      serviceDescription: nextFormData.serviceDescription,
-      serviceValue: nextFormData.serviceValue ?? 0,
-      userId: userData?.id ?? '',
-      ...(formData.customerEmail
-        ? { customerEmail: formData.customerEmail }
-        : {}),
+    if (mode === 'create') {
+      const tokenPayload = decodeToken()
+      const userId = userData?.id ?? (tokenPayload?.sub as string) ?? ''
+
+      const payload = {
+        issueDate: formData.issueDate ?? '',
+        providerName: formData.providerName ?? '',
+        providerCnpj: formData.providerCnpj ?? '',
+        customerName: formData.customerName ?? '',
+        customerCnpjOrCpf: formData.customerCnpjOrCpf ?? '',
+        serviceDescription: nextFormData.serviceDescription,
+        serviceValue: nextFormData.serviceValue ?? 0,
+        userId,
+        ...(formData.customerEmail && {
+          customerEmail: formData.customerEmail,
+        }),
+      }
+
+      axios
+        .post('/api/dashboard/invoices', payload, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(() => {
+          Toast({
+            type: 'success',
+            message: 'Nota fiscal criada com sucesso!',
+          })
+          onClose()
+        })
+        .catch(() => {
+          Toast({
+            type: 'error',
+            message: 'Erro ao criar nota fiscal. Tente novamente.',
+          })
+        })
+      return
     }
 
+    const payload = removeEmptyValues({
+      id: invoiceId,
+      issueDate: formData.issueDate,
+      providerName: formData.providerName,
+      providerCnpj: formData.providerCnpj,
+      customerName: formData.customerName,
+      customerCnpjOrCpf: formData.customerCnpjOrCpf,
+      serviceDescription: nextFormData.serviceDescription,
+      serviceValue: nextFormData.serviceValue,
+      customerEmail: formData.customerEmail,
+      invoiceNumber: formData.invoiceNumber,
+      taxRate: formData.taxRate,
+      issValue: formData.issValue,
+      netValue: formData.netValue,
+      status: formData.status,
+    })
+
     axios
-      .post('/api/dashboard/invoices', payload, {
+      .patch('/api/dashboard/invoices', payload, {
         headers: { 'Content-Type': 'application/json' },
       })
-      .then(() => onClose())
+      .then(() => {
+        Toast({
+          type: 'success',
+          message: 'Nota fiscal atualizada com sucesso!',
+        })
+        onClose()
+      })
       .catch(() => {
         Toast({
           type: 'error',
-          message: 'Erro ao criar nota fiscal. Tente novamente.',
+          message: 'Erro ao atualizar nota fiscal. Tente novamente.',
         })
       })
   }
+
+  const isButtonDisabled = mode === 'create' ? !isValid : false
 
   return (
     <FormProvider {...form}>
@@ -127,7 +184,7 @@ export const ServiceDetails = ({ onClose }: { onClose: () => void }) => {
           </FieldSet>
 
           <ModalFooter>
-            <Button type="submit" disabled={!isValid}>
+            <Button type="submit" disabled={isButtonDisabled}>
               ENVIAR
             </Button>
           </ModalFooter>
