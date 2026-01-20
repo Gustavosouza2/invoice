@@ -2,25 +2,27 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import z from 'zod';
 
 const createInvoiceSchema = z.object({
-  invoiceNumber: z.number(),
+  status: z.enum(['Normal', 'Cancelled']).optional(),
+  invoiceNumber: z.coerce.number().optional(),
   verificationCode: z.string().optional(),
-  issueDate: z.date().optional(),
-  status: z.enum(['Normal', 'Cancelled']).default('Normal'),
+  issueDate: z.coerce.date(),
 
-  providerName: z.string(),
-  providerCnpj: z.string(),
-  providerMunicipalReg: z.string(),
+  providerName: z.string().min(1),
+  providerCnpj: z.string().min(1),
+  providerMunicipalReg: z.string().optional(),
 
-  customerName: z.string(),
-  customerCnpjOrCpf: z.string(),
+  customerName: z.string().min(1),
+  customerCnpjOrCpf: z.string().min(1),
   customerEmail: z.string().email().optional(),
 
-  serviceDescription: z.string(),
-  serviceValue: z.number(),
-  taxRate: z.number().optional(),
-  issValue: z.number().optional(),
-  netValue: z.number().optional(),
-  userId: z.string().uuid().optional(),
+  serviceDescription: z.string().min(1),
+  serviceValue: z.coerce.number(),
+
+  taxRate: z.coerce.number().optional(),
+  issValue: z.coerce.number().optional(),
+  netValue: z.coerce.number().optional(),
+
+  userId: z.string().optional(),
 });
 
 export class CreateInvoiceDto extends createZodDto(createInvoiceSchema) {}

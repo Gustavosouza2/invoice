@@ -22,3 +22,19 @@ export type GetInvoiceRequest = {
 export type GetInvoiceResponse = {
   invoice: Invoice
 }
+
+export type CreateInvoiceRequest = {
+  serviceDescription: string
+  customerCnpjOrCpf: string
+  customerEmail?: string
+  providerName: string
+  providerCnpj: string
+  customerName: string
+  serviceValue: number
+  issueDate: string
+  userId: string
+}
+
+export type CreateInvoiceResponse = {
+  invoice: Invoice
+}

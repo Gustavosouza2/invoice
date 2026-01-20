@@ -2,6 +2,8 @@ import { BaseApi } from '../base'
 import type {
   GetInvoiceRequest,
   GetInvoiceResponse,
+  CreateInvoiceRequest,
+  CreateInvoiceResponse,
   GetAllInvoicesRequest,
   GetAllInvoicesResponse,
 } from './type'
@@ -24,7 +26,15 @@ class Invoice extends BaseApi {
     )
     return response
   }
+
+  public async createInvoice({ ...data }: CreateInvoiceRequest) {
+    const response = await this.post<
+      CreateInvoiceRequest,
+      CreateInvoiceResponse
+    >(`/invoices/create-invoice`, data)
+    return response
+  }
 }
 
-const baseUrl = process.env.BASE_URL ?? 'http://localhost:3000'
-export const invoiceApi = new Invoice(baseUrl)
+const baseUrl = process.env.BASE_URL
+export const invoiceApi = new Invoice(baseUrl!)

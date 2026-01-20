@@ -1,6 +1,27 @@
 import { EMAIL_REGEX } from '@/utils/email-regex'
 import z from 'zod'
 
+function parseIssueDate(value: string): Date | null {
+  const trimmedValue = value.trim()
+  if (!trimmedValue) return null
+
+  const brFormattedDate = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(trimmedValue)
+  const isoFormattedDate = /^(\d{4})-(\d{2})-(\d{2})$/.exec(trimmedValue)
+
+  const year = Number((isoFormattedDate?.[1] ?? brFormattedDate?.[3]) || NaN)
+  const month = Number((isoFormattedDate?.[2] ?? brFormattedDate?.[2]) || NaN)
+  const day = Number((isoFormattedDate?.[3] ?? brFormattedDate?.[1]) || NaN)
+
+  return new Date(year, month - 1, day)
+}
+
+function formatIsoDate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 export const stepOneSchema = z.object({
   type: z.enum(['WithIA', 'WithoutIA']),
 })
@@ -18,24 +39,32 @@ export const stepTwoSchema = z.object({
     }),
   issueDate: z
     .string({ required_error: 'Data é obrigatória' })
+    .trim()
     .min(1, 'Data é obrigatória')
-    .refine(
-      (val) => {
-        const date = new Date(val)
-        return !isNaN(date.getTime())
-      },
-      { message: 'Data inválida' },
-    )
-    .refine(
-      (val) => {
-        const date = new Date(val)
-        const today = new Date()
-        today.setHours(23, 59, 59, 999)
-        return date <= today
-      },
-      { message: 'A data não pode ser no futuro' },
-    )
-    .transform((val) => new Date(val)),
+    .transform((val, ctx) => {
+      const date = parseIssueDate(val)
+      if (!date) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Data inválida' })
+        return z.NEVER
+      }
+
+      const today = new Date()
+      today.setHours(23, 59, 59, 999)
+      if (date > today) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'A data não pode ser no futuro',
+        })
+        return z.NEVER
+      }
+
+      return formatIsoDate(date)
+    }),
+})
+
+export const stepProviderSchema = z.object({
+  providerName: z.string().min(1, 'Nome do prestador é obrigatório'),
+  providerCnpj: z.string().min(1, 'CNPJ do prestador é obrigatório'),
 })
 
 export const stepThreeSchema = z.object({
@@ -48,15 +77,19 @@ export const stepThreeSchema = z.object({
   customerCnpjOrCpf: z.string().min(1).max(14),
   customerEmail: z
     .string()
-    .min(1, { message: 'Email é obrigatório' })
+    .trim()
     .email({ message: 'Por favor, insira um email válido' })
     .max(255, { message: 'Esse email é muito longo' })
-    .regex(EMAIL_REGEX, { message: 'Insira um email válido' }),
+    .regex(EMAIL_REGEX, { message: 'Insira um email válido' })
+    .optional()
+    .or(z.literal('')),
 })
 
 export const stepFourSchema = z.object({
   serviceDescription: z.string().min(1, 'A descrição do serviço é obrigatória'),
-  serviceValue: z.number().min(1, 'O valor do serviço é obrigatório'),
+  serviceValue: z
+    .number({ required_error: 'O valor do serviço é obrigatório' })
+    .min(1, 'O valor do serviço é obrigatório'),
 })
 
 export const stepFiveSchema = z.object({

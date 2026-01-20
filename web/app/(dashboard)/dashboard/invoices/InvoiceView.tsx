@@ -24,6 +24,7 @@ export default function InvoiceView() {
   const { data: invoices, isLoading } = useGetInvoicesList({
     page: filters.page,
     perPage: filters.pageSize,
+    name: filters.name ?? '',
   })
 
   const { push } = useRouter()

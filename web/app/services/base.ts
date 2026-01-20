@@ -28,9 +28,11 @@ export class BaseApi {
     useSessionToken = false,
     customToken?: string,
   ): Promise<R> {
+    const headers = this.buildHeaders(useSessionToken, customToken)
+
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: 'POST',
-      headers: this.buildHeaders(useSessionToken, customToken),
+      headers,
       body: JSON.stringify(body),
     })
 

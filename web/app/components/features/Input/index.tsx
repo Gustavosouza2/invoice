@@ -60,57 +60,76 @@ export const Input = ({
                 {inputIcons({ iconType })}
               </div>
             )}
-            <InputMask
-              maskChar={null}
-              mask={mask ?? ''}
-              onChange={onChange}
-              value={(props.value as string | undefined) || ''}
-            >
-              {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
-                <InputShad
-                  {...inputProps}
-                  placeholder={placeholder || ''}
-                  className={cn(
-                    'h-11 rounded border border-transparent bg-input-default',
-                    'text-text-tertiary placeholder:text-text-tertiary/70',
-                    'focus-visible:ring-0 focus:border-zinc-700',
-                    iconType ? 'pl-10' : 'pl-3',
-                  )}
-                  onChange={onChange}
-                  autoComplete="off"
-                  type="text"
-                />
-              )}
-            </InputMask>
+            {mask ? (
+              <InputMask
+                maskChar={null}
+                mask={mask}
+                onChange={onChange}
+                value={(props.value as string | undefined) || ''}
+              >
+                {(inputProps: React.InputHTMLAttributes<HTMLInputElement>) => (
+                  <InputShad
+                    {...inputProps}
+                    placeholder={placeholder || ''}
+                    className={cn(
+                      'h-11 rounded border border-transparent bg-input-default',
+                      'text-text-tertiary placeholder:text-text-tertiary/70',
+                      'focus-visible:ring-0 focus:border-zinc-700',
+                      iconType ? 'pl-10' : 'pl-3',
+                    )}
+                    onChange={onChange}
+                    autoComplete="off"
+                    type="text"
+                  />
+                )}
+              </InputMask>
+            ) : (
+              <InputShad
+                placeholder={placeholder || ''}
+                className={cn(
+                  'h-11 rounded border border-transparent bg-input-default',
+                  'text-text-tertiary placeholder:text-text-tertiary/70',
+                  'focus-visible:ring-0 focus:border-zinc-700',
+                  iconType ? 'pl-10' : 'pl-3',
+                )}
+                value={(props.value as string | undefined) || ''}
+                onChange={onChange}
+                autoComplete="off"
+                type="text"
+                {...props}
+              />
+            )}
           </div>
         )}
 
         {type === 'currency' && (
-          <CurrencyInput
-            className={cn(
-              'w-full h-11 rounded text-sm',
-              'border border-transparent bg-input-default',
-              'text-text-tertiary placeholder:text-text-tertiary/70',
-              'focus:outline-none focus:ring-0 focus:border-zinc-700',
-              'focus-visible:outline-none focus-visible:ring-0 focus-visible:border-zinc-700',
-              iconType ? 'pl-10' : 'pl-3',
-            )}
-            intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
-            placeholder={placeholder}
-            name={props.name}
-            value={
-              typeof props.value === 'number'
-                ? String(props.value)
-                : (props.value as string | undefined)
-            }
-            onValueChange={(value, name, values) => {
-              onChangeCurrency?.(value ?? '', name, values)
-            }}
-            allowDecimals={true}
-            decimalSeparator=","
-            groupSeparator="."
-            prefix="R$"
-          />
+          <div className="relative">
+            <CurrencyInput
+              className={cn(
+                'w-full h-11 rounded text-sm',
+                'border border-transparent bg-input-default',
+                'text-text-tertiary placeholder:text-text-tertiary/70',
+                'focus:outline-none focus:ring-0 focus:border-zinc-700',
+                'focus-visible:outline-none focus-visible:ring-0 focus-visible:border-zinc-700',
+                'pl-4',
+              )}
+              intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
+              placeholder={placeholder}
+              name={props.name}
+              inputMode="decimal"
+              value={
+                typeof props.value === 'number'
+                  ? String(props.value)
+                  : (props.value as string | undefined)
+              }
+              onValueChange={(value, name, values) => {
+                onChangeCurrency?.(value ?? '', name, values)
+              }}
+              allowDecimals={true}
+              decimalSeparator=","
+              groupSeparator="."
+            />
+          </div>
         )}
 
         {type === 'select' && (

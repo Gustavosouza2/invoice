@@ -1,31 +1,33 @@
-import { useForm, FormProvider } from 'react-hook-form'
+'use client'
+
+import { FormProvider, useForm } from 'react-hook-form'
 
 import { ModalFooter, ModalHeader } from '@/components/features/Modal'
 import { Button } from '@/components/features/Button/DefaultButton'
 import { FieldGroup, FieldSet } from '@/components/ui/field'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { FormField } from '@/components/ui/form-field'
+import { useUserContext } from '@/context/userContext'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/features/Input'
 
 import { useCreateInvoiceContext } from '../context'
-import { stepThreeSchema } from '../schema'
+import { stepProviderSchema } from '../schema'
 
-type CustomerDetailsFormData = {
-  customerCnpjOrCpf: string
-  customerEmail?: string
-  customerName: string
+type ProviderDetailsFormData = {
+  providerName: string
+  providerCnpj: string
 }
 
-export const CustomerDetails = () => {
-  const { setStep, formData, setFormData } = useCreateInvoiceContext()
+export const ProviderDetails = () => {
+  const { userData } = useUserContext()
+  const { formData, setFormData, setStep } = useCreateInvoiceContext()
 
-  const form = useForm<CustomerDetailsFormData>({
-    resolver: zodResolver(stepThreeSchema),
+  const form = useForm<ProviderDetailsFormData>({
+    resolver: zodResolver(stepProviderSchema),
     mode: 'onChange',
     defaultValues: {
-      customerName: formData.customerName || '',
-      customerEmail: formData.customerEmail || '',
-      customerCnpjOrCpf: formData.customerCnpjOrCpf || '',
+      providerName: formData.providerName || userData?.name || '',
+      providerCnpj: formData.providerCnpj || '',
     },
   })
 
@@ -35,13 +37,12 @@ export const CustomerDetails = () => {
     formState: { isValid },
   } = form
 
-  const onSubmit = (data: CustomerDetailsFormData) => {
+  const onSubmit = (data: ProviderDetailsFormData) => {
     setFormData({
-      customerName: data.customerName,
-      customerEmail: data.customerEmail,
-      customerCnpjOrCpf: data.customerCnpjOrCpf,
+      providerName: data.providerName,
+      providerCnpj: data.providerCnpj,
     })
-    setStep(4)
+    setStep(5)
   }
 
   return (
@@ -53,48 +54,34 @@ export const CustomerDetails = () => {
         >
           <FieldSet className="w-full">
             <div className="flex justify-center mt-2 mb-4">
-              <ModalHeader title="Detalhes do Cliente" />
+              <ModalHeader title="Dados do Prestador" />
             </div>
             <FieldGroup className="gap-6">
               <FormField
                 control={control}
-                name="customerName"
-                label="Nome do Cliente:"
+                name="providerName"
+                label="Nome do Prestador:"
                 labelClassName="-mb-1"
                 render={({ field }) => (
                   <Input
                     {...field}
                     type="text"
-                    placeholder="Digite o nome do cliente"
+                    placeholder="Digite o nome do prestador"
                   />
                 )}
               />
 
               <FormField
                 control={control}
-                labelClassName="-mb-1"
-                label="CPF Do Cliente:"
-                name="customerCnpjOrCpf"
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    mask="999.999.999-99"
-                    placeholder="Digite o CPF ou CNPJ do cliente"
-                  />
-                )}
-              />
-
-              <FormField
-                control={control}
-                name="customerEmail"
-                label="Email do Cliente:"
+                name="providerCnpj"
+                label="CNPJ do Prestador:"
                 labelClassName="-mb-1"
                 render={({ field }) => (
                   <Input
                     {...field}
                     type="text"
-                    placeholder="Digite o email do cliente"
+                    mask="99.999.999/9999-99"
+                    placeholder="Digite o CNPJ do prestador"
                   />
                 )}
               />

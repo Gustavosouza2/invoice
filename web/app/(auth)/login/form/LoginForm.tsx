@@ -93,6 +93,7 @@ export function LoginForm() {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setEmail(e.target.value)
                     }
+                    value={email}
                     type="text"
                     placeholder="Email"
                     iconType="email"

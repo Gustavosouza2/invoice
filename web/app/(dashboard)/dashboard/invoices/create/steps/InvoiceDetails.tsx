@@ -81,7 +81,7 @@ export const InvoiceDetails = () => {
                     {...field}
                     type="date"
                     mask="99/99/9999"
-                    placeholder="Digite a Data da nota"
+                    placeholder="Digite a Data da nota (DD/MM/YYYY)"
                   />
                 )}
               />

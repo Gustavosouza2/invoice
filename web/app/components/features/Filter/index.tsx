@@ -17,7 +17,7 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
   const { filters, setFilters } = usePagination()
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({ ...filters, name: e.target.value })
+    setFilters({ name: e.target.value })
   }
 
   const { state } = useSidebar()

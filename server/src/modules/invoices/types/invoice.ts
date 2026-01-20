@@ -29,6 +29,7 @@ export type GetInvoiceResponse = Awaited<Invoice>;
 export type CreateInvoiceRequest = {
   invoiceData: CreateInvoiceDto;
   file?: Express.Multer.File;
+  userId?: string;
 };
 
 export type CreateInvoiceResponse = Awaited<Invoice>;

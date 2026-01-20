@@ -92,24 +92,48 @@ export class InvoicesService {
   }
 
   async createInvoice({ file, invoiceData }: CreateInvoiceRequest) {
-    const { userId, invoiceNumber, taxRate, netValue, issValue, serviceValue } =
-      invoiceData;
-
-    if (!userId) {
+    if (!invoiceData.userId) {
       throw new CustomException(ErrorCode.BAD_REQUEST, 'userId is required');
     }
 
     try {
-      const formattedInvoice = Object.assign(invoiceData, { userId });
+      const {
+        providerMunicipalReg,
+        serviceDescription,
+        customerCnpjOrCpf,
+        verificationCode,
+        invoiceNumber,
+        customerEmail,
+        serviceValue,
+        providerName,
+        providerCnpj,
+        customerName,
+        issueDate,
+        netValue,
+        issValue,
+        taxRate,
+        status,
+        userId,
+      } = invoiceData;
 
       const invoice = await this.prisma.invoice.create({
         data: {
-          ...formattedInvoice,
-          invoiceNumber: Number(invoiceNumber),
+          userId,
+          issueDate,
+          providerName,
+          providerCnpj,
+          customerName,
+          customerEmail,
+          verificationCode,
+          customerCnpjOrCpf,
+          serviceDescription,
+          status: status ?? 'Normal',
           serviceValue: Number(serviceValue),
-          issValue: Number(issValue),
-          netValue: Number(netValue),
-          taxRate: Number(taxRate),
+          invoiceNumber: Number(invoiceNumber ?? 0),
+          providerMunicipalReg: providerMunicipalReg ?? '',
+          taxRate: taxRate == null ? undefined : Number(taxRate),
+          issValue: issValue == null ? undefined : Number(issValue),
+          netValue: netValue == null ? undefined : Number(netValue),
         },
       });
 
@@ -233,7 +257,7 @@ export class InvoicesService {
         <h2>Dados do Prestador</h2>
         <p><strong>Prestador:</strong> ${invoice.providerName}</p>
         <p><strong>Cnpj/Cpf:</strong> ${invoice.providerCnpj}</p>
-        <p><strong>Registro municipal:</strong> ${invoice.providerMunicipalReg}</p>
+        <p><strong>Registro municipal:</strong> ${invoice.providerMunicipalReg ?? ''}</p>
         </section>
 
         <section>

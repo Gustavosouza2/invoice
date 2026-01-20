@@ -51,14 +51,14 @@ model Session {
 model Invoice {
   user             User     @relation(fields: [userId], references: [id])
   id               String   @id @default(uuid())
-  status           String   @default("Normal")
-  issueDate        DateTime @default(now())
+  status           String?  @default("Normal")
+  issueDate        DateTime
   verificationCode String?
-  invoiceNumber    Int
+  invoiceNumber    Int?
 
   providerName         String
   providerCnpj         String
-  providerMunicipalReg String
+  providerMunicipalReg String?
 
   customerName      String
   customerCnpjOrCpf String
