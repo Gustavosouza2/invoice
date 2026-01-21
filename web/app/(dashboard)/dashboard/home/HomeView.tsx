@@ -37,13 +37,10 @@ export default function HomeView() {
     [invoicesData],
   )
 
-  const totalNetRevenue = useMemo(
-    () => invoicesData.reduce((sum, inv) => sum + (inv.netValue || 0), 0),
-    [invoicesData],
-  )
+  const totalInvoices = useMemo(() => invoicesData.length, [invoicesData])
 
-  const totalISS = useMemo(
-    () => invoicesData.reduce((sum, inv) => sum + (inv.issValue || 0), 0),
+  const uniqueCustomers = useMemo(
+    () => new Set(invoicesData.map((inv) => inv.customerName)).size,
     [invoicesData],
   )
 
@@ -54,12 +51,9 @@ export default function HomeView() {
       isFirstCard: true,
     },
     {
-      title: 'Receita Líquida',
-      info: totalNetRevenue.toLocaleString('pt-br', {
-        style: 'currency',
-        currency: 'BRL',
-      }),
-      description: 'Receita líquida total',
+      title: 'Total de Invoices',
+      info: totalInvoices.toLocaleString('pt-br'),
+      description: 'Número total de notas fiscais',
     },
     {
       title: 'Receita Bruta',
@@ -70,12 +64,9 @@ export default function HomeView() {
       description: 'Receita bruta total',
     },
     {
-      title: 'ISS Total',
-      info: totalISS.toLocaleString('pt-br', {
-        style: 'currency',
-        currency: 'BRL',
-      }),
-      description: 'Total de ISS recolhido',
+      title: 'Clientes Únicos',
+      info: uniqueCustomers.toLocaleString('pt-br'),
+      description: 'Número de clientes únicos',
     },
   ]
 

@@ -2,6 +2,7 @@ import type { User } from './user'
 
 export interface Invoice {
   providerMunicipalReg: string
+  type: 'WithIA' | 'WithoutIA'
   serviceDescription: string
   customerCnpjOrCpf: string
   verificationCode: string
@@ -18,7 +19,6 @@ export interface Invoice {
   netValue: number
   taxRate: number
   userId: string
-  status: string
   id: string
   user: User
 }

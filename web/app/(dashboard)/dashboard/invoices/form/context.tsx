@@ -29,7 +29,6 @@ export type InvoiceFormData = {
   netValue?: number
   taxRate?: number
   userId?: string
-  status?: string
   id?: string
 }
 
@@ -62,10 +61,10 @@ type InvoiceFormProviderProps = {
 }
 
 export const InvoiceFormProvider: React.FC<InvoiceFormProviderProps> = ({
-  children,
   initialData,
-  mode,
   invoiceId,
+  children,
+  mode,
 }) => {
   const [step, setStep] = useState<number>(mode === 'create' ? 1 : 1)
   const [formData, setFormDataState] = useState<InvoiceFormData>(

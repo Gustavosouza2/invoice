@@ -6,6 +6,7 @@ import { invoiceApi } from '@/services/invoice/invoiceApi'
 import { setToken } from '@/services/token'
 
 const createInvoiceSchema = z.object({
+  userId: z.string().min(1),
   issueDate: z.string().min(1),
   providerName: z.string().min(1),
   providerCnpj: z.string().min(1),
@@ -14,24 +15,24 @@ const createInvoiceSchema = z.object({
   serviceDescription: z.string().min(1),
   serviceValue: z.coerce.number().positive(),
   customerEmail: z.string().email().optional(),
-  userId: z.string().min(1),
+  type: z.enum(['WithIA', 'WithoutIA']).optional(),
+  invoiceNumber: z.coerce.number().int().positive().optional(),
 })
 
 const updateInvoiceSchema = z.object({
   id: z.string().min(1),
   issueDate: z.string().optional(),
-  providerName: z.string().optional(),
   providerCnpj: z.string().optional(),
+  providerName: z.string().optional(),
   customerName: z.string().optional(),
-  customerCnpjOrCpf: z.string().optional(),
-  serviceDescription: z.string().optional(),
-  serviceValue: z.coerce.number().positive().optional(),
-  customerEmail: z.string().email().optional(),
-  invoiceNumber: z.coerce.number().optional(),
   taxRate: z.coerce.number().optional(),
   issValue: z.coerce.number().optional(),
   netValue: z.coerce.number().optional(),
-  status: z.string().optional(),
+  customerCnpjOrCpf: z.string().optional(),
+  serviceDescription: z.string().optional(),
+  invoiceNumber: z.coerce.number().optional(),
+  customerEmail: z.string().email().optional(),
+  serviceValue: z.coerce.number().positive().optional(),
 })
 
 export async function GET(req: Request) {

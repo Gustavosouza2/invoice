@@ -2,10 +2,10 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import z from 'zod';
 
 const createInvoiceSchema = z.object({
-  status: z.enum(['Normal', 'Cancelled']).optional(),
   invoiceNumber: z.coerce.number().optional(),
   verificationCode: z.string().optional(),
   issueDate: z.coerce.date(),
+  type: z.enum(['WithIA', 'WithoutIA']).optional(),
 
   providerName: z.string().min(1),
   providerCnpj: z.string().min(1),

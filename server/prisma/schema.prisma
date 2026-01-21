@@ -51,7 +51,7 @@ model Session {
 model Invoice {
   user             User     @relation(fields: [userId], references: [id])
   id               String   @id @default(uuid())
-  status           String?  @default("Normal")
+  type             String?  @default("WithoutIA")
   issueDate        DateTime
   verificationCode String?
   invoiceNumber    Int?

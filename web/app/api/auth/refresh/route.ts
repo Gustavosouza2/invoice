@@ -33,7 +33,7 @@ export async function POST() {
         sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60 * 15,
+        maxAge: 60 * 60 * 24 * 7,
       })
     }
     return res

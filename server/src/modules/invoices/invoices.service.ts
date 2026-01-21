@@ -112,8 +112,8 @@ export class InvoicesService {
         netValue,
         issValue,
         taxRate,
-        status,
         userId,
+        type,
       } = invoiceData;
 
       const invoice = await this.prisma.invoice.create({
@@ -125,13 +125,13 @@ export class InvoicesService {
           customerEmail,
           verificationCode,
           customerCnpjOrCpf,
-          serviceDescription,
-          status: status ?? 'Normal',
+          type: type ?? 'WithoutIA',
           issueDate: new Date(issueDate),
+          invoiceNumber: invoiceNumber ?? 0,
           serviceValue: Number(serviceValue),
+          serviceDescription: serviceDescription ?? '',
           providerMunicipalReg: providerMunicipalReg ?? '',
           taxRate: taxRate == null ? undefined : Number(taxRate),
-          invoiceNumber: invoiceNumber ? Number(invoiceNumber) : 0,
           issValue: issValue == null ? undefined : Number(issValue),
           netValue: netValue == null ? undefined : Number(netValue),
         },

@@ -25,7 +25,11 @@ export const InvoiceDetails = () => {
     mode: 'onChange',
     defaultValues: {
       issueDate: formData.issueDate || '',
-      invoiceNumber: formData?.invoiceNumber,
+      invoiceNumber:
+        formData?.invoiceNumber !== undefined &&
+        formData?.invoiceNumber !== null
+          ? formData.invoiceNumber
+          : undefined,
     },
   })
 
@@ -37,7 +41,10 @@ export const InvoiceDetails = () => {
 
   const onSubmit = (data: InvoiceDetailsFormData) => {
     setFormData({
-      invoiceNumber: data.invoiceNumber,
+      invoiceNumber:
+        data.invoiceNumber !== undefined && !isNaN(Number(data.invoiceNumber))
+          ? Number(data.invoiceNumber)
+          : undefined,
       issueDate: data.issueDate,
     })
     setStep(3)
@@ -67,9 +74,25 @@ export const InvoiceDetails = () => {
                     {...field}
                     type="number"
                     maxLength={9}
-                    value={field.value ?? ''}
+                    value={
+                      field.value === 0
+                        ? '0'
+                        : field.value !== undefined && field.value !== null
+                          ? String(field.value)
+                          : ''
+                    }
                     placeholder="Digite o número da nota"
-                    onChange={(e) => field.onChange(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.trim()
+                      if (value === '') {
+                        field.onChange(undefined)
+                      } else {
+                        const numValue = Number(value)
+                        if (!isNaN(numValue)) {
+                          field.onChange(numValue)
+                        }
+                      }
+                    }}
                   />
                 )}
               />

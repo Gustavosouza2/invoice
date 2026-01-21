@@ -53,7 +53,6 @@ export type UpdateInvoiceRequest = {
   taxRate?: number
   issValue?: number
   netValue?: number
-  status?: string
 }
 
 export type UpdateInvoiceResponse = {

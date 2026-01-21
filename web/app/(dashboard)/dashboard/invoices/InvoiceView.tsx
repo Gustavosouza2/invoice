@@ -2,7 +2,6 @@
 
 import { useCallback, useMemo, useState, useEffect } from 'react'
 import { MdEdit, MdVisibility } from 'react-icons/md'
-import { useRouter } from 'next/navigation'
 
 import { useGetInvoicesList } from '@/hooks/getInvoicesList'
 import { DataTable } from '@/components/features/Table'
@@ -20,6 +19,21 @@ export default function InvoiceView() {
   const [editInvoiceData, setEditInvoiceData] =
     useState<InvoiceFormData | null>(null)
   const { filters, setFilters } = usePagination()
+
+  // Set page and pageSize in URL on mount
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const hasPage = urlParams.has('page')
+    const hasPageSize = urlParams.has('pageSize')
+
+    if (!hasPage || !hasPageSize) {
+      setFilters({
+        page: filters.page || 1,
+        pageSize: filters.pageSize || 10,
+        name: filters.name || '',
+      })
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const [debouncedName, setDebouncedName] = useState(filters.name ?? '')
 
@@ -63,8 +77,6 @@ export default function InvoiceView() {
     [isLoading, invoices],
   )
 
-  const { push } = useRouter()
-
   const columns = useMemo(
     () =>
       [
@@ -78,10 +90,9 @@ export default function InvoiceView() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      setFilters({ ...filters, page })
-      push(`/dashboard/invoices?page=${page}`)
+      setFilters({ ...filters, page, pageSize: filters.pageSize || 10 })
     },
-    [push, setFilters, filters],
+    [setFilters, filters],
   )
 
   const formattedInvoiceData = useMemo(() => {
@@ -138,8 +149,8 @@ export default function InvoiceView() {
       {editInvoiceData && (
         <InvoiceFormProvider
           mode="edit"
-          initialData={editInvoiceData}
           invoiceId={editInvoiceId}
+          initialData={editInvoiceData}
         >
           <InvoiceFormModal
             isOpen={isOpenEditModal}

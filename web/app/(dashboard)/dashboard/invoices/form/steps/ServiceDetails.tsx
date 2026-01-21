@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form'
+import { useSWRConfig } from 'swr'
 import axios from 'axios'
 
 import { ModalFooter, ModalHeader } from '@/components/features/Modal'
@@ -14,6 +15,7 @@ import { decodeToken } from '@/services/token'
 
 import { useInvoiceFormContext } from '../context'
 import { serviceDetailsSchema } from '../schema'
+import { useState } from 'react'
 
 type ServiceDetailsFormData = {
   serviceDescription?: string
@@ -26,7 +28,10 @@ type ServiceDetailsProps = {
 
 export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
   const { formData, setFormData, mode, invoiceId } = useInvoiceFormContext()
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const { userData } = useUserContext()
+  const { mutate } = useSWRConfig()
 
   const schema = serviceDetailsSchema[mode]
 
@@ -46,6 +51,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
   } = form
 
   const onSubmit = (data: ServiceDetailsFormData) => {
+    setIsLoading(true)
     const nextFormData = {
       serviceDescription: data.serviceDescription,
       serviceValue: data.serviceValue,
@@ -63,9 +69,13 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
         providerCnpj: formData.providerCnpj ?? '',
         customerName: formData.customerName ?? '',
         customerCnpjOrCpf: formData.customerCnpjOrCpf ?? '',
-        serviceDescription: nextFormData.serviceDescription,
+        serviceDescription: nextFormData.serviceDescription ?? '',
         serviceValue: nextFormData.serviceValue ?? 0,
         userId,
+        ...(formData.type && { type: formData.type }),
+        ...(formData.invoiceNumber && {
+          invoiceNumber: Number(formData.invoiceNumber),
+        }),
         ...(formData.customerEmail && {
           customerEmail: formData.customerEmail,
         }),
@@ -76,6 +86,11 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
           headers: { 'Content-Type': 'application/json' },
         })
         .then(() => {
+          mutate(
+            (key) =>
+              typeof key === 'string' &&
+              key.startsWith('/api/dashboard/invoices'),
+          )
           Toast({
             type: 'success',
             message: 'Nota fiscal criada com sucesso!',
@@ -88,24 +103,26 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
             message: 'Erro ao criar nota fiscal. Tente novamente.',
           })
         })
+      setIsLoading(false)
       return
     }
 
+    setIsLoading(true)
+
     const payload = removeEmptyValues({
       id: invoiceId,
+      taxRate: formData.taxRate,
+      issValue: formData.issValue,
+      netValue: formData.netValue,
       issueDate: formData.issueDate,
       providerName: formData.providerName,
       providerCnpj: formData.providerCnpj,
       customerName: formData.customerName,
-      customerCnpjOrCpf: formData.customerCnpjOrCpf,
-      serviceDescription: nextFormData.serviceDescription,
-      serviceValue: nextFormData.serviceValue,
       customerEmail: formData.customerEmail,
       invoiceNumber: formData.invoiceNumber,
-      taxRate: formData.taxRate,
-      issValue: formData.issValue,
-      netValue: formData.netValue,
-      status: formData.status,
+      serviceValue: nextFormData.serviceValue,
+      customerCnpjOrCpf: formData.customerCnpjOrCpf,
+      serviceDescription: nextFormData.serviceDescription,
     })
 
     axios
@@ -113,6 +130,11 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
         headers: { 'Content-Type': 'application/json' },
       })
       .then(() => {
+        mutate(
+          (key) =>
+            typeof key === 'string' &&
+            key.startsWith('/api/dashboard/invoices'),
+        )
         Toast({
           type: 'success',
           message: 'Nota fiscal atualizada com sucesso!',
@@ -125,6 +147,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
           message: 'Erro ao atualizar nota fiscal. Tente novamente.',
         })
       })
+    setIsLoading(false)
   }
 
   const isButtonDisabled = mode === 'create' ? !isValid : false
@@ -184,7 +207,11 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
           </FieldSet>
 
           <ModalFooter>
-            <Button type="submit" disabled={isButtonDisabled}>
+            <Button
+              type="submit"
+              isLoading={isLoading}
+              disabled={isButtonDisabled}
+            >
               ENVIAR
             </Button>
           </ModalFooter>
