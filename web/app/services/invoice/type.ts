@@ -1,6 +1,5 @@
 import type { Invoice } from '@/types/invoice'
 
-// Invoice
 export type GetAllInvoicesRequest = {
   customerName?: string
   perPage: number
@@ -24,6 +23,8 @@ export type GetInvoiceResponse = {
 }
 
 export type CreateInvoiceRequest = {
+  providerMunicipalReg?: string
+  type?: 'WithIA' | 'WithoutIA'
   serviceDescription: string
   customerCnpjOrCpf: string
   customerEmail?: string
@@ -40,19 +41,18 @@ export type CreateInvoiceResponse = {
 }
 
 export type UpdateInvoiceRequest = {
-  id: string
+  providerMunicipalReg?: string
+  type?: 'WithIA' | 'WithoutIA'
   serviceDescription?: string
   customerCnpjOrCpf?: string
+  invoiceNumber?: number
   customerEmail?: string
   providerName?: string
   providerCnpj?: string
   customerName?: string
   serviceValue?: number
   issueDate?: string
-  invoiceNumber?: number
-  taxRate?: number
-  issValue?: number
-  netValue?: number
+  id: string
 }
 
 export type UpdateInvoiceResponse = {

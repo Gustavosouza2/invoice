@@ -12,10 +12,10 @@ const createInvoiceSchema = z.object({
   providerCnpj: z.string().min(1),
   customerName: z.string().min(1),
   customerCnpjOrCpf: z.string().min(1),
+  type: z.enum(['WithIA', 'WithoutIA']),
   serviceDescription: z.string().min(1),
   serviceValue: z.coerce.number().positive(),
   customerEmail: z.string().email().optional(),
-  type: z.enum(['WithIA', 'WithoutIA']).optional(),
   invoiceNumber: z.coerce.number().int().positive().optional(),
 })
 
@@ -25,24 +25,22 @@ const updateInvoiceSchema = z.object({
   providerCnpj: z.string().optional(),
   providerName: z.string().optional(),
   customerName: z.string().optional(),
-  taxRate: z.coerce.number().optional(),
-  issValue: z.coerce.number().optional(),
-  netValue: z.coerce.number().optional(),
   customerCnpjOrCpf: z.string().optional(),
   serviceDescription: z.string().optional(),
   invoiceNumber: z.coerce.number().optional(),
   customerEmail: z.string().email().optional(),
+  type: z.enum(['WithIA', 'WithoutIA']).optional(),
   serviceValue: z.coerce.number().positive().optional(),
 })
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
   const searchParams = url.searchParams
+  const customerName = searchParams.get('name') ?? ''
   const page = Number(searchParams.get('page') ?? '1')
   const perPage = Number(
     searchParams.get('per_page') ?? searchParams.get('perPage') ?? '10',
   )
-  const customerName = searchParams.get('name') ?? ''
 
   try {
     const cookieStore = cookies()
@@ -65,6 +63,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(data)
   } catch (err) {
+    console.log('err', err)
     const anyErr = err as { message?: string; status?: number }
 
     if (anyErr?.message?.includes('404')) {

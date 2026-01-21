@@ -2,24 +2,17 @@ import { createZodDto } from '@anatine/zod-nestjs';
 import z from 'zod';
 
 const updateInvoiceSchema = z.object({
+  type: z.enum(['WithIA', 'WithoutIA']).optional(),
+  customerEmail: z.string().email().optional(),
+  providerMunicipalReg: z.string().optional(),
+  serviceDescription: z.string().optional(),
+  customerCnpjOrCpf: z.string().optional(),
   invoiceNumber: z.number().optional(),
-  verificationCode: z.string().optional(),
-  issueDate: z.date().optional(),
-  status: z.enum(['Normal', 'Cancelled']).optional(),
-
   providerName: z.string().optional(),
   providerCnpj: z.string().optional(),
-  providerMunicipalReg: z.string().optional(),
-
   customerName: z.string().optional(),
-  customerCnpjOrCpf: z.string().optional(),
-  customerEmail: z.string().email().optional(),
-
-  serviceDescription: z.string().optional(),
   serviceValue: z.number().optional(),
-  taxRate: z.number().optional(),
-  issValue: z.number().optional(),
-  netValue: z.number().optional(),
+  issueDate: z.date().optional(),
   userId: z.string().uuid(),
 });
 

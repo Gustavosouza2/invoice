@@ -111,9 +111,6 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
 
     const payload = removeEmptyValues({
       id: invoiceId,
-      taxRate: formData.taxRate,
-      issValue: formData.issValue,
-      netValue: formData.netValue,
       issueDate: formData.issueDate,
       providerName: formData.providerName,
       providerCnpj: formData.providerCnpj,

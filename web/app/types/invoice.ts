@@ -5,7 +5,6 @@ export interface Invoice {
   type: 'WithIA' | 'WithoutIA'
   serviceDescription: string
   customerCnpjOrCpf: string
-  verificationCode: string
   invoiceNumber: number
   customerEmail: string
   providerName: string
@@ -15,9 +14,6 @@ export interface Invoice {
   issueDate: string
   updatedAt: string
   createdAt: string
-  issValue: number
-  netValue: number
-  taxRate: number
   userId: string
   id: string
   user: User

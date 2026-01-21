@@ -10,35 +10,34 @@ datasource db {
 
 model User {
   id            String    @id @default(uuid())
-  emailVerified Boolean   @default(false)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
   email         String    @unique
-  accounts      Account[]
-  sessions      Session[]
-  Invoice       Invoice[]
-  image         String?
+  name          String
   password      String?
   phone         String?
-  name          String
+  updatedAt     DateTime  @updatedAt
+  emailVerified Boolean   @default(false)
+  image         String?
+  accounts      Account[]
+  Invoice       Invoice[]
+  sessions      Session[]
 }
 
 model Account {
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id         String   @id
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  id         String   @id
-  password   String?
   userId     String
-  providerId String
   accountId  String
+  password   String?
+  providerId String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([providerId, accountId])
 }
 
 model Session {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   token     String   @unique
@@ -46,42 +45,34 @@ model Session {
   userId    String
   ipAddress String
   userAgent String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Invoice {
-  user             User     @relation(fields: [userId], references: [id])
-  id               String   @id @default(uuid())
-  type             String?  @default("WithoutIA")
-  issueDate        DateTime
-  verificationCode String?
-  invoiceNumber    Int?
-
-  providerName         String
+  id                   String   @id @default(uuid())
+  userId               String
+  createdAt            DateTime @default(now())
+  customerCnpjOrCpf    String
+  customerEmail        String?
+  customerName         String
+  invoiceNumber        Int
+  issueDate            DateTime @default(now())
   providerCnpj         String
-  providerMunicipalReg String?
-
-  customerName      String
-  customerCnpjOrCpf String
-  customerEmail     String?
-
-  serviceDescription String
-  serviceValue       Float
-  taxRate            Float?
-  issValue           Float?
-  netValue           Float?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String
-  File   File?
+  providerMunicipalReg String
+  providerName         String
+  serviceDescription   String
+  serviceValue         Float
+  updatedAt            DateTime @updatedAt
+  type                 String?  @default("WithoutIA")
+  File                 File?
+  user                 User     @relation(fields: [userId], references: [id])
 }
 
 model File {
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
   id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  invoiceId String   @unique
   url       String
   type      String
+  invoiceId String   @unique
+  createdAt DateTime @default(now())
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
 }

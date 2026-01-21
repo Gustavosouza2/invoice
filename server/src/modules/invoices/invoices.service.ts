@@ -101,7 +101,6 @@ export class InvoicesService {
         providerMunicipalReg,
         serviceDescription,
         customerCnpjOrCpf,
-        verificationCode,
         invoiceNumber,
         customerEmail,
         serviceValue,
@@ -109,9 +108,6 @@ export class InvoicesService {
         providerCnpj,
         customerName,
         issueDate,
-        netValue,
-        issValue,
-        taxRate,
         userId,
         type,
       } = invoiceData;
@@ -123,7 +119,6 @@ export class InvoicesService {
           providerCnpj,
           customerName,
           customerEmail,
-          verificationCode,
           customerCnpjOrCpf,
           type: type ?? 'WithoutIA',
           issueDate: new Date(issueDate),
@@ -131,9 +126,6 @@ export class InvoicesService {
           serviceValue: Number(serviceValue),
           serviceDescription: serviceDescription ?? '',
           providerMunicipalReg: providerMunicipalReg ?? '',
-          taxRate: taxRate == null ? undefined : Number(taxRate),
-          issValue: issValue == null ? undefined : Number(issValue),
-          netValue: netValue == null ? undefined : Number(netValue),
         },
       });
 
@@ -272,8 +264,6 @@ export class InvoicesService {
         <h2>Serviço</h2>
         <p><strong>Valor:</strong> ${invoice.serviceValue}</p>
         <p><strong>Descrição:</strong> ${invoice.serviceDescription}</p>
-        <p><strong>Valor ISS:</strong> ${invoice.issValue ?? ''}</p>
-        <p><strong>Taxa de imposto:</strong> ${invoice.taxRate ?? ''}</p>
         </section>
 
         <p><strong>Data:</strong> ${new Date(invoice.issueDate).toLocaleDateString()}</p>

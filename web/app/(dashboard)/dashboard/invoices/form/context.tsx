@@ -16,7 +16,6 @@ export type InvoiceFormData = {
   type?: 'WithIA' | 'WithoutIA'
   serviceDescription?: string
   customerCnpjOrCpf?: string
-  verificationCode?: string
   invoiceNumber?: number
   customerEmail?: string
   providerName?: string
@@ -25,9 +24,6 @@ export type InvoiceFormData = {
   serviceValue?: number
   file?: File | null
   issueDate?: string
-  issValue?: number
-  netValue?: number
-  taxRate?: number
   userId?: string
   id?: string
 }

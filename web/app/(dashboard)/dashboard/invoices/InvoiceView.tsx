@@ -20,21 +20,6 @@ export default function InvoiceView() {
     useState<InvoiceFormData | null>(null)
   const { filters, setFilters } = usePagination()
 
-  // Set page and pageSize in URL on mount
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const hasPage = urlParams.has('page')
-    const hasPageSize = urlParams.has('pageSize')
-
-    if (!hasPage || !hasPageSize) {
-      setFilters({
-        page: filters.page || 1,
-        pageSize: filters.pageSize || 10,
-        name: filters.name || '',
-      })
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
   const [debouncedName, setDebouncedName] = useState(filters.name ?? '')
 
   useEffect(() => {
