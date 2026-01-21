@@ -116,7 +116,10 @@ export const customerDetailsSchema = {
       .max(50, 'O Nome do cliente não pode exceder 50 caracteres')
       .trim()
       .nonempty('Nome do cliente é obrigatório'),
-    customerCnpjOrCpf: z.string().min(1).max(14),
+    customerCnpjOrCpf: z
+      .string()
+      .min(1, 'CPF ou CNPJ do cliente é obrigatório')
+      .max(14, 'CPF ou CNPJ deve ter no máximo 14 caracteres'),
     customerEmail: z
       .string()
       .trim()

@@ -4,7 +4,6 @@ import React from 'react'
 
 import { parsedDataTable } from '@/utils/parsed-data-table'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Badge } from '@/components/ui/badge'
 import {
   TableHeader,
   TableCell,
@@ -14,7 +13,7 @@ import {
   Table,
 } from '@/components/ui/table'
 
-import { type DataTableProps, type TableColumn } from './types'
+import type { DataTableProps, TableColumn } from './types'
 import { Pagination } from '../Pagination'
 
 const COLUMN_WIDTH_MAP: Record<string, string> = {
@@ -33,19 +32,6 @@ const getColumnWidth = (column: TableColumn<any>) => {
 const isActionsColumn = (column: TableColumn<any>) =>
   column.name === 'actions' || column.size === '0'
 
-const BADGE_PROPS_COLOR: Record<string, JSX.Element> = {
-  done: (
-    <Badge className="bg-zinc-800 rounded-xl text-green-500 font-mono font-medium hover:bg-zinc-900">
-      Pago
-    </Badge>
-  ),
-  pending: (
-    <Badge className="bg-zinc-800 text-orange-500  font-mono font-medium rounded-xl hover:bg-zinc-900">
-      Pendente
-    </Badge>
-  ),
-}
-
 export const DataTable = React.memo(
   <T extends Array<any>>({
     data,
@@ -56,9 +42,9 @@ export const DataTable = React.memo(
     currentPage,
     onPageChange,
   }: DataTableProps<T>) => {
-    const containerClassName = `w-full border border-bg-secondary/20
-      hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60
-      bg-gradient-to-br from-bg-default to-bg-primary rounded-xl`
+    const containerClassName = `w-full border border-accent/20
+      hover:shadow-xl/60 transition-all duration-300 hover:border-accent/60
+      bg-gradient-to-br from-bg to-bg-primary rounded-xl`
 
     return (
       <>
@@ -119,7 +105,7 @@ export const DataTable = React.memo(
                     {data && data?.length >= 1 && (
                       <>
                         <TableHeader>
-                          <TableRow className="border-b border-bg-secondary/20 hover:bg-transparent">
+                          <TableRow className="border-b border-accent/20 hover:bg-transparent">
                             {columns.map((column, index) => (
                               <TableHead
                                 className={`${getColumnWidth(column)} text-gray-400 font-medium text-sm lg:text-base ${isActionsColumn(column) ? 'text-right' : ''}`}
@@ -150,12 +136,7 @@ export const DataTable = React.memo(
                                           : ''
                                       }
                                     >
-                                      {parsedDataTable(
-                                        items,
-                                        BADGE_PROPS_COLOR,
-                                        column,
-                                        data,
-                                      )}
+                                      {parsedDataTable(items, column, data)}
                                     </div>
                                   </TableCell>
                                 )
@@ -196,7 +177,6 @@ export const DataTable = React.memo(
                                   <div className="text-sm font-medium text-gray-200 break-words">
                                     {parsedDataTable(
                                       items,
-                                      BADGE_PROPS_COLOR,
                                       primaryColumn,
                                       data,
                                     )}
@@ -212,7 +192,6 @@ export const DataTable = React.memo(
                                   <div className="text-sm font-medium text-gray-200 break-words">
                                     {parsedDataTable(
                                       items,
-                                      BADGE_PROPS_COLOR,
                                       secondaryColumn,
                                       data,
                                     )}
@@ -228,7 +207,6 @@ export const DataTable = React.memo(
                                   <div className="text-sm font-medium text-gray-200">
                                     {parsedDataTable(
                                       items,
-                                      BADGE_PROPS_COLOR,
                                       tercenaryColumn,
                                       data,
                                     )}
@@ -243,12 +221,7 @@ export const DataTable = React.memo(
                                   {actionColumn.label}
                                 </div>
                                 <div className="text-sm font-medium text-gray-200">
-                                  {parsedDataTable(
-                                    items,
-                                    BADGE_PROPS_COLOR,
-                                    actionColumn,
-                                    data,
-                                  )}
+                                  {parsedDataTable(items, actionColumn, data)}
                                 </div>
                               </div>
                             )}

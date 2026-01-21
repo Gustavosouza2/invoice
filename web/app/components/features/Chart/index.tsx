@@ -79,7 +79,7 @@ export const Chart = React.memo(({ isLoading, data }: ChartProps) => {
       {isLoading ? (
         <Skeleton className="w-full h-72 rounded-xl" />
       ) : (
-        <Card className="h-[300px] rounded-xl border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary shadow-xl/40 hover:shadow-xl/60 transition-all duration-300">
+        <Card className="h-[300px] rounded-xl border-accent/40 bg-gradient-to-br from-bg to-bg-primary shadow-xl/40 hover:shadow-xl/60 transition-all duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-text-primary">Situação Mensal</CardTitle>
             <CardDescription className="text-text-tertiary">

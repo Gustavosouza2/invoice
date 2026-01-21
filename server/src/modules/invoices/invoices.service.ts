@@ -172,17 +172,22 @@ export class InvoicesService {
     id,
     invoiceData,
   }: UpdateInvoiceRequest): Promise<UpdateInvoiceResponse> {
+    const dataToUpdate = {
+      ...invoiceData,
+      ...(invoiceData.issueDate && {
+        issueDate: new Date(invoiceData.issueDate),
+      }),
+    };
     const updatedInvoice = await this.prisma.invoice.update({
       where: { id },
-      data: invoiceData,
+      data: dataToUpdate,
     });
 
     if (!updatedInvoice) {
       throw new CustomException(ErrorCode.BAD_REQUEST, 'Invoice update failed');
     }
 
-    const invoice = await this.findInvoiceById({ id });
-    return invoice;
+    return this.findInvoiceById({ id });
   }
 
   async removeInvoice({ id }: DeleteInvoiceRequest): Promise<void> {

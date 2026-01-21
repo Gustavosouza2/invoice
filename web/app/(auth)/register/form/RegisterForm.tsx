@@ -73,7 +73,7 @@ export function RegisterForm() {
 
   return (
     <main className="relative h-screen w-screen flex items-center justify-between overflow-hidden">
-      <div className="hidden custom:flex bg-bg-secondary w-full h-full rounded-e-3xl justify-center items-center flex-col gap-10">
+      <div className="hidden custom:flex bg-accent w-full h-full rounded-e-3xl justify-center items-center flex-col gap-10">
         <h1 className="text-text-quaternary text-center text-3xl font-bold font-poppins">
           Aqui é onde tudo começa.
         </h1>
@@ -158,12 +158,12 @@ export function RegisterForm() {
             </FieldSet>
             <div className="mt-2 flex flex-col gap-2">
               <Button
-                type="submit"
-                disabled={!isTrueValid}
+                type="default"
+                text="REGISTRAR"
+                htmlType="submit"
                 isLoading={isLoading}
-              >
-                {isLoading ? 'Criando conta...' : 'Criar conta'}
-              </Button>
+                disabled={!isTrueValid}
+              />
             </div>
           </form>
         </div>

@@ -32,7 +32,7 @@ export const UserMenu = ({ email, name, handleLogout }: UserMenuProps) => {
         <IconButton Icon={<ChevronDown className="h-4 w-4" />} />
       </PopoverTrigger>
       <PopoverContent
-        className="flex border-bg-secondary/40 bg-gradient-to-br from-bg-default to-bg-primary
+        className="flex border-accent/40 bg-gradient-to-br from-bg to-bg-primary
         mr-10 mt-2 rounded-xl shadow-xl w-auto z-[100]"
         align="end"
       >

@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 
 import { Card, type CardProps } from '@/components/features/Card'
-import { useGetInvoicesList } from '@/hooks/getInvoicesList'
+import { useGetInvoicesList } from '@/hooks/invoices/getInvoicesList'
 import { useUserContext } from '@/context/userContext'
 
 const PAGE_SIZE = 10
@@ -16,7 +16,7 @@ const Chart = dynamic(
     ssr: true,
     loading: () => (
       <div className="w-full h-72 max-w-7xl">
-        <div className="w-full h-72 rounded-xl bg-bg-primary border border-bg-secondary" />
+        <div className="w-full h-72 rounded-xl bg-bg-primary border border-accent" />
       </div>
     ),
   },

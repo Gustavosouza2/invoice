@@ -39,8 +39,8 @@ export const HeaderDashboard = () => {
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 flex
-      justify-between items-center h-16 px-4 border-b border-bg-secondary/10
-      bg-gradient-to-r from-bg-primary to-bg-default shadow-lg"
+      justify-between items-center h-16 px-4 border-b border-accent/10
+      bg-gradient-to-r from-bg-primary to-bg shadow-lg"
     >
       {!isMobile && (
         <div className="flex items-center gap-4 mt-3">
@@ -52,7 +52,7 @@ export const HeaderDashboard = () => {
       )}
 
       <div className="flex flex-row items-center gap-3 mt-3">
-        <Avatar className="h-8 w-8 border border-bg-secondary/20">
+        <Avatar className="h-8 w-8 border border-accent/20">
           <AvatarImage
             src="https://github.com/shadcn.png"
             alt="@shadcn"

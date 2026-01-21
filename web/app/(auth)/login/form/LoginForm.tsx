@@ -114,12 +114,12 @@ export function LoginForm() {
 
             <div className="mt-2 flex flex-col gap-2">
               <Button
-                type="submit"
+                type="default"
+                text="ENTRAR"
+                htmlType="submit"
                 isLoading={isLoading}
                 disabled={!isValid || isLoading}
-              >
-                {isLoading ? 'Entrando...' : 'Entrar'}
-              </Button>
+              />
 
               <div className="flex w-full justify-center my-7">
                 <p className="text-xs font-inter font-normal text-text-tertiary">
@@ -135,7 +135,7 @@ export function LoginForm() {
           </form>
         </div>
       </div>
-      <div className="hidden custom:flex bg-bg-secondary w-full h-full rounded-s-3xl justify-center items-center flex-col gap-10">
+      <div className="hidden custom:flex bg-accent w-full h-full rounded-s-3xl justify-center items-center flex-col gap-10">
         <h1 className="text-text-quaternary text-center text-3xl font-bold font-poppins">
           Suas notas fiscais em um só lugar.
         </h1>

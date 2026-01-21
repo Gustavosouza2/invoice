@@ -58,3 +58,11 @@ export type UpdateInvoiceRequest = {
 export type UpdateInvoiceResponse = {
   invoice: Invoice
 }
+
+export type DeleteInvoiceRequest = {
+  id: string
+}
+
+export type DeleteInvoiceResponse = {
+  message: string
+}

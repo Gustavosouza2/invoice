@@ -55,9 +55,12 @@ export const SelectType = () => {
       </div>
 
       <ModalFooter>
-        <Button disabled={isDisabled} onClick={() => setStep(2)}>
-          CONTINUAR
-        </Button>
+        <Button
+          type="default"
+          text="CONTINUAR"
+          disabled={isDisabled}
+          onClick={() => setStep(2)}
+        />
       </ModalFooter>
     </div>
   )

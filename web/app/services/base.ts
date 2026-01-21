@@ -66,7 +66,18 @@ export class BaseApi {
       throw new Error(`Resquest DELETE failed with status ${response.status}`)
     }
 
-    return response.json()
+    const contentType = response.headers.get('content-type')
+    const text = await response.text()
+
+    if (contentType && contentType.includes('application/json') && text) {
+      try {
+        return JSON.parse(text)
+      } catch {
+        return {} as T
+      }
+    }
+
+    return {} as T
   }
 
   private buildHeaders(useSessionToken = false, customToken?: string) {

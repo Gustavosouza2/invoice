@@ -33,11 +33,11 @@ export const NoteButton = ({
       disabled={disabled}
       type="button"
       className={cn(
-        'cursor-pointer bg-input-default border transition-colors w-32 h-28 flex justify-center items-center rounded-xl',
+        'cursor-pointer bg-surface border transition-colors w-32 h-28 flex justify-center items-center rounded-xl',
         isSelected
-          ? 'border-bg-secondary hover:bg-input-default'
+          ? 'border-accent hover:bg-surface'
           : 'border-transparent',
-        !isSelected && 'hover:border-zinc-700 hover:bg-input-primary',
+        !isSelected && 'hover:border-border-focus hover:bg-surface-elevated',
         disabled && 'opacity-60 pointer-events-none',
         className,
       )}

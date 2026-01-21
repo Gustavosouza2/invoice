@@ -1,148 +1,73 @@
 'use client'
 
-import { useCallback, useMemo, useState, useEffect } from 'react'
-import { MdEdit, MdVisibility } from 'react-icons/md'
-
-import { useGetInvoicesList } from '@/hooks/getInvoicesList'
+import { DeleteModal } from '@/components/features/Modal/DeleteModal'
+import { useInvoiceCreate } from '@/hooks/invoices/useInvoiceCreate'
+import { useInvoiceDelete } from '@/hooks/invoices/useInvoiceDelete'
+import { useInvoiceTable } from '@/hooks/invoices/useInvoiceTable'
+import { useInvoiceEdit } from '@/hooks/invoices/useInvoiceEdit'
 import { DataTable } from '@/components/features/Table'
-import { usePagination } from '@/hooks/usePagination'
 import { Filter } from '@/components/features/Filter'
-import type { Invoice } from '@/types/invoice'
 
-import { InvoiceFormProvider, type InvoiceFormData } from './form/context'
+import { InvoiceFormProvider } from './form/context'
 import { InvoiceFormModal } from './form'
 
 export default function InvoiceView() {
-  const [isOpenCreateModal, setIsOpenCreateModal] = useState<boolean>(false)
-  const [editInvoiceId, setEditInvoiceId] = useState<string | undefined>()
-  const [isOpenEditModal, setIsOpenEditModal] = useState<boolean>(false)
-  const [editInvoiceData, setEditInvoiceData] =
-    useState<InvoiceFormData | null>(null)
-  const { filters, setFilters } = usePagination()
+  const createInvoice = useInvoiceCreate()
+  const deleteInvoice = useInvoiceDelete()
+  const editInvoice = useInvoiceEdit()
 
-  const [debouncedName, setDebouncedName] = useState(filters.name ?? '')
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedName(filters.name ?? '')
-    }, 300)
-    return () => clearTimeout(timer)
-  }, [filters.name])
-
-  const handleIsOpenCreateInvoiceModal = useCallback(() => {
-    setIsOpenCreateModal(!isOpenCreateModal)
-  }, [isOpenCreateModal])
-
-  const handleOpenEditModal = useCallback((invoice: Invoice) => {
-    const { issueDate, ...invoiceFormFields } = invoice
-
-    setEditInvoiceData({
-      ...invoiceFormFields,
-      issueDate: issueDate?.split('T')[0],
-    } as InvoiceFormData)
-
-    setEditInvoiceId(invoice.id)
-    setIsOpenEditModal(true)
-  }, [])
-
-  const handleCloseEditModal = useCallback(() => {
-    setIsOpenEditModal(false)
-    setEditInvoiceData(null)
-    setEditInvoiceId(undefined)
-  }, [])
-
-  const { data: invoices, isLoading } = useGetInvoicesList({
-    page: filters.page,
-    perPage: filters.pageSize,
-    name: debouncedName,
+  const table = useInvoiceTable({
+    onEdit: editInvoice.openModal,
+    onDelete: deleteInvoice.openModal,
   })
-
-  const showSkeleton = useMemo(
-    () => isLoading && !invoices,
-    [isLoading, invoices],
-  )
-
-  const columns = useMemo(
-    () =>
-      [
-        { name: 'customerName', label: 'Nome do cliente', size: '80' },
-        { name: 'invoiceNumber', label: 'Número da nota', size: '20' },
-        { name: 'serviceValue', label: 'Valor do serviço', size: '20' },
-        { name: 'actions', label: '', size: '0' },
-      ] as const,
-    [],
-  )
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setFilters({ ...filters, page, pageSize: filters.pageSize || 10 })
-    },
-    [setFilters, filters],
-  )
-
-  const formattedInvoiceData = useMemo(() => {
-    return invoices?.data?.map((invoice) => ({
-      ...invoice,
-      onClickRow: () => handleOpenEditModal(invoice),
-    }))
-  }, [invoices?.data, handleOpenEditModal]) as Invoice[]
-
-  const ItemsContextMenu = useCallback(
-    (rowData: Invoice) => [
-      {
-        label: 'Visualizar',
-        icon: () => <MdVisibility className="h-4 w-4 fill-current" />,
-        onClick: () => handleOpenEditModal(rowData),
-      },
-      {
-        label: 'Editar',
-        icon: () => <MdEdit className="h-4 w-4 fill-current" />,
-        onClick: () => handleOpenEditModal(rowData),
-      },
-    ],
-    [handleOpenEditModal],
-  )
 
   return (
     <main className="gap-5 scrollbar-hide flex flex-col md-mobile:flex-row">
       <div className="w-full md-mobile:w-auto order-2 md-mobile:order-1">
         <DataTable
-          columns={columns}
-          isLoading={showSkeleton}
-          items={ItemsContextMenu}
-          currentPage={filters.page}
-          data={formattedInvoiceData}
-          onPageChange={handlePageChange}
-          totalPages={invoices?.total_pages || 10}
+          data={table.data}
+          columns={table.columns}
+          isLoading={table.isLoading}
+          totalPages={table.totalPages}
+          items={table.itemsContextMenu}
+          currentPage={table.currentPage}
+          onPageChange={table.onPageChange}
         />
       </div>
 
       <div className="w-full md-mobile:w-auto order-1 md-mobile:order-2 h-full">
         <Filter
-          isLoading={showSkeleton}
-          handleCreateInvoice={handleIsOpenCreateInvoiceModal}
+          isLoading={table.isLoading}
+          handleCreateInvoice={createInvoice.openModal}
         />
       </div>
 
       <InvoiceFormProvider mode="create">
         <InvoiceFormModal
-          isOpen={isOpenCreateModal}
-          onClose={handleIsOpenCreateInvoiceModal}
+          isOpen={createInvoice.isOpen}
+          onClose={createInvoice.closeModal}
         />
       </InvoiceFormProvider>
 
-      {editInvoiceData && (
+      {editInvoice.invoiceData && (
         <InvoiceFormProvider
           mode="edit"
-          invoiceId={editInvoiceId}
-          initialData={editInvoiceData}
+          invoiceId={editInvoice.invoiceId}
+          initialData={editInvoice.invoiceData}
         >
           <InvoiceFormModal
-            isOpen={isOpenEditModal}
-            onClose={handleCloseEditModal}
+            isOpen={editInvoice.isOpen}
+            onClose={editInvoice.closeModal}
           />
         </InvoiceFormProvider>
       )}
+
+      <DeleteModal
+        isOpen={deleteInvoice.isOpen}
+        onClose={deleteInvoice.closeModal}
+        invoiceId={deleteInvoice.invoiceId}
+        onDelete={deleteInvoice.deleteInvoice}
+      />
     </main>
   )
 }

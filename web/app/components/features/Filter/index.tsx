@@ -24,9 +24,9 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
 
   const cardClassName = `
     ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
-    h-auto px-8 py-6 rounded-xl border border-bg-secondary/40
-    bg-gradient-to-br from-bg-default to-bg-primary shadow-xl/40
-    hover:shadow-xl/60 transition-all duration-300 hover:border-bg-secondary/60`
+    h-auto px-8 py-6 rounded-xl border border-accent/40
+    bg-gradient-to-br from-bg to-bg-primary shadow-xl/40
+    hover:shadow-xl/60 transition-all duration-300 hover:border-accent/60`
 
   return (
     <>
@@ -34,8 +34,8 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
         <div
           className={`
             ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
-            w-full px-8 py-6 rounded-xl border border-bg-secondary/40
-            bg-gradient-to-br from-bg-default to-bg-primary
+            w-full px-8 py-6 rounded-xl border border-accent/40
+            bg-gradient-to-br from-bg to-bg-primary
           `}
         >
           <div className="flex flex-col space-y-4">

@@ -1,4 +1,5 @@
 import { FormProvider, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
 
 import { ModalHeader, ModalFooter } from '@/components/features/Modal'
 import { Button } from '@/components/features/Button/DefaultButton'
@@ -11,7 +12,7 @@ import { useInvoiceFormContext } from '../context'
 import { invoiceDetailsSchema } from '../schema'
 
 type InvoiceDetailsFormData = {
-  invoiceNumber?: number
+  invoiceNumber?: number | string
   issueDate?: string
 }
 
@@ -20,17 +21,23 @@ export const InvoiceDetails = () => {
 
   const schema = invoiceDetailsSchema[mode]
 
-  const form = useForm<InvoiceDetailsFormData>({
-    resolver: zodResolver(schema),
-    mode: 'onChange',
-    defaultValues: {
+  const defaultValues = useMemo(
+    () => ({
       issueDate: formData.issueDate || '',
       invoiceNumber:
         formData?.invoiceNumber !== undefined &&
         formData?.invoiceNumber !== null
-          ? formData.invoiceNumber
-          : undefined,
-    },
+          ? String(formData.invoiceNumber)
+          : '',
+    }),
+    [formData.invoiceNumber, formData.issueDate],
+  )
+
+  const form = useForm<InvoiceDetailsFormData>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues,
+    shouldUnregister: false,
   })
 
   const {
@@ -40,11 +47,13 @@ export const InvoiceDetails = () => {
   } = form
 
   const onSubmit = (data: InvoiceDetailsFormData) => {
+    const invoiceNumberValue =
+      data.invoiceNumber && String(data.invoiceNumber).trim() !== ''
+        ? Number(data.invoiceNumber)
+        : undefined
+
     setFormData({
-      invoiceNumber:
-        data.invoiceNumber !== undefined && !isNaN(Number(data.invoiceNumber))
-          ? Number(data.invoiceNumber)
-          : undefined,
+      invoiceNumber: invoiceNumberValue,
       issueDate: data.issueDate,
     })
     setStep(3)
@@ -69,32 +78,22 @@ export const InvoiceDetails = () => {
                 name="invoiceNumber"
                 label="Numero da Nota:"
                 labelClassName="-mb-1"
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="number"
-                    maxLength={9}
-                    value={
-                      field.value === 0
-                        ? '0'
-                        : field.value !== undefined && field.value !== null
-                          ? String(field.value)
-                          : ''
-                    }
-                    placeholder="Digite o número da nota"
-                    onChange={(e) => {
-                      const value = e.target.value.trim()
-                      if (value === '') {
-                        field.onChange(undefined)
-                      } else {
-                        const numValue = Number(value)
-                        if (!isNaN(numValue)) {
-                          field.onChange(numValue)
-                        }
-                      }
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <Input
+                      name={field.name}
+                      onBlur={field.onBlur}
+                      type="number"
+                      maxLength={9}
+                      value={field.value ?? ''}
+                      placeholder="Digite o número da nota"
+                      onChange={(e) => {
+                        const value = e.target.value
+                        field.onChange(value === '' ? '' : value)
+                      }}
+                    />
+                  )
+                }}
               />
               <FormField
                 control={control}
@@ -114,9 +113,12 @@ export const InvoiceDetails = () => {
           </FieldSet>
 
           <ModalFooter>
-            <Button disabled={isButtonDisabled} type="submit">
-              CONTINUAR
-            </Button>
+            <Button
+              type="default"
+              text="CONTINUAR"
+              htmlType="submit"
+              disabled={isButtonDisabled}
+            />
           </ModalFooter>
         </form>
       </div>

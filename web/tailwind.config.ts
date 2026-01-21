@@ -69,15 +69,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--muted))',
           foreground: 'hsl(var(--muted-foreground))',
         },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        border: 'hsl(var(--border))',
         ring: 'hsl(var(--ring))',
         chart: {
           '1': 'hsl(var(--chart-1))',
@@ -96,30 +91,55 @@ module.exports = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
-        button: {
-          yellow: '##E1C379',
-          gray: '#3E3E3F',
+
+        // Surface colors - for component backgrounds (inputs, buttons, cards)
+        surface: {
+          DEFAULT: '#2A2A2E',
+          elevated: '#1F1F23',
+          hover: '#333337',
         },
-        hover: {
-          yellow: '#baa163',
-          gray: '#333333',
-        },
+
+        // Background colors - for page/container backgrounds
         bg: {
-          default: '#1A1A1D',
+          DEFAULT: '#1A1A1D',
           primary: '#151518',
           secondary: '#E1C379',
           tertiary: '#252529',
           quaternary: '#2A2A2E',
         },
-        input: {
-          default: '#2A2A2E',
-          primary: '#1F1F23',
-        },
+
+        // Text colors
         text: {
+          DEFAULT: '#F5F5F7',
           primary: '#F5F5F7',
           secondary: '#E1C379',
           tertiary: '#A8A8B0',
           quaternary: '#252529',
+          muted: '#A8A8B0',
+        },
+
+        // Border colors
+        border: {
+          DEFAULT: '#3E3E3F',
+          muted: '#252529',
+          accent: '#E1C379',
+          focus: '#5A5A5D',
+        },
+
+        // Accent colors - for highlights and primary actions
+        accent: {
+          DEFAULT: '#E1C379',
+          hover: '#baa163',
+          light: 'rgba(225, 195, 121, 0.1)',
+        },
+
+        // Delete/Destructive colors - for destructive actions
+        delete: {
+          DEFAULT: '#d2324a',
+          background: 'rgba(210, 50, 74, 0.12)',
+          hover: 'rgba(210, 50, 74, 0.2)',
+          border: '#d2324a',
+          text: '#d2324a',
         },
       },
     },

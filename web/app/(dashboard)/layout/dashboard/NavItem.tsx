@@ -19,7 +19,7 @@ const navItems = [
 
 export function NavItems() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 w-full h-12 border-t border-bg-secondary/10 bg-gradient-to-r from-bg-primary to-bg-default shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-50 w-full h-12 border-t border-accent/10 bg-gradient-to-r from-bg-primary to-bg shadow-lg">
       <nav className="flex flex-row items-center  justify-around p-4 ">
         {navItems.map((item) => (
           <div

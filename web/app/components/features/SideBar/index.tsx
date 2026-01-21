@@ -12,9 +12,9 @@ export default function AppSidebar({ navItems }: SideBarProps) {
   return (
     <Sidebar
       collapsible="icon"
-      className="w-52 border-bg-secondary/10 bg-transparent"
+      className="w-52 border-accent/10 bg-transparent"
     >
-      <SidebarContent className="bg-gradient-to-b from-bg-primary to-bg-default">
+      <SidebarContent className="bg-gradient-to-b from-bg-primary to-bg">
         <NavMain items={navItems} />
       </SidebarContent>
       <SidebarRail />

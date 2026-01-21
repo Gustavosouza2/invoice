@@ -106,9 +106,12 @@ export const CustomerDetails = () => {
           </FieldSet>
 
           <ModalFooter>
-            <Button type="submit" disabled={isButtonDisabled}>
-              CONTINUAR
-            </Button>
+            <Button
+              type="default"
+              text="CONTINUAR"
+              htmlType="submit"
+              disabled={isButtonDisabled}
+            />
           </ModalFooter>
         </form>
       </div>

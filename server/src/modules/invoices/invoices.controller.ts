@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Delete,
+  HttpCode,
   UseGuards,
   Controller,
   UploadedFile,
@@ -72,8 +73,9 @@ export class InvoicesController {
 
   @UseGuards(JwtGuard)
   @Delete('/delete-invoice/:id')
+  @HttpCode(204)
   async removeInvoice(@Param('id') id: string) {
-    return this.invoicesService.removeInvoice({ id });
+    await this.invoicesService.removeInvoice({ id });
   }
 
   @UseGuards(JwtGuard)

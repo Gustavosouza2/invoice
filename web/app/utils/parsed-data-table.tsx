@@ -7,7 +7,6 @@ import { Invoice } from '@/types/invoice'
 
 export const parsedDataTable = (
   items?: (rowData: Invoice) => ContextMenuItemsProps['items'],
-  BADGE_PROPS_COLOR?: Record<string, JSX.Element>,
   column?: TableColumn<any>,
   data?: any,
 ) => {
@@ -25,8 +24,6 @@ export const parsedDataTable = (
     const menuItems = items(data)
     return menuItems ? <ContextMenuItems items={menuItems} /> : null
   }
-
-  if (column?.name === 'status') return BADGE_PROPS_COLOR?.[data[column.name]]
 
   return data?.[column?.name]
 }

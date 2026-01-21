@@ -72,9 +72,9 @@ export const Input = ({
                     {...inputProps}
                     placeholder={placeholder || ''}
                     className={cn(
-                      'h-11 rounded border border-transparent bg-input-default',
+                      'h-11 rounded border border-transparent !bg-surface',
                       'text-text-tertiary placeholder:text-text-tertiary/70',
-                      'focus-visible:ring-0 focus:border-zinc-700',
+                      'focus-visible:ring-0 focus:border-border-focus',
                       iconType ? 'pl-10' : 'pl-3',
                     )}
                     onChange={onChange}
@@ -85,18 +85,19 @@ export const Input = ({
               </InputMask>
             ) : (
               <InputShad
+                {...props}
                 placeholder={placeholder || ''}
                 className={cn(
-                  'h-11 rounded border border-transparent bg-input-default',
+                  'h-11 rounded border border-transparent !bg-surface',
                   'text-text-tertiary placeholder:text-text-tertiary/70',
-                  'focus-visible:ring-0 focus:border-zinc-700',
+                  'focus-visible:ring-0 focus:border-border-focus',
                   iconType ? 'pl-10' : 'pl-3',
+                  props.className,
                 )}
                 value={(props.value as string | undefined) || ''}
                 onChange={onChange}
                 autoComplete="off"
                 type="text"
-                {...props}
               />
             )}
           </div>
@@ -107,9 +108,9 @@ export const Input = ({
             <CurrencyInput
               className={cn(
                 'w-full h-11 rounded text-sm',
-                'border border-transparent bg-input-default',
+                'border border-transparent bg-surface',
                 'text-text-tertiary placeholder:text-text-tertiary/70',
-                'focus:outline-none focus:ring-0 focus:border-zinc-700',
+                'focus:outline-none focus:ring-0 focus:border-border-focus',
                 'focus-visible:outline-none focus-visible:ring-0 focus-visible:border-zinc-700',
                 'pl-4',
               )}
@@ -138,20 +139,23 @@ export const Input = ({
             onValueChange={onValueChange}
           >
             <SelectTrigger
-              className="w-full rounded h-10 text-zinc-200
+              className="w-full rounded h-10 text-text-primary
               ring-0 focus:ring-0
         border border-transparent
-        focus:border-zinc-700 focus-visible:ring-0 focus-visible:ring-offset-0
-        bg-zinc-900"
+        focus:border-border-focus focus-visible:ring-0 focus-visible:ring-offset-0
+        bg-surface"
             >
-              <SelectValue placeholder="Status" className="text-[#A1A1AA]" />
+              <SelectValue
+                placeholder="Status"
+                className="text-text-tertiary"
+              />
             </SelectTrigger>
-            <SelectContent className="border-zinc-800 bg-zinc-900 text-zinc-200 rounded">
+            <SelectContent className="border-border-muted bg-surface text-text-primary rounded">
               {options?.map((option) => (
                 <SelectItem
                   key={option.id}
                   value={option.value}
-                  className="focus:bg-zinc-800 text-[#A1A1AA]"
+                  className="focus:bg-surface-elevated text-text-tertiary"
                 >
                   {option.label}
                 </SelectItem>
@@ -170,7 +174,7 @@ export const Input = ({
               )}
               <InputShad
                 className={cn(
-                  'h-11 rounded placeholder:text-text-tertiary/70 text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-zinc-700 bg-input-default pr-10',
+                  'h-11 rounded placeholder:text-text-tertiary/70 text-text-tertiary border border-transparent focus-visible:ring-0 focus:border-border-focus bg-surface pr-10',
                   iconType ? 'pl-10' : 'pl-3',
                 )}
                 type={showPassword ? 'text' : 'password'}
@@ -189,12 +193,12 @@ export const Input = ({
               >
                 {showPassword ? (
                   <FaRegEye
-                    className="h-4 w-4 text-zinc-300 opacity-40"
+                    className="h-4 w-4 text-text-tertiary opacity-40"
                     aria-hidden="true"
                   />
                 ) : (
                   <FaRegEyeSlash
-                    className="h-4 w-4 text-zinc-300 opacity-40"
+                    className="h-4 w-4 text-text-tertiary opacity-40"
                     aria-hidden="true"
                   />
                 )}
@@ -205,7 +209,7 @@ export const Input = ({
             </div>
             {showPasswordTips && (
               <div className="flex justify-center items-center mt-4">
-                <p className="text-sm text-zinc-300 opacity-5">
+                <p className="text-sm text-text-tertiary opacity-5">
                   * The password must be at least 8 characters long
                 </p>
               </div>
@@ -218,38 +222,48 @@ export const Input = ({
             <InputShad
               onKeyDown={handleBlockKeyDownValuesInput}
               className={cn(
-                'h-11 rounded border border-transparent bg-input-default',
+                'h-11 rounded border border-transparent bg-surface',
                 'text-text-tertiary placeholder:text-text-tertiary/70',
-                'focus-visible:ring-0 focus:border-zinc-700',
+                'focus-visible:ring-0 focus:border-border-focus',
                 iconType ? 'pl-10' : 'pl-3',
-
                 '[appearance:textfield]',
                 '[&::-webkit-inner-spin-button]:appearance-none',
                 '[&::-webkit-outer-spin-button]:appearance-none',
                 '[&::-webkit-inner-spin-button]:m-0',
               )}
               placeholder={placeholder}
+              name={props.name}
+              onBlur={props.onBlur}
               value={
-                typeof props.value === 'number'
-                  ? String(props.value)
-                  : (props.value as string | undefined) || ''
+                props.value === null ||
+                props.value === undefined ||
+                props.value === ''
+                  ? ''
+                  : String(props.value)
               }
               onChange={(e) => {
-                if (maxLength && e.target.value.length > maxLength) {
-                  e.target.value = e.target.value
-                    .slice(0, maxLength)
-                    .replace(/[^0-9.]/g, '')
+                let value = e.target.value
+
+                value = value.replace(/[^0-9]/g, '')
+
+                if (maxLength && value.length > maxLength) {
+                  value = value.slice(0, maxLength)
                 }
-                onChange?.(e)
+
+                const syntheticEvent = {
+                  ...e,
+                  target: { ...e.target, value },
+                } as React.ChangeEvent<HTMLInputElement>
+
+                onChange?.(syntheticEvent)
               }}
               autoComplete="off"
-              pattern="[0-9]*"
-              type="number"
-              {...props}
+              inputMode="numeric"
+              type="text"
             />
             {maxLength && (
               <h1 className="text-xs text-text-tertiary/70 absolute bottom-3 right-4">
-                {String(props.value).length} / {maxLength}
+                {String(props.value ?? '').length} / {maxLength}
               </h1>
             )}
           </>
@@ -267,9 +281,9 @@ export const Input = ({
                 {...inputProps}
                 placeholder={placeholder || 'DD/MM/YYYY'}
                 className={cn(
-                  'h-11 rounded border border-transparent bg-input-default',
+                  'h-11 rounded border border-transparent !bg-surface',
                   'text-text-tertiary placeholder:text-text-tertiary/70',
-                  'focus-visible:ring-0 focus:border-zinc-700',
+                  'focus-visible:ring-0 focus:border-border-focus',
                   iconType ? 'pl-10' : 'pl-3',
                 )}
                 autoComplete="off"
@@ -286,11 +300,12 @@ export const Input = ({
               onChange?.(e as unknown as React.ChangeEvent<HTMLInputElement>)
             }
             className={cn(
-              'h-11 rounded border border-transparent bg-input-default',
+              'h-11 rounded border border-transparent !bg-surface',
               'text-text-tertiary placeholder:text-text-tertiary/70',
-              'focus-visible:ring-0 focus:border-zinc-700 resize-y max-h-28',
+              'focus-visible:ring-0 focus:border-border-focus resize-y max-h-28',
               iconType ? 'pl-10' : 'pl-3',
             )}
+            defaultValue={props.defaultValue}
           />
         )}
       </div>

@@ -8,6 +8,8 @@ import type {
   UpdateInvoiceResponse,
   GetAllInvoicesRequest,
   GetAllInvoicesResponse,
+  DeleteInvoiceRequest,
+  DeleteInvoiceResponse,
 } from './type'
 
 class Invoice extends BaseApi {
@@ -44,7 +46,14 @@ class Invoice extends BaseApi {
     )) as UpdateInvoiceResponse
     return response
   }
+
+  public async deleteInvoice({ id }: DeleteInvoiceRequest) {
+    const response = await this.delete<DeleteInvoiceResponse>(
+      `/invoices/delete-invoice/${id}`,
+    )
+    return response
+  }
 }
 
-const baseUrl = process.env.BASE_URL
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 export const invoiceApi = new Invoice(baseUrl!)

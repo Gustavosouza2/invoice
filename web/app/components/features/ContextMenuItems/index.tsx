@@ -18,8 +18,8 @@ export const ContextMenuItems = ({ items }: ContextMenuItemsProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         className="flex items-center justify-center gap-1.5 flex-col
-        border border-bg-secondary/20
-        bg-gradient-to-br from-bg-default to-bg-primary rounded-xl overflow-hidden p-0"
+        border border-accent/20
+        bg-gradient-to-br from-bg to-bg-primary rounded-xl overflow-hidden p-0"
       >
         {items.map((item) => (
           <DropdownMenuItem
@@ -30,7 +30,7 @@ export const ContextMenuItems = ({ items }: ContextMenuItemsProps) => {
             <div className="w-5 h-5 flex items-center hover:text-text-secondary">
               {item.icon()}
             </div>
-            <span className="text-sm font-inter font-medium text-zinc-300 hover:text-text-secondary">
+            <span className="text-sm font-inter font-medium text-text-tertiary hover:text-text-secondary">
               {item.label}
             </span>
           </DropdownMenuItem>

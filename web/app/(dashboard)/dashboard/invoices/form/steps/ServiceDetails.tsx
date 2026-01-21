@@ -27,8 +27,8 @@ type ServiceDetailsProps = {
 }
 
 export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
-  const { formData, setFormData, mode, invoiceId } = useInvoiceFormContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { formData, setFormData, mode, invoiceId } = useInvoiceFormContext()
 
   const { userData } = useUserContext()
   const { mutate } = useSWRConfig()
@@ -170,6 +170,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
                   <Input
                     {...field}
                     type="textArea"
+                    defaultValue={formData.serviceDescription}
                     placeholder="Digite a descrição do serviço"
                     onChange={(e) => field.onChange(e.target.value)}
                   />
@@ -205,12 +206,12 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
 
           <ModalFooter>
             <Button
-              type="submit"
+              text="ENVIAR"
+              type="default"
+              htmlType="submit"
               isLoading={isLoading}
               disabled={isButtonDisabled}
-            >
-              ENVIAR
-            </Button>
+            />
           </ModalFooter>
         </form>
       </div>

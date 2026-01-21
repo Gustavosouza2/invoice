@@ -63,7 +63,6 @@ export async function GET(req: Request) {
 
     return NextResponse.json(data)
   } catch (err) {
-    console.log('err', err)
     const anyErr = err as { message?: string; status?: number }
 
     if (anyErr?.message?.includes('404')) {
@@ -140,13 +139,69 @@ export async function PATCH(req: Request) {
   setToken(token)
 
   try {
-    const data = await invoiceApi.updateInvoice(parsed.data)
+    const data = await invoiceApi.updateInvoice({
+      id: parsed.data.id,
+      issueDate: parsed.data.issueDate,
+      providerName: parsed.data.providerName,
+      providerCnpj: parsed.data.providerCnpj,
+      customerName: parsed.data.customerName,
+      customerEmail: parsed.data.customerEmail,
+      invoiceNumber: parsed.data.invoiceNumber,
+      serviceValue: parsed.data.serviceValue,
+      customerCnpjOrCpf: parsed.data.customerCnpjOrCpf,
+      serviceDescription: parsed.data.serviceDescription,
+    })
     return NextResponse.json(data)
   } catch (err) {
-    console.log('error', err)
+    console.log('patch error', err)
     return NextResponse.json(
       { error: 'Internal Server Error' },
       { status: 500 },
     )
+  }
+}
+
+export async function DELETE(req: Request) {
+  let body
+  try {
+    body = await req.json()
+  } catch {
+    body = {}
+  }
+
+  const parsedId = z
+    .object({
+      id: z.string().min(1),
+    })
+    .safeParse(body)
+
+  if (!parsedId.success) {
+    return NextResponse.json(
+      { error: 'Dados inválidos', details: parsedId.error.flatten() },
+      { status: 400 },
+    )
+  }
+
+  const cookieStore = cookies()
+  const token = cookieStore.get('access_token')?.value
+
+  if (!token) {
+    return NextResponse.json(
+      { error: 'Sessão expirada. Faça login novamente.' },
+      { status: 401 },
+    )
+  }
+
+  setToken(token)
+
+  try {
+    await invoiceApi.deleteInvoice({ id: parsedId.data.id })
+    return NextResponse.json({ success: true }, { status: 200 })
+  } catch (err) {
+    console.log('delete error', err)
+    const anyErr = err as { message?: string; status?: number }
+    const status = typeof anyErr?.status === 'number' ? anyErr.status : 500
+    const message = anyErr?.message ?? 'Internal Server Error'
+    return NextResponse.json({ error: message }, { status })
   }
 }
