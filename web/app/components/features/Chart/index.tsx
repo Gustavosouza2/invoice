@@ -1,10 +1,13 @@
 'use client'
 
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from 'recharts'
-import React, { useMemo } from 'react'
-import { format, parse } from 'date-fns'
+import { format, parse, subMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import React, { useMemo } from 'react'
 
+import { capitalizeFirstLetter } from '@/utils/capitalize'
+import { Skeleton } from '@/components/ui/skeleton'
+import { type Invoice } from '@/types/invoice'
 import {
   CardDescription,
   CardContent,
@@ -18,10 +21,6 @@ import {
   ChartTooltip,
 } from '@/components/ui/chart'
 
-import { capitalizeFirstLetter } from '@/utils/capitalize'
-import { Skeleton } from '@/components/ui/skeleton'
-import { type Invoice } from '@/types/invoice'
-
 type ChartProps = {
   isLoading: boolean
   data: Invoice[]
@@ -29,8 +28,28 @@ type ChartProps = {
 
 const processDataByMonth = (data: ChartProps['data']) => {
   const monthlyTotals: Record<string, number> = {}
+  const now = new Date()
+  const threeMonthsAgo = subMonths(now, 2)
 
-  data?.forEach((item) => {
+  const filteredData = data?.filter((item) => {
+    const createdAtDate = new Date(item.createdAt)
+    if (isNaN(createdAtDate.getTime())) return false
+
+    const itemMonth = new Date(
+      createdAtDate.getFullYear(),
+      createdAtDate.getMonth(),
+      1,
+    )
+    const cutoffMonth = new Date(
+      threeMonthsAgo.getFullYear(),
+      threeMonthsAgo.getMonth(),
+      1,
+    )
+
+    return itemMonth >= cutoffMonth
+  })
+
+  filteredData?.forEach((item) => {
     const createdAtDate = new Date(item.createdAt)
     const monthKey = isNaN(createdAtDate.getTime())
       ? format(new Date(), 'MM-yyyy')
@@ -39,27 +58,43 @@ const processDataByMonth = (data: ChartProps['data']) => {
     if (!monthlyTotals[monthKey]) {
       monthlyTotals[monthKey] = 0
     }
-    monthlyTotals[monthKey] += item.netValue || item.serviceValue || 0
+    monthlyTotals[monthKey] += item.serviceValue || 0
   })
 
-  return Object.entries(monthlyTotals)
-    .map(([monthKey, total]) => {
-      const [month, year] = monthKey.split('-')
-      const date = parse(`${year}-${month}-01`, 'yyyy-MM-dd', new Date())
-      const monthName = capitalizeFirstLetter(
-        format(date, 'MMMM', { locale: ptBR }),
-      )
+  const lastThreeMonths: string[] = []
+  for (let i = 2; i >= 0; i--) {
+    const monthDate = subMonths(now, i)
+    lastThreeMonths.push(format(monthDate, 'MM-yyyy'))
+  }
 
-      return {
-        month: monthName,
-        desktop: total,
-      }
-    })
-    .sort((a, b) => {
-      const dateA = parse(a.month, 'MMMM', new Date(), { locale: ptBR })
-      const dateB = parse(b.month, 'MMMM', new Date(), { locale: ptBR })
+  lastThreeMonths.forEach((monthKey) => {
+    if (!monthlyTotals[monthKey]) {
+      monthlyTotals[monthKey] = 0
+    }
+  })
+
+  const sortedEntries = Object.entries(monthlyTotals)
+    .filter(([monthKey]) => lastThreeMonths.includes(monthKey))
+    .sort(([keyA], [keyB]) => {
+      const [monthA, yearA] = keyA.split('-')
+      const [monthB, yearB] = keyB.split('-')
+      const dateA = new Date(Number(yearA), Number(monthA) - 1, 1)
+      const dateB = new Date(Number(yearB), Number(monthB) - 1, 1)
       return dateA.getTime() - dateB.getTime()
     })
+
+  return sortedEntries.map(([monthKey, total]) => {
+    const [month, year] = monthKey.split('-')
+    const date = parse(`${year}-${month}-01`, 'yyyy-MM-dd', new Date())
+    const monthName = capitalizeFirstLetter(
+      format(date, 'MMMM', { locale: ptBR }),
+    )
+
+    return {
+      month: monthName,
+      desktop: total,
+    }
+  })
 }
 
 const chartConfig = {

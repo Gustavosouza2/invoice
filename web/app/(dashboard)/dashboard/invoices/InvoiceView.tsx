@@ -16,9 +16,15 @@ export default function InvoiceView() {
   const deleteInvoice = useInvoiceDelete()
   const editInvoice = useInvoiceEdit()
 
+  const handleViewInvoice = (invoiceId: string) => {
+    const documentUrl = `/api/dashboard/invoices/${invoiceId}/document`
+    window.open(documentUrl, '_blank')
+  }
+
   const table = useInvoiceTable({
     onEdit: editInvoice.openModal,
     onDelete: deleteInvoice.openModal,
+    onView: handleViewInvoice,
   })
 
   return (

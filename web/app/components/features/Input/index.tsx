@@ -105,6 +105,9 @@ export const Input = ({
 
         {type === 'currency' && (
           <div className="relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none text-text-tertiary">
+              R$
+            </div>
             <CurrencyInput
               className={cn(
                 'w-full h-11 rounded text-sm',
@@ -112,16 +115,19 @@ export const Input = ({
                 'text-text-tertiary placeholder:text-text-tertiary/70',
                 'focus:outline-none focus:ring-0 focus:border-border-focus',
                 'focus-visible:outline-none focus-visible:ring-0 focus-visible:border-zinc-700',
-                'pl-4',
+                'pl-12',
               )}
-              intlConfig={{ locale: 'pt-BR', currency: 'BRL' }}
               placeholder={placeholder}
               name={props.name}
               inputMode="decimal"
               value={
-                typeof props.value === 'number'
-                  ? String(props.value)
-                  : (props.value as string | undefined)
+                props.value === undefined ||
+                props.value === null ||
+                props.value === ''
+                  ? undefined
+                  : typeof props.value === 'number'
+                    ? String(props.value)
+                    : (props.value as string | undefined)
               }
               onValueChange={(value, name, values) => {
                 onChangeCurrency?.(value ?? '', name, values)
@@ -129,6 +135,7 @@ export const Input = ({
               allowDecimals={true}
               decimalSeparator=","
               groupSeparator="."
+              allowNegativeValue={false}
             />
           </div>
         )}

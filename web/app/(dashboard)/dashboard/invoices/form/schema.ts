@@ -22,12 +22,10 @@ function formatIsoDate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-// Schema for SelectType step (create only)
 export const selectTypeSchema = z.object({
   type: z.enum(['WithIA', 'WithoutIA']),
 })
 
-// Schemas for CREATE mode (required fields)
 export const invoiceDetailsSchema = {
   create: z.object({
     invoiceNumber: z.coerce
@@ -123,10 +121,21 @@ export const customerDetailsSchema = {
     customerEmail: z
       .string()
       .trim()
-      .email({ message: 'Por favor, insira um email válido' })
-      .max(255, { message: 'Esse email é muito longo' })
-      .regex(EMAIL_REGEX, { message: 'Insira um email válido' })
       .optional()
+      .refine(
+        (val) => {
+          if (!val || val === '') return true
+          return EMAIL_REGEX.test(val)
+        },
+        { message: 'Por favor, insira um email válido' },
+      )
+      .refine(
+        (val) => {
+          if (!val || val === '') return true
+          return val.length <= 255
+        },
+        { message: 'Esse email é muito longo' },
+      )
       .or(z.literal('')),
   }),
   edit: z.object({
@@ -141,10 +150,21 @@ export const customerDetailsSchema = {
     customerEmail: z
       .string()
       .trim()
-      .email({ message: 'Por favor, insira um email válido' })
-      .max(255, { message: 'Esse email é muito longo' })
-      .regex(EMAIL_REGEX, { message: 'Insira um email válido' })
       .optional()
+      .refine(
+        (val) => {
+          if (!val || val === '') return true
+          return EMAIL_REGEX.test(val)
+        },
+        { message: 'Por favor, insira um email válido' },
+      )
+      .refine(
+        (val) => {
+          if (!val || val === '') return true
+          return val.length <= 255
+        },
+        { message: 'Esse email é muito longo' },
+      )
       .or(z.literal('')),
   }),
 }
@@ -166,30 +186,38 @@ export const serviceDetailsSchema = {
       .string()
       .min(1, 'A descrição do serviço é obrigatória'),
     serviceValue: z
-      .number({ required_error: 'O valor do serviço é obrigatório' })
-      .min(1, 'O valor do serviço é obrigatório'),
+      .string()
+      .refine(
+        (val) => {
+          if (val === '' || val === undefined || val === null) return false
+          const numValue = parseFloat(val.replace(/\./g, '').replace(',', '.'))
+          return !isNaN(numValue) && numValue > 0
+        },
+        {
+          message: 'O valor do serviço é obrigatório e deve ser maior que zero',
+        },
+      )
+      .transform((val) => {
+        if (val === '' || val === undefined || val === null) return 0
+        return parseFloat(val.replace(/\./g, '').replace(',', '.')) || 0
+      }),
   }),
   edit: z.object({
     serviceDescription: z.string().optional(),
-    serviceValue: z.number().min(0).optional(),
+    serviceValue: z
+      .string()
+      .optional()
+      .refine(
+        (val) => {
+          if (val === undefined || val === null || val === '') return true
+          const numValue = parseFloat(val.replace(/\./g, '').replace(',', '.'))
+          return !isNaN(numValue) && numValue >= 0
+        },
+        { message: 'O valor do serviço deve ser um número válido' },
+      )
+      .transform((val) => {
+        if (val === undefined || val === null || val === '') return undefined
+        return parseFloat(val.replace(/\./g, '').replace(',', '.')) || undefined
+      }),
   }),
 }
-
-export const fileUploadSchema = z.object({
-  file: z
-    .instanceof(File, { message: 'Por favor, selecione um arquivo' })
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: 'O arquivo deve ter no máximo 5MB',
-    })
-    .refine(
-      (file) =>
-        ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'].includes(
-          file.type,
-        ),
-      {
-        message: 'Apenas arquivos PDF, JPEG ou PNG são permitidos',
-      },
-    )
-    .optional()
-    .nullable(),
-})

@@ -7,11 +7,16 @@ import type { Invoice } from '@/types/invoice'
 import { debounce } from '@/utils/debounce'
 
 type UseInvoiceTableProps = {
-  onEdit: (invoice: Invoice) => void
   onDelete: (invoiceId: string) => void
+  onView?: (invoiceId: string) => void
+  onEdit: (invoice: Invoice) => void
 }
 
-export function useInvoiceTable({ onEdit, onDelete }: UseInvoiceTableProps) {
+export function useInvoiceTable({
+  onEdit,
+  onView,
+  onDelete,
+}: UseInvoiceTableProps) {
   const { filters, setFilters } = usePagination()
   const [debouncedName, setDebouncedName] = useState(filters.name ?? '')
 
@@ -66,7 +71,12 @@ export function useInvoiceTable({ onEdit, onDelete }: UseInvoiceTableProps) {
       {
         label: 'Visualizar',
         icon: () => <MdVisibility className="h-4 w-4 fill-current" />,
-        onClick: () => onEdit(rowData),
+        onClick: () => {
+          if (onView) {
+            return onView(rowData.id)
+          }
+          return onEdit(rowData)
+        },
       },
       {
         label: 'Editar',
@@ -79,7 +89,7 @@ export function useInvoiceTable({ onEdit, onDelete }: UseInvoiceTableProps) {
         onClick: () => onDelete(rowData.id),
       },
     ],
-    [onEdit, onDelete],
+    [onEdit, onDelete, onView],
   )
 
   return {

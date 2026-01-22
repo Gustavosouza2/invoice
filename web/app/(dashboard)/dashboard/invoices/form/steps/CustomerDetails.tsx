@@ -1,3 +1,4 @@
+import { QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 import { useForm, FormProvider } from 'react-hook-form'
 
 import { ModalFooter, ModalHeader } from '@/components/features/Modal'
@@ -6,6 +7,11 @@ import { FieldGroup, FieldSet } from '@/components/ui/field'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormField } from '@/components/ui/form-field'
 import { Input } from '@/components/features/Input'
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { useInvoiceFormContext } from '../context'
 import { customerDetailsSchema } from '../schema'
@@ -89,19 +95,32 @@ export const CustomerDetails = () => {
                 )}
               />
 
-              <FormField
-                control={control}
-                name="customerEmail"
-                label="Email do Cliente:"
-                labelClassName="-mb-1"
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    type="text"
-                    placeholder="Digite o email do cliente"
-                  />
-                )}
-              />
+              <div>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <span className="text-sm font-medium text-text-primary">
+                    Email do Cliente:
+                  </span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <QuestionMarkCircledIcon className="h-4 w-4 text-text-tertiary cursor-help hover:text-text-secondary transition-colors" />
+                      </TooltipTrigger>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <FormField
+                  control={control}
+                  name="customerEmail"
+                  labelClassName="hidden"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="text"
+                      placeholder="Digite o email do cliente (opcional)"
+                    />
+                  )}
+                />
+              </div>
             </FieldGroup>
           </FieldSet>
 

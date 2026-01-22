@@ -19,7 +19,7 @@ import { useState } from 'react'
 
 type ServiceDetailsFormData = {
   serviceDescription?: string
-  serviceValue?: number
+  serviceValue?: string
 }
 
 type ServiceDetailsProps = {
@@ -40,7 +40,10 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
     mode: 'onChange',
     defaultValues: {
       serviceDescription: formData.serviceDescription || '',
-      serviceValue: formData.serviceValue ?? undefined,
+      serviceValue:
+        formData.serviceValue !== undefined && formData.serviceValue !== null
+          ? String(formData.serviceValue)
+          : '',
     },
   })
 
@@ -52,9 +55,18 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
 
   const onSubmit = (data: ServiceDetailsFormData) => {
     setIsLoading(true)
+
+    const serviceValueNumber =
+      data.serviceValue !== undefined &&
+      data.serviceValue !== null &&
+      data.serviceValue !== ''
+        ? parseFloat(data.serviceValue.replace(/\./g, '').replace(',', '.')) ||
+          undefined
+        : undefined
+
     const nextFormData = {
       serviceDescription: data.serviceDescription,
-      serviceValue: data.serviceValue,
+      serviceValue: serviceValueNumber,
     }
 
     setFormData(nextFormData)
@@ -70,7 +82,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
         customerName: formData.customerName ?? '',
         customerCnpjOrCpf: formData.customerCnpjOrCpf ?? '',
         serviceDescription: nextFormData.serviceDescription ?? '',
-        serviceValue: nextFormData.serviceValue ?? 0,
+        serviceValue: serviceValueNumber ?? 0,
         userId,
         ...(formData.type && { type: formData.type }),
         ...(formData.invoiceNumber && {
@@ -117,7 +129,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
       invoiceNumber: formData.invoiceNumber,
-      serviceValue: nextFormData.serviceValue,
+      serviceValue: serviceValueNumber,
       customerCnpjOrCpf: formData.customerCnpjOrCpf,
       serviceDescription: nextFormData.serviceDescription,
     })
@@ -187,16 +199,15 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
                     {...field}
                     type="currency"
                     placeholder="Digite o valor do serviço"
-                    onChangeCurrency={(_, __, values) => {
-                      form.setValue(
-                        'serviceValue',
-                        values?.float ?? undefined,
-                        {
-                          shouldDirty: true,
-                          shouldTouch: true,
-                          shouldValidate: true,
-                        },
-                      )
+                    value={field.value ?? ''}
+                    onChangeCurrency={(value) => {
+                      const stringValue =
+                        value === undefined || value === null ? '' : value
+                      form.setValue('serviceValue', stringValue, {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                      })
                     }}
                   />
                 )}

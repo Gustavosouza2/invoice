@@ -53,6 +53,31 @@ class Invoice extends BaseApi {
     )
     return response
   }
+
+  public async getInvoiceDocument({
+    invoiceId,
+    token,
+  }: {
+    invoiceId: string
+    token?: string
+  }): Promise<string> {
+    const response = await fetch(
+      `${this.baseUrl}/invoices/${invoiceId}/document`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      },
+    )
+
+    if (!response.ok) {
+      throw new Error(`Request GET failed with status ${response.status}`)
+    }
+
+    return response.text()
+  }
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
