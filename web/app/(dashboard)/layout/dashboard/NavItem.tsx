@@ -13,21 +13,28 @@ const navItems = [
   {
     label: 'Notas',
     href: '/dashboard/invoices',
-    icon: Icons.customer,
+    icon: Icons.invoice,
   },
 ]
 
 export function NavItems() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 w-full h-12 border-t border-accent/10 bg-gradient-to-r from-bg-primary to-bg shadow-lg">
-      <nav className="flex flex-row items-center  justify-around p-4 ">
+    <div className="fixed bottom-0 left-0 right-0 z-50 w-full h-14 border-t border-accent/10 bg-gradient-to-r from-bg-primary to-bg shadow-lg">
+      <nav className="flex flex-row items-center justify-around px-4 py-2 mt-3">
         {navItems.map((item) => (
           <div
             key={item.label}
-            className="w-4rem rounded-lg hover:bg-transparent"
+            className="flex-1 flex justify-center rounded-lg hover:bg-transparent"
           >
-            <Link href={item.href} className={cn('flex flex-col items-center')}>
-              <item.icon className={cn('h-6 w-6 cursor-pointer ')} />
+            <Link
+              href={item.href}
+              className={cn('flex flex-col items-center gap-1 w-full')}
+            >
+              <item.icon
+                className={cn(
+                  'h-6 w-6 cursor-pointer text-text-tertiary hover:text-text-secondary transition-all duration-100',
+                )}
+              />
             </Link>
           </div>
         ))}

@@ -6,8 +6,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Kuro',
-    default: 'Kuro',
+    template: '%s | FiscalOwl',
+    default: 'FiscalOwl',
   },
 }
 

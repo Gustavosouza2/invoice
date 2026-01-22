@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import {
@@ -13,6 +14,7 @@ import {
   SidebarMenu,
   useSidebar,
 } from '../../../components/ui/sidebar'
+import Logo from '@/assets/images/logo.png'
 
 export function NavMain({
   items,
@@ -35,7 +37,7 @@ export function NavMain({
   return (
     <SidebarGroup className={`${isSideBarOpen && 'mt-10'}`}>
       <SidebarGroupLabel className="text-md mb-10 mt-20 flex justify-center tracking-widest">
-        Dashboard
+        <Image alt="Logo" src={Logo} quality={100} height={50} />
       </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (

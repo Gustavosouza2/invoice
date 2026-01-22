@@ -71,7 +71,7 @@ export default function HomeView() {
   ]
 
   return (
-    <main className="flex flex-col gap-5 py-6 mt-10 md:mt-0 px-10 items-center justify-center scrollbar-hide">
+    <main className="flex flex-col gap-5 py-6 mt-10 md:mt-0 px-10 items-center justify-center scrollbar-hide min-h-[calc(100vh-8rem)] md:min-h-0">
       <div className="max-w-7xl">
         <div className="mb-4">
           <Card data={[cardItems[0]]} isLoading={isLoading} />

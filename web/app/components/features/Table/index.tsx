@@ -154,7 +154,7 @@ export const DataTable = React.memo(
               <div className="block sm:hidden">
                 {data && data?.length >= 1 && (
                   <div className="space-y-4">
-                    {data.map(({ onClickRow, ...data }, dataIndex) => {
+                    {data.map((data, dataIndex) => {
                       const primaryColumn = columns[0]
                       const secondaryColumn = columns[columns.length - 2]
                       const actionColumn = columns[columns.length - 1]
@@ -165,7 +165,6 @@ export const DataTable = React.memo(
                           key={`mobile-row-${dataIndex}`}
                           className="border-b border-[#FFFA]/10 pb-4 last:border-b-0 hover:bg-[#FFFA]/5
                           transition-colors rounded-lg p-3 -m-3 cursor-pointer"
-                          onClick={onClickRow}
                         >
                           <div className="flex justify-between items-start w-full gap-4 p-3">
                             <div className="flex flex-col space-y-2 flex-1 min-w-0">

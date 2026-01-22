@@ -3,10 +3,11 @@
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
-import { SidebarProvider } from '../components/ui/sidebar'
-import { CustomerIcon, HomeIcon } from '../assets/icons'
-import AppSidebar from '../components/features/SideBar'
+import { InvoiceIcon } from '@/assets/icons/InvoiceIcon'
+import { HomeIcon } from '@/assets/icons/HomeIcon'
 
+import { SidebarProvider } from '../components/ui/sidebar'
+import AppSidebar from '../components/features/SideBar'
 import '../globals.css'
 
 export default function ClientLayoutRoot({
@@ -26,7 +27,7 @@ export default function ClientLayoutRoot({
       {
         title: 'Notas',
         url: '/dashboard/invoices',
-        icon: CustomerIcon,
+        icon: InvoiceIcon,
       },
     ],
     [],

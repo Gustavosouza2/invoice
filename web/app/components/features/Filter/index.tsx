@@ -24,7 +24,7 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
 
   const cardClassName = `
     ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
-    h-auto px-8 py-6 rounded-xl border border-accent/40
+    h-auto px-4 md:px-8 py-6 rounded-xl border border-accent/40
     bg-gradient-to-br from-bg to-bg-primary shadow-xl/40
     hover:shadow-xl/60 transition-all duration-300 hover:border-accent/60`
 
@@ -34,7 +34,7 @@ export const Filter = ({ isLoading, handleCreateInvoice }: FilterProps) => {
         <div
           className={`
             ${state === 'expanded' ? 'md-mobile:w-[250px] md-mobile:px-5' : 'md-mobile:w-full'}
-            w-full px-8 py-6 rounded-xl border border-accent/40
+            w-full px-4 md:px-8 py-6 rounded-xl border border-accent/40
             bg-gradient-to-br from-bg to-bg-primary
           `}
         >
