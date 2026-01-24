@@ -23,7 +23,7 @@ export function useInvoiceDelete() {
 
     setIsOpen(false)
     axios
-      .delete(`/api/dashboard/invoices/${id}`)
+      .delete(`/api/dashboard/invoices/${id}/delete`)
       .then(() => {
         mutate(
           (key) =>

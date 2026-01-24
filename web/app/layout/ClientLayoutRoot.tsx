@@ -27,7 +27,9 @@ export default function ClientLayoutRoot({
       {
         title: 'Notas',
         url: '/dashboard/invoices',
-        icon: InvoiceIcon,
+        icon: () => (
+          <InvoiceIcon className="hover:text-text-secondary transition-all duration-100" />
+        ),
       },
     ],
     [],

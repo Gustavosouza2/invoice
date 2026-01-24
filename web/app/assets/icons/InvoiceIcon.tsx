@@ -1,13 +1,23 @@
 import { cn } from '@/lib/utils'
 
-export const InvoiceIcon = () => {
+type InvoiceIconProps = {
+  width?: string
+  height?: string
+  className?: string
+}
+
+export const InvoiceIcon = ({
+  className,
+  width = '21',
+  height = '21',
+}: InvoiceIconProps) => {
   return (
     <svg
-      width="21"
-      height="21"
+      width={width}
+      height={height}
       viewBox="0 0 24 24"
       fill="none"
-      className={cn('hover:text-text-secondary transition-all duration-100')}
+      className={cn(className)}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path

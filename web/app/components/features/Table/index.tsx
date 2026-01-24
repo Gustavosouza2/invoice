@@ -3,6 +3,7 @@
 import React from 'react'
 
 import { parsedDataTable } from '@/utils/parsed-data-table'
+import { InvoiceIcon } from '@/assets/icons/InvoiceIcon'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   TableHeader,
@@ -15,6 +16,7 @@ import {
 
 import type { DataTableProps, TableColumn } from './types'
 import { Pagination } from '../Pagination'
+import { EmptyBanner } from '../Empty'
 
 const COLUMN_WIDTH_MAP: Record<string, string> = {
   '0': 'w-[50px] min-w-[50px] max-w-[50px]',
@@ -102,7 +104,7 @@ export const DataTable = React.memo(
               <div className="hidden sm:block">
                 <div className="w-full overflow-x-auto">
                   <Table className="w-full min-w-[600px] lg:min-w-[800px]">
-                    {data && data?.length >= 1 && (
+                    {data && data?.length >= 1 ? (
                       <>
                         <TableHeader>
                           <TableRow className="border-b border-accent/20 hover:bg-transparent">
@@ -145,6 +147,18 @@ export const DataTable = React.memo(
                           ))}
                         </TableBody>
                       </>
+                    ) : (
+                      <EmptyBanner
+                        icon={
+                          <InvoiceIcon
+                            width="42"
+                            height="42"
+                            className="text-text-primary/40 hover:bg-transparent"
+                          />
+                        }
+                        title="Nenhuma Nota Encontrada"
+                        description="Nenhuma nota fiscal foi encontrada na sua conta."
+                      />
                     )}
                   </Table>
                 </div>
@@ -232,11 +246,13 @@ export const DataTable = React.memo(
                 )}
               </div>
 
-              <Pagination
-                totalPages={totalPages}
-                currentPage={currentPage}
-                onPageChange={onPageChange}
-              />
+              {data && data?.length >= 1 ? (
+                <Pagination
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  onPageChange={onPageChange}
+                />
+              ) : null}
             </div>
           </div>
         )}

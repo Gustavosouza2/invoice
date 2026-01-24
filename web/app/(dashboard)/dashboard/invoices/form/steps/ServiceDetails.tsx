@@ -57,16 +57,11 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
     setIsLoading(true)
 
     const serviceValueNumber =
-      data.serviceValue !== undefined &&
-      data.serviceValue !== null &&
-      data.serviceValue !== ''
-        ? parseFloat(data.serviceValue.replace(/\./g, '').replace(',', '.')) ||
-          undefined
-        : undefined
+      data.serviceValue !== undefined && data.serviceValue !== null
 
     const nextFormData = {
       serviceDescription: data.serviceDescription,
-      serviceValue: serviceValueNumber,
+      serviceValue: parseFloat(data.serviceValue ?? '0'),
     }
 
     setFormData(nextFormData)
@@ -129,7 +124,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
       customerName: formData.customerName,
       customerEmail: formData.customerEmail,
       invoiceNumber: formData.invoiceNumber,
-      serviceValue: serviceValueNumber,
+      serviceValue: parseFloat(data.serviceValue ?? '0'),
       customerCnpjOrCpf: formData.customerCnpjOrCpf,
       serviceDescription: nextFormData.serviceDescription,
     })

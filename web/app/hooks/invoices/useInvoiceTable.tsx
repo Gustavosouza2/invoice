@@ -94,11 +94,11 @@ export function useInvoiceTable({
 
   return {
     columns,
-    data: formattedInvoiceData,
+    itemsContextMenu,
     isLoading: showSkeleton,
     currentPage: filters.page,
-    totalPages: invoices?.total_pages || 10,
+    data: formattedInvoiceData,
     onPageChange: handlePageChange,
-    itemsContextMenu,
+    totalPages: invoices?.total_pages || 10,
   }
 }

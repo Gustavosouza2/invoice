@@ -12,7 +12,7 @@ test.describe('Login', () => {
   })
 
   test('should login with valid credentials', async () => {
-    await loginPage.login('gustavoleonsouza@gmail.com', 'senha123')
+    await loginPage.login('teste@teste.com', 'senha123')
     await loginPage.expectSuccessLogin()
   })
 

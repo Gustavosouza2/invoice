@@ -26,7 +26,6 @@ export async function DELETE(
     await invoiceApi.deleteInvoice({ id })
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (err) {
-    console.log('delete error', err)
     const anyErr = err as { message?: string; status?: number }
     const status = typeof anyErr?.status === 'number' ? anyErr.status : 500
     const message = anyErr?.message ?? 'Internal Server Error'
