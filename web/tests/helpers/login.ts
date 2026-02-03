@@ -21,6 +21,12 @@ export class LoginPage {
     await this.page.getByRole('button', { name: 'ENTRAR' }).click()
   }
 
+  async expectDisabledButton() {
+    await expect(
+      this.page.getByRole('button', { name: 'ENTRAR' }),
+    ).toBeDisabled()
+  }
+
   async expectSuccessLogin() {
     await expect(this.page.getByText(/Bem vindo de volta/i)).toBeVisible()
   }
