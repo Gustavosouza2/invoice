@@ -40,31 +40,30 @@ export function RegisterForm() {
 
   const onSubmit = async (data: RegisterRequest) => {
     setIsLoading(true)
-    try {
-      const response = await axios.post('/api/auth/register', data)
-      if (response.status < 200 || response.status >= 300) {
+    await axios
+      .post('/api/auth/register', data)
+      .then((response) => {
+        if (response.status < 200 || response.status >= 300) {
+          Toast({
+            type: 'error',
+            message: 'Erro ao fazer registro. Tente novamente.',
+          })
+          return
+        }
+        Toast({
+          type: 'success',
+          message: 'Registro realizado com sucesso!',
+          description: 'Você será redirecionado para a dashboard.',
+        })
+        router.replace('/dashboard/home')
+      })
+      .catch(() => {
         Toast({
           type: 'error',
           message: 'Erro ao fazer registro. Tente novamente.',
         })
-        return
-      }
-
-      Toast({
-        type: 'success',
-        message: 'Registro realizado com sucesso!',
-        description: 'Você será redirecionado para a dashboard.',
       })
-
-      router.replace('/dashboard/home')
-    } catch {
-      Toast({
-        type: 'error',
-        message: 'Erro ao fazer registro. Tente novamente.',
-      })
-    } finally {
-      setIsLoading(false)
-    }
+      .finally(() => setIsLoading(false))
   }
 
   useEffect(() => {
