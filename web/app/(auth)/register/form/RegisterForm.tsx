@@ -118,7 +118,8 @@ export function RegisterForm() {
                     render={({ field }) => (
                       <Input
                         {...field}
-                        placeholder="Digite seu telefone"
+                        placeholder="Digite seu número de celular"
+                        mask="(99) 99999-9999"
                         iconType="phone"
                         type="text"
                       />
