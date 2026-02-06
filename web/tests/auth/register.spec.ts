@@ -134,7 +134,8 @@ test.describe('Register', () => {
       'senha123',
     )
 
-    await expect(page).toHaveURL('/login', { timeout: 20000 })
+    await registerPage.waitForLoginRedirect()
+    await expect(page).toHaveURL('/login')
   })
 
   test('should enable button when all fields are valid', async ({ page }) => {

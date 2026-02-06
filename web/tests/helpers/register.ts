@@ -67,4 +67,8 @@ export class RegisterPage {
 
     await this.submit()
   }
+
+  async waitForLoginRedirect(timeout = 25000) {
+    await this.page.waitForURL('/login', { timeout })
+  }
 }

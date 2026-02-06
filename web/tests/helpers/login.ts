@@ -32,7 +32,10 @@ export class LoginPage {
   }
 
   async expectErrorLogin() {
-    await this.page.waitForURL('/login')
+    await this.page.waitForURL('/login', { timeout: 10000 })
+    await expect(this.page.getByText(/Erro ao fazer login/i)).toBeVisible({
+      timeout: 10000,
+    })
   }
 
   async login(email: string, password: string) {
@@ -42,5 +45,9 @@ export class LoginPage {
     await this.fillEmail(email)
     await this.fillPassword(password)
     await this.submit()
+  }
+
+  async waitForDashboardRedirect(timeout = 25000) {
+    await this.page.waitForURL(/\/dashboard/, { timeout })
   }
 }

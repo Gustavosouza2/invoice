@@ -1,13 +1,9 @@
 import { expect, test, type Page } from '@playwright/test'
 
 import { LoginPage } from '../helpers/login'
+import { User } from 'tests/constants/userAuth'
 import { DashboardPage } from '../helpers/dashboard'
 import { InvoicePage, type InvoiceFormData } from '../helpers/invoice'
-
-const TEST_USER = {
-  email: 'gustavoleonsouza@gmail.com',
-  password: 'senha123',
-}
 
 test.describe('Invoices', () => {
   let loginPage: LoginPage
@@ -20,7 +16,7 @@ test.describe('Invoices', () => {
     invoicePage = new InvoicePage(page)
     await page.goto('/login')
     await page.waitForURL('/login', { timeout: 10000 })
-    await loginPage.login(TEST_USER.email, TEST_USER.password)
+    await loginPage.login(User.email, User.password)
     await loginPage.waitForDashboardRedirect()
     await dashboardPage.goToInvoices()
   })
