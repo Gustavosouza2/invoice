@@ -48,4 +48,3 @@ export function getApiBaseUrl(): string {
     'Missing NEXT_PUBLIC_API_BASE_URL (or legacy NEXT_PUBLIC_BASE_URL) in production.',
   )
 }
-
