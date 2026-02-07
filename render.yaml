@@ -9,12 +9,14 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: APP_ENV
+        value: PRODUCTION
       - key: FRONTEND_URL
-        sync: false
+        value: https://fiscal-own.vercel.app
       - key: BETTER_AUTH_SECRET
         generateValue: true
       - key: BETTER_AUTH_URL
-        sync: false
+        value: https://invoice-olua.onrender.com/api/auth
       - key: DATABASE_URL
         fromDatabase:
           name: invoice-db

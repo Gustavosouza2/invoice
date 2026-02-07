@@ -11,6 +11,7 @@ import type {
   DeleteInvoiceRequest,
   DeleteInvoiceResponse,
 } from './type'
+import { getApiBaseUrl } from '@/lib/env'
 
 class Invoice extends BaseApi {
   public async getAllInvoices({
@@ -80,5 +81,5 @@ class Invoice extends BaseApi {
   }
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
-export const invoiceApi = new Invoice(baseUrl!)
+const baseUrl = getApiBaseUrl()
+export const invoiceApi = new Invoice(baseUrl)

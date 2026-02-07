@@ -10,6 +10,7 @@ import type {
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from './types'
+import { getApiBaseUrl } from '@/lib/env'
 
 export class AuthAPI extends BaseApi {
   public async login({ email, password }: LoginRequest) {
@@ -75,5 +76,5 @@ export class AuthAPI extends BaseApi {
   }
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000'
+const baseUrl = getApiBaseUrl()
 export const authService = new AuthAPI(baseUrl)

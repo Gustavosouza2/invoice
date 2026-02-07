@@ -34,9 +34,7 @@ export const NoteButton = ({
       type="button"
       className={cn(
         'cursor-pointer bg-surface border transition-colors w-32 h-28 flex justify-center items-center rounded-xl',
-        isSelected
-          ? 'border-accent hover:bg-surface'
-          : 'border-transparent',
+        isSelected ? 'border-accent hover:bg-surface' : 'border-transparent',
         !isSelected && 'hover:border-border-focus hover:bg-surface-elevated',
         disabled && 'opacity-60 pointer-events-none',
         className,
