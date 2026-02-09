@@ -4,7 +4,7 @@ import InvoiceView from './InvoiceView'
 
 export default async function Invoices() {
   return (
-    <Suspense>
+    <Suspense fallback={null}>
       <InvoiceView />
     </Suspense>
   )
