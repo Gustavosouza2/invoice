@@ -12,7 +12,6 @@ const createInvoiceSchema = z.object({
   providerCnpj: z.string().min(1),
   customerName: z.string().min(1),
   serviceValue: z.coerce.number(),
-  userId: z.string().optional(),
   issueDate: z.coerce.date(),
 });
 

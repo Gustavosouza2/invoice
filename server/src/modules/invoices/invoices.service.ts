@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { CustomException } from 'src/common/errors/exceptions/custom.exception';
 import { ErrorCode } from 'src/common/errors/exceptions/error-codes';
 import { PrismaService } from 'src/common/prisma/prisma.service';
+import type { Prisma } from 'generated/prisma';
 import type {
   Invoice,
   GetInvoiceRequest,
@@ -28,17 +29,13 @@ export class InvoicesService {
 
   async findAllInvoices({
     page,
+    userId,
     per_page,
     customer_name,
   }: GetAllInvoicesRequest): Promise<GetAllInvoicesResponse> {
     const skip = (page - 1) * per_page;
 
-    const where: {
-      customerName?: {
-        contains: string;
-        mode: 'insensitive';
-      };
-    } = {};
+    const where: Prisma.InvoiceWhereInput = { userId };
 
     if (customer_name) {
       where.customerName = {
@@ -75,9 +72,10 @@ export class InvoicesService {
 
   async findInvoiceById({
     id,
+    userId,
   }: GetInvoiceRequest): Promise<GetInvoiceResponse> {
-    const invoice = await this.prisma.invoice.findUnique({
-      where: { id },
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id, userId },
       include: {
         user: { include: { accounts: false } },
         File: true,
@@ -91,11 +89,7 @@ export class InvoicesService {
     return invoice;
   }
 
-  async createInvoice({ file, invoiceData }: CreateInvoiceRequest) {
-    if (!invoiceData.userId) {
-      throw new CustomException(ErrorCode.BAD_REQUEST, 'userId is required');
-    }
-
+  async createInvoice({ file, invoiceData, userId }: CreateInvoiceRequest) {
     try {
       const {
         providerMunicipalReg,
@@ -108,7 +102,6 @@ export class InvoicesService {
         providerCnpj,
         customerName,
         issueDate,
-        userId,
         type,
       } = invoiceData;
 
@@ -171,27 +164,39 @@ export class InvoicesService {
   async updateInvoice({
     id,
     invoiceData,
+    userId,
   }: UpdateInvoiceRequest): Promise<UpdateInvoiceResponse> {
-    const dataToUpdate = {
-      ...invoiceData,
-      ...(invoiceData.issueDate && {
-        issueDate: new Date(invoiceData.issueDate),
+    const { issueDate, ...rest } = invoiceData;
+    const dataToUpdate: Prisma.InvoiceUpdateManyMutationInput = {
+      ...rest,
+      ...(issueDate && {
+        issueDate: issueDate instanceof Date ? issueDate : new Date(issueDate),
       }),
     };
-    const updatedInvoice = await this.prisma.invoice.update({
-      where: { id },
+
+    const updated = await this.prisma.invoice.updateMany({
+      where: { id, userId },
       data: dataToUpdate,
     });
 
-    if (!updatedInvoice) {
-      throw new CustomException(ErrorCode.BAD_REQUEST, 'Invoice update failed');
+    if (!updated.count) {
+      throw new CustomException(ErrorCode.NOT_FOUND, 'Invoice not found');
     }
 
-    return this.findInvoiceById({ id });
+    return this.findInvoiceById({ id, userId });
   }
 
-  async removeInvoice({ id }: DeleteInvoiceRequest): Promise<void> {
+  async removeInvoice({ id, userId }: DeleteInvoiceRequest): Promise<void> {
     const result = await this.prisma.$transaction(async (tx) => {
+      const invoice = await tx.invoice.findFirst({
+        where: { id, userId },
+        select: { id: true },
+      });
+
+      if (!invoice) {
+        throw new CustomException(ErrorCode.NOT_FOUND, 'Invoice not found');
+      }
+
       await tx.file.deleteMany({ where: { invoiceId: id } });
 
       const deleted = await tx.invoice.delete({ where: { id } });

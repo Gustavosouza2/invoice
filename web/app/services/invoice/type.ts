@@ -33,7 +33,6 @@ export type CreateInvoiceRequest = {
   customerName: string
   serviceValue: number
   issueDate: string
-  userId: string
 }
 
 export type CreateInvoiceResponse = {

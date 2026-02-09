@@ -12,8 +12,7 @@ const updateInvoiceSchema = z.object({
   providerCnpj: z.string().optional(),
   customerName: z.string().optional(),
   serviceValue: z.number().optional(),
-  issueDate: z.date().optional(),
-  userId: z.string().uuid(),
+  issueDate: z.coerce.date().optional(),
 });
 
 export class UpdateInvoiceDto extends createZodDto(updateInvoiceSchema) {}

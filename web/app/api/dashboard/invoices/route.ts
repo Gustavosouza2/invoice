@@ -6,7 +6,6 @@ import { invoiceApi } from '@/services/invoice/invoiceApi'
 import { setToken } from '@/services/token'
 
 const createInvoiceSchema = z.object({
-  userId: z.string().min(1),
   issueDate: z.string().min(1),
   providerName: z.string().min(1),
   providerCnpj: z.string().min(1),

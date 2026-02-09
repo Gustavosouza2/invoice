@@ -7,11 +7,9 @@ import { Button } from '@/components/features/Button/DefaultButton'
 import { removeEmptyValues } from '@/utils/removeEmptyValues'
 import { FieldGroup, FieldSet } from '@/components/ui/field'
 import { FormField } from '@/components/ui/form-field'
-import { useUserContext } from '@/context/userContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/features/Input'
 import { Toast } from '@/components/features/Toast'
-import { decodeToken } from '@/services/token'
 
 import { useInvoiceFormContext } from '../context'
 import { serviceDetailsSchema } from '../schema'
@@ -30,7 +28,6 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { formData, setFormData, mode, invoiceId } = useInvoiceFormContext()
 
-  const { userData } = useUserContext()
   const { mutate } = useSWRConfig()
 
   const schema = serviceDetailsSchema[mode]
@@ -67,9 +64,6 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
     setFormData(nextFormData)
 
     if (mode === 'create') {
-      const tokenPayload = decodeToken()
-      const userId = userData?.id ?? (tokenPayload?.sub as string) ?? ''
-
       const payload = {
         issueDate: formData.issueDate ?? '',
         providerName: formData.providerName ?? '',
@@ -78,7 +72,6 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
         customerCnpjOrCpf: formData.customerCnpjOrCpf ?? '',
         serviceDescription: nextFormData.serviceDescription ?? '',
         serviceValue: serviceValueNumber ?? 0,
-        userId,
         ...(formData.type && { type: formData.type }),
         ...(formData.invoiceNumber && {
           invoiceNumber: Number(formData.invoiceNumber),

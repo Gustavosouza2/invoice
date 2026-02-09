@@ -5,6 +5,7 @@ import type { Prisma } from 'generated/prisma';
 export type GetAllInvoicesRequest = {
   customer_name: string;
   per_page: number;
+  userId: string;
   page: number;
 };
 
@@ -21,6 +22,7 @@ export type GetAllInvoicesResponse = Awaited<{
 }>;
 
 export type GetInvoiceRequest = {
+  userId: string;
   id: string;
 };
 
@@ -29,18 +31,20 @@ export type GetInvoiceResponse = Awaited<Invoice>;
 export type CreateInvoiceRequest = {
   invoiceData: CreateInvoiceDto;
   file?: Express.Multer.File;
-  userId?: string;
+  userId: string;
 };
 
 export type CreateInvoiceResponse = Awaited<Invoice>;
 
 export type UpdateInvoiceRequest = {
   invoiceData: Partial<UpdateInvoiceDto>;
+  userId: string;
   id: string;
 };
 
 export type UpdateInvoiceResponse = Awaited<Invoice>;
 
 export type DeleteInvoiceRequest = {
+  userId: string;
   id: string;
 };
