@@ -23,10 +23,7 @@ export const Card = ({ data, isLoading }: CardMapProps) => {
   return data.map((item, index: number) => (
     <div key={index} className="w-full">
       {isLoading ? (
-        <CardShadcn
-          className={`${item.isFirstCard ? 'w-full h-36' : 'w-[200px] h-36'} rounded-xl border border-accent/40
-            bg-gradient-to-br from-bg to-bg-primary shadow-xl/40`}
-        >
+        <CardShadcn className="w-full h-36 rounded-xl border border-accent/40 bg-gradient-to-br from-bg to-bg-primary shadow-xl/40">
           <CardHeader className="space-y-4">
             <Skeleton className="h-5 w-3/4 rounded-md" />
             <Skeleton className="h-7 w-2/3 rounded-md" />

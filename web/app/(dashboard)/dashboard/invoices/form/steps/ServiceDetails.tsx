@@ -151,7 +151,7 @@ export const ServiceDetails = ({ onClose }: ServiceDetailsProps) => {
 
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col h-full min-h-[29rem] justify-between">
+      <div className="flex flex-col h-full sm:min-h-[29rem] justify-between">
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col h-full"

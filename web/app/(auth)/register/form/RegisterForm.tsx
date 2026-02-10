@@ -67,7 +67,7 @@ export function RegisterForm() {
   }
 
   return (
-    <main className="relative h-screen w-screen flex items-center justify-between overflow-hidden">
+    <main className="relative min-h-dvh w-full flex flex-col custom:flex-row items-stretch custom:items-center justify-center custom:justify-between overflow-x-hidden px-4 py-10 custom:px-0 custom:py-0">
       <div className="hidden custom:flex bg-accent w-full h-full rounded-e-3xl justify-center items-center flex-col gap-10">
         <h1 className="text-text-quaternary text-center text-3xl font-bold font-poppins">
           Aqui é onde tudo começa.
@@ -80,7 +80,7 @@ export function RegisterForm() {
         />
       </div>
       <div className="w-full flex justify-center">
-        <div className="w-[29rem] h-[30rem] bg-bg-primary/50 backdrop-blur rounded-2xl p-6 shadow-xl border border-white/5">
+        <div className="w-full max-w-[29rem] bg-bg-primary/50 backdrop-blur rounded-2xl p-6 sm:p-8 shadow-xl border border-white/5">
           <form
             noValidate
             className="flex flex-col gap-4"

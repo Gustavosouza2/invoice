@@ -29,8 +29,8 @@ export const DeleteModal = ({
   return (
     <Dialog modal onOpenChange={onClose} open={isOpen} defaultOpen={isOpen}>
       <DialogContent
-        className={`w-full max-w-full h-screen md:max-w-[25rem] md:h-[15rem] flex flex-col rounded-none md:rounded-2xl border
-          border-border-muted bg-bg-primary text-text-primary shadow-[0_20px_60px_rgba(0,0,0,0.45)] p-6 md:p-8`}
+        className={`w-full max-w-full h-dvh md:max-w-[25rem] md:h-[15rem] flex flex-col rounded-none md:rounded-2xl border
+          border-border-muted bg-bg-primary text-text-primary shadow-[0_20px_60px_rgba(0,0,0,0.45)] p-6 md:p-8 overflow-y-auto md:overflow-hidden`}
       >
         <div className="flex flex-col h-full">
           <div className="flex justify-end">

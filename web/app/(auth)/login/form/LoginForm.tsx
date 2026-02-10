@@ -69,9 +69,9 @@ export function LoginForm() {
   }
 
   return (
-    <main className="relative h-screen w-screen flex items-center justify-between overflow-hidden">
+    <main className="relative min-h-dvh w-full flex flex-col custom:flex-row items-stretch custom:items-center justify-center custom:justify-between overflow-x-hidden px-4 py-10 custom:px-0 custom:py-0">
       <div className="w-full flex justify-center">
-        <div className="w-[29rem] bg-bg-primary/50 backdrop-blur rounded-2xl p-6 shadow-xl border border-white/5">
+        <div className="w-full max-w-[29rem] bg-bg-primary/50 backdrop-blur rounded-2xl p-6 sm:p-8 shadow-xl border border-white/5">
           <form
             noValidate
             className="flex flex-col gap-4"
@@ -131,7 +131,7 @@ export function LoginForm() {
           </form>
         </div>
       </div>
-      <div className="hidden custom:flex bg-accent w-full h-full rounded-s-3xl justify-center items-center flex-col gap-10">
+      <div className="hidden custom:flex bg-accent w-full min-h-dvh rounded-s-3xl justify-center items-center flex-col gap-10 px-6">
         <h1 className="text-text-quaternary text-center text-3xl font-bold font-poppins">
           Suas notas fiscais em um só lugar.
         </h1>

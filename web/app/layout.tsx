@@ -36,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${poppins.className} ${inter.className}`}>
-      <body className="bg-gradient-to-br from-bg-primary via-bg-default to-bg-primary flex w-screen h-screen overflow-hidden">
+      <body className="bg-gradient-to-br from-bg-primary via-bg-default to-bg-primary min-h-dvh w-full overflow-x-hidden">
         <Providers>{children}</Providers>
       </body>
     </html>

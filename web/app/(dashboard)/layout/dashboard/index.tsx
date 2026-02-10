@@ -12,7 +12,7 @@ export const DashBoardLayout = React.memo(
     const isMobile = useIsMobile()
 
     return (
-      <div className="w-full h-full flex flex-col justify-center items-center pt-20 pb-7 overflow-scroll md:overflow-visible">
+      <div className="w-full min-h-dvh flex flex-col justify-start items-stretch pt-20 pb-20 md:pb-7 overflow-x-hidden overflow-y-auto">
         <HeaderDashboard />
         {children}
         {isMobile && (

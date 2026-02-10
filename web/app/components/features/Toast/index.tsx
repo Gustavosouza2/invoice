@@ -39,7 +39,7 @@ export const Toast = ({
   }
 
   const outer = 'bg-bg-primary rounded-2xl p-[0px] shadow-md'
-  const container = `${variants[type]} rounded-2xl px-4 py-3 min-w-[280px] max-w-[420px] inline-flex flex-col`
+  const container = `${variants[type]} rounded-2xl px-4 py-3 w-[min(420px,calc(100vw-2rem))] inline-flex flex-col`
   const title = 'font-medium'
   const desc = 'text-sm opacity-90 mt-1'
 

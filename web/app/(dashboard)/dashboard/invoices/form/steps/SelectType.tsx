@@ -31,10 +31,10 @@ export const SelectType = () => {
   const isDisabled = !isValid
 
   return (
-    <div className="flex flex-col h-full min-h-[29rem] justify-between">
+    <div className="flex flex-col h-full sm:min-h-[29rem] justify-between">
       <div className="flex flex-col gap-6 justify-start items-center text-center pt-4">
         <ModalHeader title="Modo de preenchimento" />
-        <div className="flex flex-row items-center gap-5 justify-center mt-10">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 justify-center mt-6 sm:mt-10 w-full">
           <NoteButton
             text="MANUAL"
             value="WithoutIA"
