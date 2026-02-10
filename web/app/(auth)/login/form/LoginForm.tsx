@@ -1,7 +1,7 @@
 'use client'
 
+import { useCallback, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import axios from 'axios'
@@ -24,10 +24,6 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const isValid = LoginSchema.safeParse({ email, password }).success
-
-  useEffect(() => {
-    router.prefetch('/dashboard/home')
-  }, [router])
 
   const onSubmit = useCallback(
     async (data: LoginRequest) => {

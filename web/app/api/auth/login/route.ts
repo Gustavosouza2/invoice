@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { authService } from '@/services/auth/auth'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
+export const maxDuration = 30
 
 export async function POST(req: Request) {
   const { email, password } = await req.json()

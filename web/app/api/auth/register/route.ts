@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server'
 
 import { authService } from '@/services/auth/auth'
 
-export const runtime = 'edge'
+export const runtime = 'nodejs'
+export const maxDuration = 30
 
 export async function POST(req: Request) {
   const { email, name, password, phone } = await req.json()
@@ -26,12 +27,34 @@ export async function POST(req: Request) {
     if (result instanceof Response) {
       return result
     }
-    return NextResponse.json(
+    const res = NextResponse.json(
       result ?? { message: 'Registro realizado com sucesso' },
       {
         status: 201,
       },
     )
+
+    if (result?.token) {
+      res.cookies.set('token', result.token, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    }
+
+    if (result?.jwt) {
+      res.cookies.set('access_token', result.jwt, {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    }
+
+    return res
   } catch (error) {
     console.error(error)
     return NextResponse.json(

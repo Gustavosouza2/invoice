@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, Controller } from 'react-hook-form'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import axios from 'axios'
@@ -65,10 +65,6 @@ export function RegisterForm() {
       })
       .finally(() => setIsLoading(false))
   }
-
-  useEffect(() => {
-    router.prefetch('/dashboard/home')
-  }, [router])
 
   return (
     <main className="relative h-screen w-screen flex items-center justify-between overflow-hidden">

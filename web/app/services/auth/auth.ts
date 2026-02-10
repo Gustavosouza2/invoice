@@ -1,4 +1,3 @@
-import { clearToken, setToken, setSessionToken } from '../token'
 import { BaseApi } from '../base'
 import type {
   LoginRequest,
@@ -18,13 +17,6 @@ export class AuthAPI extends BaseApi {
       '/auth/login',
       { email, password },
     )
-
-    if (response?.jwt) {
-      setToken(response.jwt)
-    }
-    if (response?.token) {
-      setSessionToken(response.token)
-    }
     return response
   }
 
@@ -35,8 +27,6 @@ export class AuthAPI extends BaseApi {
       true,
       customToken,
     )
-
-    if (response.success) clearToken()
     return response
   }
 
@@ -46,31 +36,16 @@ export class AuthAPI extends BaseApi {
       { email, name, password, phone },
     )
 
-    if (response?.jwt) {
-      setToken(response.jwt)
-    }
-
-    if (response?.token) {
-      setSessionToken(response.token)
-    }
-
     if (response.success) return response
   }
 
   public async refreshToken({ token }: RefreshTokenRequest) {
-    const response = await this.post<RefreshTokenRequest, RefreshTokenResponse>(
+    const response = await this.post<undefined, RefreshTokenResponse>(
       '/auth/refresh',
-      { token },
+      undefined,
       true,
+      token,
     )
-
-    if (response?.jwt) {
-      setToken(response.jwt)
-    }
-
-    if (response?.token) {
-      setSessionToken(response.token)
-    }
 
     if (response.success) return response
   }
